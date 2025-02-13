@@ -4,7 +4,7 @@ import json
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig, pipeline
 from datasets import load_dataset
 from tqdm import tqdm
-from evaluate import load
+import evaluate
 import torch
 import subprocess
 
@@ -93,9 +93,11 @@ def gen_preds(examples, generator):
 def eval_qa(preds, refs, metric="squad"):
   if metric=="squad":
     # Compute exact match and F1 scores
+    metric = evaluate.load("squad")
     final_score = metric.compute(predictions=preds, references=refs)
   elif metric=="bertscore":
-    final_score = bertscore.compute(predictions=preds, references=refs, lang="en")
+    metric = evaluate.load("bertscore")
+    final_score = metric.compute(predictions=preds, references=refs, lang="en")
 
   return final_score
 
@@ -136,7 +138,7 @@ if __name__ == "__main__":
         preds, refs = gen_preds(custom_dataset, generator)
 
         # evaluate bertscore on custom open-ended QA testset
-        bertscore = load("bertscore")
+        #bertscore = evaluate.load("bertscore")
         final_score = eval_qa(preds, refs, metric="bertscore")
 
         # output bertscore final_score to drive
