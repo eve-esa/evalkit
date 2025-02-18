@@ -5,7 +5,7 @@ from torch.utils.data import DataLoader, Dataset
 from transformers import AutoModelForCausalLM, AutoTokenizer
 import pandas as pd
 import click
-
+from tqdm import tqdm
 
 # Create a custom Dataset class to handle batching
 class TextDataset(Dataset):
@@ -52,7 +52,7 @@ class Perplexity:
         total_tokens = 0
 
         with torch.no_grad():
-            for batch in self.dataloader:
+            for batch in tqdm(self.dataloader):
                 input_ids = batch['input_ids'].squeeze(1).to(self.model.device)
 
                 # Compute the model's loss (log-likelihood)
@@ -73,8 +73,10 @@ class Perplexity:
 @click.option('--batch_size', default=8, help='Batch size for evaluation')
 @click.option('--output_path', default='perplexity.json', help='Path to save the perplexity value')
 def main(model_path, dataset_path, output_path='perplexity.json', batch_size=8):
+
+    print(f'Evaluating perplexity on model {model_path} and dataset {dataset_path}...')
     # Load the model
-    model = AutoModelForCausalLM.from_pretrained(model_path)
+    model = AutoModelForCausalLM.from_pretrained(model_path, device_map='auto')
     tokenizer = AutoTokenizer.from_pretrained(model_path)
 
     # Assert it is a jsonl file
