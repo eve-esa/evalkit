@@ -8,24 +8,16 @@ import click
 from tqdm import tqdm
 
 # Create a custom Dataset class to handle batching
+# Custom dataset using batch tokenization
 class TextDataset(Dataset):
-    def __init__(self, texts, tokenizer, max_length=512):
+    def __init__(self, texts):
         self.texts = texts
-        self.tokenizer = tokenizer
-        self.max_length = max_length
 
     def __len__(self):
         return len(self.texts)
 
     def __getitem__(self, idx):
-        # Tokenize each text and return a batch-friendly format
-        encoding = self.tokenizer(
-            self.texts[idx],
-            truncation=True,
-            padding=True,
-            return_tensors="pt"
-        )
-        return encoding
+        return self.texts[idx]
 
 
 class Perplexity:
@@ -42,9 +34,17 @@ class Perplexity:
         # Pad token
         self.tokenizer.pad_token = tokenizer.eos_token
 
-        self.dataset = TextDataset(dataset['text'], self.tokenizer)
+        self.dataset = TextDataset(dataset['text'])
         self.batch_size = batch_size
-        self.dataloader = DataLoader(self.dataset, batch_size=batch_size)
+        self.dataloader = DataLoader(self.dataset, batch_size=batch_size, collate_fn=self.collate_batch)
+
+    def collate_batch(self, batch):
+        encodings = self.tokenizer(batch,
+                              return_tensors="pt",
+                              padding=True,  # Ensures all sequences in batch have the same length
+                              truncation=True,
+                              max_length=512)
+        return encodings
 
     # Function to compute perplexity
     def __call__(self):
@@ -53,10 +53,12 @@ class Perplexity:
 
         with torch.no_grad():
             for batch in tqdm(self.dataloader):
-                input_ids = batch['input_ids'].squeeze(1).to(self.model.device)
+                input_ids = batch['input_ids'].to(self.model.device)
+                attention_mask = batch['attention_mask'].to(self.model.device)
+
 
                 # Compute the model's loss (log-likelihood)
-                outputs = self.model(input_ids, labels=input_ids)
+                outputs = self.model(input_ids, labels=input_ids, attention_mask=attention_mask)
                 loss = outputs.loss.item()
 
                 total_log_likelihood += loss * input_ids.size(1)  # Multiply by number of tokens in batch
