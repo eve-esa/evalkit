@@ -1,72 +1,22 @@
 import json
+import os
 import evaluate
-import torch
-from torch.utils.data import DataLoader, Dataset
-from transformers import AutoModelForCausalLM, AutoTokenizer
 import pandas as pd
 import click
-from tqdm import tqdm
 
-# Create a custom Dataset class to handle batching
-# Custom dataset using batch tokenization
-class TextDataset(Dataset):
-    def __init__(self, texts):
-        self.texts = texts
+def compute_perplexity(model_path, predictions, batch_size):
+    # Try to load the metric
+    try:
+        ppl = evaluate.load('perplexity')
+    except FileNotFoundError:
+        # If it is not found clone the repo and load the metric
+        os.system('git clone https://github.com/huggingface/evaluate.git')
+        ppl = evaluate.load('evaluate/metrics/perplexity/perplexity.py')
 
-    def __len__(self):
-        return len(self.texts)
+    # Compute the perplexity
+    perplexity = ppl.compute(predictions=predictions, model_id=model_path, batch_size=batch_size)
 
-    def __getitem__(self, idx):
-        return self.texts[idx]
-
-
-class Perplexity:
-    """
-    Class to compute perplexity of a model on a dataset.
-    """
-
-    def __init__(self, dataset: pd.DataFrame, model: AutoModelForCausalLM, tokenizer, batch_size=8):
-        self.name = 'perplexity'
-        # Assert that dataset contains the 'text' column
-        assert 'text' in dataset.columns, "Dataset must contain 'text' column"
-        self.model = model
-        self.tokenizer = tokenizer
-        # Pad token
-        self.tokenizer.pad_token = tokenizer.eos_token
-
-        self.dataset = TextDataset(dataset['text'])
-        self.batch_size = batch_size
-        self.dataloader = DataLoader(self.dataset, batch_size=batch_size, collate_fn=self.collate_batch)
-
-    def collate_batch(self, batch):
-        encodings = self.tokenizer(batch,
-                              return_tensors="pt",
-                              padding=True,  # Ensures all sequences in batch have the same length
-                              truncation=True,
-                              max_length=512)
-        return encodings
-
-    # Function to compute perplexity
-    def __call__(self):
-        total_log_likelihood = 0
-        total_tokens = 0
-
-        with torch.no_grad():
-            for batch in tqdm(self.dataloader):
-                input_ids = batch['input_ids'].to(self.model.device)
-                attention_mask = batch['attention_mask'].to(self.model.device)
-
-
-                # Compute the model's loss (log-likelihood)
-                outputs = self.model(input_ids, labels=input_ids, attention_mask=attention_mask)
-                loss = outputs.loss.item()
-
-                total_log_likelihood += loss * input_ids.size(1)  # Multiply by number of tokens in batch
-                total_tokens += input_ids.size(1)  # Count number of tokens
-
-        # Compute perplexity as exp of negative average log-likelihood
-        perplexity = torch.exp(torch.tensor(total_log_likelihood / total_tokens)).item()
-        return perplexity
+    return perplexity
 
 
 @click.command()
@@ -75,23 +25,22 @@ class Perplexity:
 @click.option('--batch_size', default=8, help='Batch size for evaluation')
 @click.option('--output_path', default='perplexity.json', help='Path to save the perplexity value')
 def main(model_path, dataset_path, output_path='perplexity.json', batch_size=8):
-
     print(f'Evaluating perplexity on model {model_path} and dataset {dataset_path}...')
-    # Load the model
-    model = AutoModelForCausalLM.from_pretrained(model_path, device_map='auto')
-    tokenizer = AutoTokenizer.from_pretrained(model_path)
 
     # Assert it is a jsonl file
     assert dataset_path.endswith('.jsonl'), "Dataset must be in jsonl format"
+    
 
     # Load the dataset
     df = pd.read_json(dataset_path, lines=True)
 
-    # Initialize the Perplexity class
-    perplexity = Perplexity(df, model, tokenizer, batch_size=batch_size)
+    # Assert there is a text column
+    assert 'text' in df.columns, "Dataset must have a 'text' column"
+
+    texts = df['text'].tolist()
 
     # Compute perplexity
-    perplexity_value = perplexity()
+    perplexity_value = compute_perplexity(model_path, texts, batch_size)
 
     # Save the perplexity value
     with open(output_path, 'w') as f:
