@@ -6,111 +6,196 @@ import numpy as np
 import torch
 from torch.nn import CrossEntropyLoss
 from transformers import AutoModelForCausalLM, AutoTokenizer
+import datasets
 
 import evaluate
 from evaluate import logging
+from tqdm import tqdm
+
+import json
+import evaluate
+import torch
+from torch.utils.data import DataLoader, Dataset
+from transformers import AutoModelForCausalLM, AutoTokenizer
+import pandas as pd
+import click
+from tqdm import tqdm
 
 
-def compute(
-        predictions, model_id, batch_size: int = 2, add_start_token: bool = True, device=None, max_length=None
-):
+# Create a custom Dataset class to handle batching
+# Custom dataset using batch tokenization
+class TextDataset(Dataset):
+    def __init__(self, texts):
+        self.texts = texts
 
-    if device is not None:
-        assert device in ["gpu", "cpu", "cuda"], "device should be either gpu or cpu."
-        if device == "gpu":
-            device = "cuda"
-    else:
-        device = "cuda" if torch.cuda.is_available() else "cpu"
+    def __len__(self):
+        return len(self.texts)
 
-    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto")
+    def __getitem__(self, idx):
+        return self.texts[idx]
+
+# Function to compute perplexity
+
+def compute2(predictions, model_id, batch_size: int = 1):
+
+    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype='auto')
     tokenizer = AutoTokenizer.from_pretrained(model_id)
+    tokenizer.pad_token = tokenizer.eos_token
+    device = model.device
 
-    # if batch_size > 1 (which generally leads to padding being required), and
-    # if there is not an already assigned pad_token, assign an existing
-    # special token to also be the padding token
-    if tokenizer.pad_token is None and batch_size > 1:
-        existing_special_tokens = list(tokenizer.special_tokens_map_extended.values())
-        # check that the model already has at least one special token defined
-        assert (
-            len(existing_special_tokens) > 0
-        ), "If batch_size > 1, model must have at least one special token to use for padding. Please use a different model or set batch_size=1."
-        # assign one of the special tokens to also be the pad token
-        tokenizer.add_special_tokens({"pad_token": existing_special_tokens[0]})
-
-    if add_start_token and max_length:
-        # leave room for <BOS> token to be added:
-        assert (
-            tokenizer.bos_token is not None
-        ), "Input model must already have a BOS token if using add_start_token=True. Please use a different model, or set add_start_token=False"
-        max_tokenized_len = max_length - 1
-    else:
-        max_tokenized_len = max_length
-
-    encodings = tokenizer(
-        predictions,
-        add_special_tokens=False,
-        padding=True,
-        truncation=True if max_tokenized_len else False,
-        max_length=max_tokenized_len,
-        return_tensors="pt",
-        return_attention_mask=True,
-    ).to(device)
-
-    encoded_texts = encodings["input_ids"]
-    attn_masks = encodings["attention_mask"]
-
-    # check that each input is long enough:
-    if add_start_token:
-        assert torch.all(torch.ge(attn_masks.sum(1), 1)), "Each input text must be at least one token long."
-    else:
-        assert torch.all(
-            torch.ge(attn_masks.sum(1), 2)
-        ), "When add_start_token=False, each input text must be at least two tokens long. Run with add_start_token=True if inputting strings of only one token, and remove all empty input strings."
-
-    ppls = []
-    loss_fct = CrossEntropyLoss(reduction="none")
-
-    for start_index in logging.tqdm(range(0, len(encoded_texts), batch_size)):
-        end_index = min(start_index + batch_size, len(encoded_texts))
-        encoded_batch = encoded_texts[start_index:end_index]
-        attn_mask = attn_masks[start_index:end_index]
-
-        if add_start_token:
-            bos_tokens_tensor = torch.tensor([[tokenizer.bos_token_id]] * encoded_batch.size(dim=0)).to(device)
-            encoded_batch = torch.cat([bos_tokens_tensor, encoded_batch], dim=1)
-            attn_mask = torch.cat(
-                [torch.ones(bos_tokens_tensor.size(), dtype=torch.int64).to(device), attn_mask], dim=1
-            )
-
-        labels = encoded_batch
-
-        with torch.no_grad():
-            out_logits = model(encoded_batch, attention_mask=attn_mask).logits
-
-        shift_logits = out_logits[..., :-1, :].contiguous()
-        shift_labels = labels[..., 1:].contiguous()
-        shift_attention_mask_batch = attn_mask[..., 1:].contiguous()
-
-        perplexity_batch = torch.exp(
-            (loss_fct(shift_logits.transpose(1, 2), shift_labels) * shift_attention_mask_batch).sum(1)
-            / shift_attention_mask_batch.sum(1)
+    def collate_fn(batch):
+        encodings = tokenizer(
+            batch,
+            add_special_tokens=False,
+            padding=True,
+            return_tensors="pt",
+            return_attention_mask=True,
         )
+        return encodings
 
-        ppls += perplexity_batch.tolist()
+    dataset = TextDataset(predictions)
+    dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn)
 
-    return {"perplexities": ppls, "mean_perplexity": np.mean(ppls)}
+    ppls_list = []
+
+    loss_fct = CrossEntropyLoss(ignore_index=-100, reduction="none")
+
+    stride = 1
+    max_length = 2048
+    with torch.no_grad():
+        for batch in tqdm(dataloader):
+            prev_end_loc = 0
+            encoding = batch['input_ids']
+            attn_mask = batch['attention_mask']
+            seq_len = encoding.size(1)
+
+            perplexity_sum = torch.zeros(encoding.size(0), device=device)
+            perplexity_count = torch.zeros(encoding.size(0), device=device)
+            for begin_loc in tqdm(range(0, seq_len, stride)):
+                end_loc = min(begin_loc + max_length, seq_len)
+                trg_len = end_loc - prev_end_loc  # may be different from stride on last loop
+                input_ids = encoding[:, begin_loc:end_loc].to(device)
+                attn_mask = attn_mask.to(device)
+                target_ids = input_ids.clone()
+                target_ids[:, :-trg_len] = -100
+
+                with torch.no_grad():
+                    outputs = model(input_ids, labels=target_ids)
+
+                    # loss is calculated using CrossEntropyLoss which averages over valid labels
+                    # N.B. the model only calculates loss over trg_len - 1 labels, because it internally shifts the labels
+                    # to the left by 1.
+                    logits = outputs.logits
+
+                # Shift for skipping the last token (since does not have a target)
+                shift_logits = logits[..., :-1, :].contiguous()
+                # Shift for skipping the first token (since does not have a label that could be predicted)
+                shift_labels = target_ids[..., 1:].contiguous()
+                # Shift for skipping the first token
+                shift_attention_mask_batch = attn_mask[..., 1:].contiguous()
+
+
+                #print(shift_logits.shape)
+                #print(shift_attention_mask_batch.shape)
+
+                perplexity_sum += (loss_fct(shift_logits.transpose(1, 2), shift_labels) * shift_attention_mask_batch).sum(1)
+                perplexity_count += shift_attention_mask_batch.sum(1)
+
+                prev_end_loc = end_loc
+                if end_loc == seq_len:
+                    break
+            # avg_nll = nll_sum / n_tokens  # average negative log-likelihood per token
+            # ppl = torch.exp(avg_nll)
+            ppls_list.extend(torch.exp(perplexity_sum / perplexity_count).tolist())
+
+    return {"mean_perplexity": torch.mean(torch.tensor(ppls_list)).item(), 'perplexities': ppls_list}
+
+
+def compute(predictions: list[str], model_id: str, batch_size: int = 1):
+    model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype='auto')
+    tokenizer = AutoTokenizer.from_pretrained(model_id)
+    tokenizer.pad_token = tokenizer.eos_token
+
+    device = model.device
+
+    def collate_fn(batch):
+        encodings = tokenizer(
+            batch,
+            add_special_tokens=False,
+            padding=True,
+            return_tensors="pt",
+            return_attention_mask=True,
+        )
+        return encodings
+
+    dataset = TextDataset(predictions)
+    dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn)
+
+    ppls_list = []
+    ppls = 0
+    count = 0
+
+    stride = 128
+    max_length = 2048
+    with torch.no_grad():
+        for batch in tqdm(dataloader):
+            nll_sum = 0.0
+            n_tokens = 0
+            prev_end_loc = 0
+            encoding = batch['input_ids']
+            seq_len = encoding.size(1)
+            for begin_loc in tqdm(range(0, seq_len, stride)):
+                end_loc = min(begin_loc + max_length, seq_len)
+                trg_len = end_loc - prev_end_loc  # may be different from stride on last loop
+                input_ids = encoding[:, begin_loc:end_loc].to(device)
+                target_ids = input_ids.clone()
+                target_ids[:, :-trg_len] = -100
+
+                print('encoding size: ', encoding.shape)
+
+                with torch.no_grad():
+                    outputs = model(input_ids, labels=target_ids)
+
+                    # loss is calculated using CrossEntropyLoss which averages over valid labels
+                    # N.B. the model only calculates loss over trg_len - 1 labels, because it internally shifts the labels
+                    # to the left by 1.
+                    neg_log_likelihood = outputs.loss
+
+                # Accumulate the total negative log-likelihood and the total number of tokens
+                num_valid_tokens = (target_ids != -100).sum().item()  # number of valid tokens in target_ids
+                batch_size = target_ids.size(0)
+                num_loss_tokens = num_valid_tokens - batch_size  # subtract batch_size due to internal label shift
+                nll_sum += neg_log_likelihood * num_loss_tokens
+                n_tokens += num_loss_tokens
+                # The main difference is where the mean is made
+
+
+                prev_end_loc = end_loc
+                if end_loc == seq_len:
+                    break
+            avg_nll = nll_sum / n_tokens  # average negative log-likelihood per token
+
+            # Compute perplexity for the current batch
+            ppl = torch.exp(avg_nll)
+            # Add it to the list of perplexities
+            ppls_list.append(ppl.item())
+            # Update the total perplexity and the total number of examples
+            ppls += ppl.item()
+            count += batch_size
+
+    return {"mean_perplexity": ppls / count}
+
 
 @click.command()
 @click.option('--model_path', help='Path to the model checkpoint')
 @click.option('--dataset_path', help='Path to the dataset in jsonl format')
-@click.option('--batch_size', default=2, help='Batch size for evaluation')
 @click.option('--output_path', default='perplexity.json', help='Path to save the perplexity value')
-def main(model_path, dataset_path, output_path='perplexity.json', batch_size=8):
+@click.option('--batch_size', default=1, help='Batch size for tokenization')
+def main(model_path, dataset_path, output_path='perplexity.json', batch_size=1):
     print(f'Evaluating perplexity on model {model_path} and dataset {dataset_path}...')
 
     # Assert it is a jsonl file
     assert dataset_path.endswith('.jsonl'), "Dataset must be in jsonl format"
-    
 
     # Load the dataset
     df = pd.read_json(dataset_path, lines=True)
@@ -121,7 +206,7 @@ def main(model_path, dataset_path, output_path='perplexity.json', batch_size=8):
     texts = df['text'].tolist()
 
     # Compute perplexity
-    metric = compute(texts, model_path, batch_size=batch_size, add_start_token=False)
+    metric = compute(texts, model_path, batch_size=batch_size)
 
     # Save the perplexity value
     with open(output_path, 'w') as f:
