@@ -12,7 +12,7 @@ from evaluate import logging
 
 
 def compute(
-        predictions, model_id, batch_size: int = 16, add_start_token: bool = True, device=None, max_length=None
+        predictions, model_id, batch_size: int = 2, add_start_token: bool = True, device=None, max_length=None
 ):
 
     if device is not None:
@@ -103,7 +103,7 @@ def compute(
 @click.command()
 @click.option('--model_path', help='Path to the model checkpoint')
 @click.option('--dataset_path', help='Path to the dataset in jsonl format')
-@click.option('--batch_size', default=8, help='Batch size for evaluation')
+@click.option('--batch_size', default=2, help='Batch size for evaluation')
 @click.option('--output_path', default='perplexity.json', help='Path to save the perplexity value')
 def main(model_path, dataset_path, output_path='perplexity.json', batch_size=8):
     print(f'Evaluating perplexity on model {model_path} and dataset {dataset_path}...')
