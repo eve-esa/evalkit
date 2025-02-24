@@ -57,9 +57,6 @@ def mmlu_eval(model_path, output_path=None, file_name='mmlu.json'):
     if output_path is None:
         output_path = os.path.join(model_path, 'evaluation')
 
-    #out = subprocess.run(
-    #    ["lm_eval", "--model hf", "--model_args pretrained=" + model_path, "--tasks mmlu", "--device cuda:0",
-    #     "--batch_size 8", "--output_path " + output_path], capture_output=True, text=True, shell=True)
     os.system(
         f"lm_eval --model hf --model_args pretrained={model_path} --tasks mmlu --device cuda:0 --batch_size 8 --output_path {output_path}")
 
@@ -70,8 +67,7 @@ def mmlu_eval(model_path, output_path=None, file_name='mmlu.json'):
 
     os.system(f"mv {os.path.join(output_path, tmp_dir, result_file)} {os.path.join(output_path, file_name)}")
     os.system(f"rm -r {os.path.join(output_path, tmp_dir)}")
-    # print(out.stdout)
-    # print(out.stderr)
+
 
 
 def download_qa_dataset():
