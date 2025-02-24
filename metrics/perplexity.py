@@ -95,8 +95,8 @@ def compute2(predictions, model_id, batch_size: int = 1):
                 shift_attention_mask_batch = attn_mask[..., 1:].contiguous()
 
 
-                #print(shift_logits.shape)
-                #print(shift_attention_mask_batch.shape)
+                print(shift_logits.shape)
+                print(shift_attention_mask_batch.shape)
 
                 perplexity_sum += (loss_fct(shift_logits.transpose(1, 2), shift_labels) * shift_attention_mask_batch).sum(1)
                 perplexity_count += shift_attention_mask_batch.sum(1)
@@ -137,10 +137,10 @@ def compute(predictions: list[str], model_id: str, batch_size: int = 1):
 
     stride = 128
     max_length = 2048
+    nll_sum = 0.0
+    n_tokens = 0
     with torch.no_grad():
         for batch in tqdm(dataloader):
-            nll_sum = 0.0
-            n_tokens = 0
             prev_end_loc = 0
             encoding = batch['input_ids']
             seq_len = encoding.size(1)
@@ -151,7 +151,6 @@ def compute(predictions: list[str], model_id: str, batch_size: int = 1):
                 target_ids = input_ids.clone()
                 target_ids[:, :-trg_len] = -100
 
-                print('encoding size: ', encoding.shape)
 
                 with torch.no_grad():
                     outputs = model(input_ids, labels=target_ids)
@@ -173,17 +172,18 @@ def compute(predictions: list[str], model_id: str, batch_size: int = 1):
                 prev_end_loc = end_loc
                 if end_loc == seq_len:
                     break
-            avg_nll = nll_sum / n_tokens  # average negative log-likelihood per token
+        avg_nll = nll_sum / n_tokens  # average negative log-likelihood per token
+        ppl = torch.exp(avg_nll)
 
-            # Compute perplexity for the current batch
-            ppl = torch.exp(avg_nll)
-            # Add it to the list of perplexities
-            ppls_list.append(ppl.item())
-            # Update the total perplexity and the total number of examples
-            ppls += ppl.item()
-            count += batch_size
+            # # Compute perplexity for the current batch
+            # ppl = torch.exp(avg_nll)
+            # # Add it to the list of perplexities
+            # ppls_list.append(ppl.item())
+            # # Update the total perplexity and the total number of examples
+            # ppls += ppl.item()
+            # count += batch_size
 
-    return {"mean_perplexity": ppls / count}
+    return {"mean_perplexity": ppl.item()}
 
 
 @click.command()
@@ -206,7 +206,7 @@ def main(model_path, dataset_path, output_path='perplexity.json', batch_size=1):
     texts = df['text'].tolist()
 
     # Compute perplexity
-    metric = compute(texts, model_path, batch_size=batch_size)
+    metric = compute2(texts, model_path, batch_size=batch_size)
 
     # Save the perplexity value
     with open(output_path, 'w') as f:
