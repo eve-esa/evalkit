@@ -35,7 +35,6 @@ class TextDataset(Dataset):
         return self.texts[idx]
 
 # Function to compute perplexity
-
 def compute2(predictions, model_id, batch_size: int = 1):
 
     model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype='auto')
@@ -111,7 +110,7 @@ def compute2(predictions, model_id, batch_size: int = 1):
     return {"mean_perplexity": torch.mean(torch.tensor(ppls_list)).item(), 'perplexities': ppls_list}
 
 
-def compute(predictions: list[str], model_id: str, batch_size: int = 1):
+def compute(predictions: list[str], model_id: str, batch_size: int = 1, stride: int = 128, max_length: int = 2048):
     model = AutoModelForCausalLM.from_pretrained(model_id, device_map="auto", torch_dtype='auto')
     tokenizer = AutoTokenizer.from_pretrained(model_id)
     tokenizer.pad_token = tokenizer.eos_token
@@ -131,12 +130,6 @@ def compute(predictions: list[str], model_id: str, batch_size: int = 1):
     dataset = TextDataset(predictions)
     dataloader = DataLoader(dataset, batch_size=batch_size, collate_fn=collate_fn)
 
-    ppls_list = []
-    ppls = 0
-    count = 0
-
-    stride = 128
-    max_length = 2048
     nll_sum = 0.0
     n_tokens = 0
     with torch.no_grad():
@@ -166,8 +159,6 @@ def compute(predictions: list[str], model_id: str, batch_size: int = 1):
                 num_loss_tokens = num_valid_tokens - batch_size  # subtract batch_size due to internal label shift
                 nll_sum += neg_log_likelihood * num_loss_tokens
                 n_tokens += num_loss_tokens
-                # The main difference is where the mean is made
-
 
                 prev_end_loc = end_loc
                 if end_loc == seq_len:
@@ -175,15 +166,7 @@ def compute(predictions: list[str], model_id: str, batch_size: int = 1):
         avg_nll = nll_sum / n_tokens  # average negative log-likelihood per token
         ppl = torch.exp(avg_nll)
 
-            # # Compute perplexity for the current batch
-            # ppl = torch.exp(avg_nll)
-            # # Add it to the list of perplexities
-            # ppls_list.append(ppl.item())
-            # # Update the total perplexity and the total number of examples
-            # ppls += ppl.item()
-            # count += batch_size
-
-    return {"mean_perplexity": ppl.item()}
+    return {"perplexity": ppl.item()}
 
 
 @click.command()
@@ -191,7 +174,9 @@ def compute(predictions: list[str], model_id: str, batch_size: int = 1):
 @click.option('--dataset_path', help='Path to the dataset in jsonl format')
 @click.option('--output_path', default='perplexity.json', help='Path to save the perplexity value')
 @click.option('--batch_size', default=1, help='Batch size for tokenization')
-def main(model_path, dataset_path, output_path='perplexity.json', batch_size=1):
+@click.option('--stride', default=128, help='Stride for window ppl')
+@click.option('--max_length', default=2048, help='Maximum length for window ppl')
+def main(model_path, dataset_path, output_path='perplexity.json', batch_size=1, stride=128, max_length=2048):
     print(f'Evaluating perplexity on model {model_path} and dataset {dataset_path}...')
 
     # Assert it is a jsonl file
@@ -206,7 +191,7 @@ def main(model_path, dataset_path, output_path='perplexity.json', batch_size=1):
     texts = df['text'].tolist()
 
     # Compute perplexity
-    metric = compute2(texts, model_path, batch_size=batch_size)
+    metric = compute(texts, model_path, batch_size=batch_size, stride=stride, max_length=max_length)
 
     # Save the perplexity value
     with open(output_path, 'w') as f:
