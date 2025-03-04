@@ -81,9 +81,9 @@ def remove_space(answer):
 
 def to_hf_dataset(df, output_path):
     # Drop the convertible column
-    df.dropna(labels=['convertible', '__index_level_0__'], inplace=True)
-    hf_dataset = datasets.Dataset.from_pandas(df)
-    hf_dataset.push_to_hub("antoniolopez00/MOOCQAs", token='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')
+    df.drop(labels=['convertible', 'open-ended answer'], inplace=True, axis=1)
+    hf_dataset = datasets.Dataset.from_pandas(df, preserve_index=False)
+    hf_dataset.push_to_hub("antoniolopez00/MOOCQAs")
     return hf_dataset
 
 
@@ -93,24 +93,39 @@ def to_alpaca(data):
     return data
 
 
+def get_answer(row):
+    # If the question have different correct option we will use the hand-made answer
+    if len(row['answers']) > 1:
+        answer = row['open-ended answer']
+    else:
+        answer_label = row['answers'][0]
+        answer_idx = row['choices']['label'].index(answer_label)
+        answer = row['choices']['text'][answer_idx]
+    return answer
+
+
 
 def convert_to_open():
     df = process()
     # Filter out only the convertible questions
     df = df[df['convertible']]
 
-    df['answers'] = df.apply(lambda row: [row['choices']['text'][i] for i in range(len(row['choices']['text'])) if row['choices']['label'][i] in row['answers']], axis=1)
+    #df['answers'] = df.apply(lambda row: [row['choices']['text'][i] for i in range(len(row['choices']['text'])) if row['choices']['label'][i] in row['answers']], axis=1)
     # Drop the 'choices' column
-    df = df.drop(columns=['choices'])
+    df['answer'] = df.apply(lambda row: get_answer(row), axis=1)
+    df.drop(labels=['convertible', 'open-ended answer', 'choices', 'answers'], inplace=True, axis=1)
     # Reindex the dataframe
     df = df.reset_index(drop=True)
+
+    # Convert to HF
+    df = datasets.Dataset.from_pandas(df, preserve_index=False)
     return df
 
 def process():
-    df = pd.read_csv('IS_Q&A.csv')
+    df = pd.read_csv('IS_Q&A_w_convertible.csv')
 
     # Remove rows with missing values
-    df = df.dropna()
+    df = df[df['AnswerKey'].notna()]
 
     # Change the column name 'Reformatteable for open-ended' to 'convertible'
     df = df.rename(columns={'Reformatteable for open-ended': 'convertible', 'AnswerKey': 'Answer'})
@@ -134,10 +149,10 @@ def process():
 
     df.columns = df.columns.str.lower()
 
-    hf_dataset = to_hf_dataset(df, "MOOCQAs")
+    #hf_dataset = to_hf_dataset(df, "MOOCQAs")
     #alpaca = to_alpaca(hf_dataset)
 
-    return hf_dataset
+    return df
 
 
 def generate_alpaca():
