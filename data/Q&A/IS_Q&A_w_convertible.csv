@@ -1,0 +1,3078 @@
+Question,AnswerKey,Reformatteable for open-ended,Open-ended answer
+"What are the impacts of a warming climate on the cryosphere?
+
+Global warming causes melting of ice on land such as glaciers, and ice sheets in Antarctica and Greenland. This adds water to the ocean, and raises global sea levels
+
+Ice and snow reflect sunlight and have a cooling effect on the climate. Without ice, darker land and ocean absorbs heat and amplifies climate change.
+
+Thawing permafrost releases significant amounts of greenhouse gases, causing further warming
+
+Human populations living off or close to the sea will be affected as well as population within mountain regions","A, B, C, D",Y,"Global warming causes melting of ice on land such as glaciers, and ice sheets in Antarctica and Greenland. This adds water to the ocean, and raises global sea levels. Ice and snow reflect sunlight, cooling the climate, without them, darker land and ocean surfaces absorb heat and amplify climate change. Additionally, thawing permafrost releases significant greenhouse gases, leading to further warming. And human populations living near the sea and in mountain regions will be affected."
+"What is ice and snow albedo?
+
+Albedo is the measure of how much light that hits a surface is reflected without being absorbed
+
+Albedo is the measure the thickness of ice or snow
+
+Albedo is the temperature of ice or snow
+
+Albedo is the ratio between frozen water and snow",A,Y,
+"How does the cryosphere interact with the atmosphere?
+
+The atmosphere and the cryosphere do not interact with each other
+
+Some parts of the cryosphere interact with the atmosphere
+
+The atmosphere and the cryosphere are the same thing
+
+The atmosphere and the cryosphere are two key components of the Earth’s system and they have complex interactions",D,Y,
+"How are earth observations of the cryosphere used practically? 
+
+To monitor shipping routes and reduce the risk of ships hitting icebergs
+
+To reduce the loss of life and property from natural disasters such as avalanches 
+
+To monitor conditions for tourism and recreation 
+
+To help with wildlife management","A, B, C, D",Y,"Earth observations of the cryosphere are utilised to monitor shipping routes and reduce the risk of ships hitting icebergs. They also help to reduce the loss of life and property from natural disasters such as avalanches. Additionally, these observations are used to monitor conditions for tourism and recreation and to help with wildlife management."
+"What is the benefit of monitoring the cryosphere using SAR instruments?
+
+SAR instruments are cheaper than other instruments 
+
+SAR instruments measure more precisely than optical instruments 
+
+SAR instruments are not weather dependent and can penetrate cloud cover
+
+Data from SAR instruments is easier to interpret and can therefore be used more widely than data from other instruments",C,Y,
+"What is the difference between sea ice and icebergs?
+
+Sea ice and icebergs are the same thing because they both float on the ocean
+
+Icebergs are colder than sea ice 
+
+Icebergs consist of older sea ice, whereas sea ice is always young and melts quickly
+
+Sea ice forms on ocean water, but icebergs break off from larger formations such as glaciers",D,Y,
+"How does melting sea ice affect the ocean’s circulation system?
+
+When sea ice melts, it makes the sea water less salty and therefore less dense. This means the water sinks and disrupts the ocean’s circulation system
+
+When sea ice melts, it makes the ocean water cleaner and increases the rate of ocean circulation
+
+When sea ice melts, it makes the sea water more salty and therefore more dense. This means the water floats and disrupts the ocean’s circulation system
+
+When sea ice melts, the ocean dramatically drops in temperature and stops circulating",A,Y,
+"Why does satellite data play a crucial part for monitoring climate change?
+
+Satellites are the only reliable tools used for monitoring climate change as they give authoritative and unique insights about the Earth’s climate from space
+
+Satellites are used in conjunction with other data collection tools and methods by scientists to verify models and predictions to help scientists understand, analyse and predict the impact of climate change.
+
+Satellites are the only way to retrieve precise data from remote areas such as Antarctica in order to monitor climate change
+
+Satellites are more economically viable than sending lots of scientists to remote areas such as Antarctica",B,Y,
+"Sea ice extent is based on whether an area is ‘ice-covered’ or ‘not ice-covered’. What do current studies suggest is happening to sea ice extent?
+
+Sea ice extent has increased over the last 30 years
+
+Sea ice extent has remained approximately the same for the last 30 years 
+
+Sea ice extent has decreased slightly over the last 30 years 
+
+Sea ice extent has dropped rapidly over the last 30 years",D,Y,
+"What is the relationship between multi-year sea ice and climate change?
+
+Decreasing multi-year ice is a natural process, it is not related to climate change
+
+Decreasing multi-year ice means that there is more first-year sea ice which is positive, because first-year sea ice is stronger than multi-year sea ice
+
+Decreasing multi-year ice operates in a negative feedback loop, which accelerates the warming of the planet
+
+Decreasing multi-year ice operates in positive feedback loop, which decelerates the warming of the planet",C,Y,
+"With Satellite data allowing us to access data about remote regions and on an unprecedented scale, why is it important for scientists to conduct field research?
+
+Satellites are reliable sources of data but they cannot tell us crucial information about what exists under, or in the Earth’s surface
+
+Satellites have consistently proven to give unreliable data, and scientists much constantly check that the data is correct
+
+Satellites are reliable sources of data, which means that the only role of the research scientist is to be a data verifier.
+
+Satellites are reliable sources of data but they are expensive to maintain, so scientists must continue work in the field until satellites are more economically viable for space organisations.",A,Y,
+"Which instrument does CryoSat-2 use to measure sea ice thickness?
+
+SCORAL
+
+SIRI
+
+SIRAL
+
+SORAL",C,Y,
+"Why is it important for scientists to be able to measure snow on sea ice?
+
+If there is more snow on the sea ice, it is harder to get ships into the area 
+
+Snow pushes sea ice down and makes taking thickness measurements more difficult 
+
+Snow makes sea ice melt and scientists needs to keep track of this effect 
+
+Snow on sea ice causes a degree of inaccuracy in satellite measurements and scientists need to calibrate this, so their measurements from satellites can be accurate",B,Y,
+"Which of these facts about ice cores is not true?
+
+Most ice core records come from Antarctica and Greenland
+
+Ice cores are cylinders of ice drilled out of an ice sheet or glacier.
+
+Ice cores enclose small bubbles of air that contain a sample of the atmosphere measuring the past’s concentration of gases (including carbon dioxide and methane) in the atmosphere.
+
+Ice cores tell us about the past climate up to 250 years.",D,N,
+"What does the GRACE satellite measure?
+
+The Earth’s cryosphere 
+
+The size and density of snow on land 
+
+GRACE tracks and detects the geographical location of icebergs 
+
+GRACE detects gravity fields and measures mass balance",D,Y,
+"What is a grounding line?
+
+The boundary between where a glacier is set on land and juts into the sea to become a floating ice shelf
+
+The word describes a crack or fission in the ice
+
+The line or beam of data that the satellite collects in relation to the Earth
+
+The point at which research scientists take a line of snow samples to measure grain size",A,Y,
+"Which statement is not true about the way we can use data about ice velocity to understand changes in our climate? 
+
+Ice velocity maps can be created by SAR data from Sentinel-1
+
+Velocity ice maps are only created by a series of localised field measurements recorded by scientists 
+
+Ice velocity maps show us the direction and pace of moving ice 
+
+Remote sensing techniques that use SAR and optical satellite data derive accurate surface velocities of remote areas on a regular basis",B,N,
+"What are ice shelves?
+
+Ice shelves are thick slabs of ice, which are attached to a coastline and extend out over the ocean. They are a seaward extension of the grounded ice sheet.
+
+Ice Shelves are units of measurement that research scientists use to collect data.
+
+Ice shelves are thin slices of the glaciers that give us a cross-section to take data samples from
+
+Ice Shelves are platform-type formations of layers of ice that develop over time from the freezing of fresh water on glaciers.",A,Y,
+"What is the largest single component of the Cryosphere?
+
+Seasonal snow 
+
+Ice sheets
+
+Glaciers
+
+Sea Ice",A,Y,
+"How much of the Earth’s surface is covered by river or lake ice?
+
+0.1%
+
+2%
+
+5%
+
+10%",B,Y,
+"Which statements are true about surging glaciers?
+
+Surging glaciers are glaciers that are subject to cyclical flow instabilities 
+
+Surging glaciers are glaciers which flow at a constant rate down a mountain 
+
+Surging glaciers are short events where a glacier’s velocity moves up to 100 times faster than normal 
+
+Surging glaciers are glaciers which suddenly increase in mass","A, C",N,
+"Why are optical satellites useful in measuring snow cover on land?
+
+They are cheaper than other kinds of satellites 
+
+Snow appears brightly on optical satellite imagery 
+
+Snow is too bright to appear on other kinds of satellite 
+
+It is hard to tell the difference between snow and ice on using Radar satellites",B,Y,
+"What is snow water equivalent? (Select all that apply)
+
+The amount of rainfall in a topical area compared to the amount of snow in colder areas 
+
+A unit of measuring how much snow weighs
+
+The amount of water contained within a snowpack
+
+The depth of water that would be produced if the entire snowpack melted instantly",C,Y,
+"To monitor the ocean do we need satellites, local observations or both?
+Just satellites
+
+Just local observations
+
+Both",C,Y,
+"Who can access the Sentinel data?
+Only Scientists
+
+Everyone
+
+Only Businesses
+
+Only Students",B,Y,
+"When was the initial concept of the Copernicus Programme launched?
+1998
+
+1999
+
+2008
+
+2016",B,Y,
+"The Copernicus programme consists of a complex set of systems, which collect data from Earth observation satellites as well as in-situ sensors.
+
+True
+
+False",A,N,
+"What is special about the Copernicus programme that helps us to observe and manage climate change?
+Multiple satellites measuring lots of different variables
+
+Continuity of measurements for the next two decades
+
+It provides data all over the world","A, B, C",Y,"The Copernicus Programme uses multiple satellites measuring lots of different variables. It ensures continuity of measurements for the next two decades, providing data coverage worldwide."
+"Why are satellites important for studying climate change?
+Global coverage of measurements
+
+Consistency of instrumentation
+
+Climate change can only be observed from space
+
+Can be used to validate models
+
+Planning for mitigation","A, B, D, E",Y,Satellites are important for studying climate change because they provide global coverage of measurements and ensure consistency of instrumentation. Satellite data can also be used to validate models and aid in planning for mitigation efforts.
+"Why do we need long-term data records?
+So we can detect trends
+
+To decide what is natural variability and what is caused by human impacts
+
+To validate models","A, B, C",Y,"We need long term data records to detect trends, decide what is natural variability and what is caused by human impacts, and also to validate models."
+"What are the four factors that drive ocean circulation?
+Density
+
+Gravity
+
+Planetary motion
+
+Wind
+
+Plate-tectonics","A, B, C, D",Y,"Four factors that drive ocean circulation are density, gravity, planetary motion and wind."
+"How is large-scale ocean circulation related to weather?
+Transport of kinetic energy
+
+Transport of heat
+
+Transport of moisture
+
+Influence of winds","B, C, D",Y,Large-scale ocean circulation is related to weather through the transport of heat and moisture and its influence on winds.
+"How long does the full circuit of thermohaline circulation take, from the surface ocean down to the deep ocean and back again?
+10 days
+
+100 days
+
+100 years
+
+1000 years",D,Y,
+"What type of satellite sensor is used to measure sea level rise?
+Radiometer
+
+Altimeter
+
+LiDAR",B,Y,
+"Which factors contribute to sea level rise?
+Sea ice melt
+
+Glacier/land ice melt
+
+Water warming
+
+Dam building
+
+Pumping of underground water
+
+River run off","B, C, E",Y,"The factors which contribute to sea level rise are glacier and land ice melt, warming oceans and pumping of underground water."
+"El Niño is a climate pattern that describes the unusual warming of surface waters in the eastern tropical Pacific Ocean
+True
+
+False",A,Y,
+"Which types of satellite data can be used to monitor ENSO?
+Sea surface temperature
+
+Ocean colour
+
+Sea surface height
+
+Ice cover","A, B, C",Y,"Satellite data that can monitor ENSO includes sea surface temperature, ocean colour, and sea surface height."
+"Are all ENSO events the same?
+Yes
+
+No",B,Y,
+"What sensors are used to measure ice?
+Radiometers
+
+Altimeters
+
+Seismometer
+
+Optical imaging instruments
+
+Scatterometers and Synthetic Aperture Radar (SAR)","A, B, D, E",Y,"Sensors used to measure ice include
+radiometers, altimeters, optical imaging instruments, scatterometers and Synthetic Aperture Radar (SAR)."
+"Which characteristics of ice allow us to measure it from satellites?
+Colour
+
+Gravity
+
+Surface elevation
+
+Surface roughness
+
+Temperature","A, B, C, D, E",Y,"The characteristics of ice that allow for it to be measured by satellites includes its colour, gravity, surface elevation, surface roughness, and temperature."
+"What are some of the problems caused by land ice melt?
+Rising sea level
+
+Loss of habitat
+
+Change in albedo
+
+Change in weather
+
+Loss of freshwater supply","A, B, C, E",Y,"Some problems caused by land ice melt include rising sea levels, loss of habitats, change in albedo, and loss of freshwater supply."
+"If the sea level rise trend stays the same, in 2100, the sea will rise from that measured in 2000 by:
+3.3mm
+
+3.3cm
+
+33cm
+
+33m",C,N,
+"How high are the “hills” measured by altimetry that correspond to currents such as the Gulf Stream?
+1mm
+
+1m
+
+50m
+
+50cm",B,Y,
+"Which of the following services are included in the Copernicus service portfolio? 
+Land Monitoring
+
+Marine Monitoring
+
+Atmosphere Monitoring
+
+Emergency Management
+
+Security and Climate Change","A, B, C, D, E",N,
+"Which of the following statements about the El Nino Southern Oscillation are true?
+It’s caused by human activity
+
+It’s something that occurs every year
+
+It’s easily predictable
+
+It can cause floods and droughts at the same time
+
+It has global effects","D, E",N,
+"What data is required for weather predictions?
+Satellite data about the oceans
+
+Satellite data about the atmosphere
+
+Land Cover Data
+
+In-situ data","A, B, D",Y,"Data required for weather prediction includes satellite data on the ocean, the atmosphere and land cover data."
+"EUMETSAT operates satellites that provide..?
+Meteorological data
+
+Oceanographic data
+
+Both",C,N,
+"Tropical storms occur mostly in the Inter-tropical Convergence Zone?
+True
+
+False",A,N,
+"What causes tropical storms to rotate?
+Solar Radiation
+
+Ocean Salinity
+
+Earth’s rotation
+
+Winds",C,Y,
+"What is the magnitude of storm surges influenced by?
+Storm angle of approach
+
+The shape of the coastline
+
+Wind speed
+
+Tides","A, B, C",Y,"The Magnitude of storm surges is influenced by storm angle of approach, the shape of the coastline and the wind speed."
+"How can satellites assist in managing the impacts of storm surges?
+Prediction
+
+Evacuation planning
+
+Defence situation
+
+Level of inundation
+
+Disaster response","A, B, C, D, E",Y,"Satellites can assist in managing the impacts of storm surges by predicting events, aiding evacuation planning, providing surveillance for defence, tracking inundation levels and guiding disaster response."
+"What sensors are used to detect waves from space?
+Synthetic Aperture Radars
+
+Altimeters
+
+Radiometers","A, B",Y,Sensors used to predict waves from space are synthetic aperture radar and altimeters.
+"How high are the highest waves (significant wave heights) ever measured by a satellite?
+15 m during a cyclone/hurricane
+
+40 m in the roaring forties
+
+19 m in a North Atlantic winter storm",C,Y,
+"What is the global average sea level rise since sea levels were first measured in 1992?
+8cm
+
+30mm
+
+10cm",A,Y,
+"Why is the rise in sea level not always consistent over the globe?
+Changes in gravity
+
+Differences in current dynamics
+
+Variation in heating effects
+
+Sea level rise is in fact consistent","A, B, C",Y,"The rise in sea level is not always consistent over the globe due to changes in gravity, differences in current dynamics and variations in heating effects."
+"What is the significant wave height defined as?
+The mean wave height of the highest third of the waves
+
+The mean wave height of the highest fourth of the waves
+
+The mean wave height of all the waves
+
+The mean wave height of the lowest third of the waves",A,Y,
+"Where do tropical storms get their energy from?
+Winds
+
+Waves
+
+Warm sea",C,Y,
+"How does the ocean affect weather?
+Sea surface temperature affects land temperatures
+
+Sea surface temperatures influence evaporation and precipitation
+
+Sea surface temperature influences winds
+
+Ocean heat content affects tropical storms","A, B, C, D",Y,"The ocean affects weather in several ways: sea surface temperature influences land temperatures, evaporation and precipitation. They also play a key role in driving winds and affecting ocean heat content which can impact intensity and formation of tropical storms."
+"Sea level rise is homogeneous around the world?
+True
+
+False",B,N,
+"What sort of hazards can measurements of ocean transport help us manage?
+Icebergs
+
+Algal Blooms
+
+Tsunamis
+
+Oil spills","A, B, D",Y,"Measurements of ocean transport help manage hazards such as icebergs, algal blooms and oil spills."
+"Why does knowledge of currents help ocean shipping?
+Reduce journey times and save time and fuel
+
+Avoid dangerous currents/ice
+
+Avoid algal blooms","A, B",Y,"Knowledge of currents helps ocean shipping by reducing journey times and saving fuel, as well as avoiding dangerous currents and ice."
+"As well as salinity, what does the SMOS satellite measure?
+Ocean turbidity
+
+Sea ice thickness
+
+Soil moisture
+
+Sea surface height","B, C",Y,The SMOS satellite also measures sea ice thickness and soil moisture.
+"What sort of things change the salinity of the surface oceans?
+Rainfall
+
+Ice Melt
+
+River Inputs
+
+All of the Above",D,Y,
+"Temperature and salinity are responsible for driving which ocean circulation? 
+Thermohaline
+
+Upwelling",A,Y,
+"Which sensors can be used to detect icebergs?
+Barometers
+
+Altimeters
+
+Synthetic Aperture Radar
+
+Radiometers","B, C, D",Y,"Icebergs can be detected by sensors such as altimeters, synthetic aperture radar and radiometers."
+"Which Sentinel satellite has a radar sensor that can be used to detect icebergs?
+Sentinel-1
+
+Sentinel-2
+
+Sentinel-5p",A,Y,The sentinel satellite that has a radar sensor that can be used to detect icebergs is Sentinel-1.
+"What sort of information can we get about oil spills from satellites?
+Location
+
+Extent
+
+Thickness
+
+Potential transport
+
+Dispersed oil","A, B, C, D, E",Y,"The information we can get about oil spills from satellites includes: location, extent, thickness, potential transport and the presence of dispersed oil."
+"Can satellite data be used as evidence to fine polluters in the case of oil spills?
+Yes
+
+No",A,Y,
+"What sort of things change the colour of ocean water?
+Sediments
+
+Algae/phytoplankton
+
+Microplastics","A, B",Y,The colour of ocean water can change due to factors such as sediments and algae or phytoplankton.
+"What is the primary cause of harmful algal blooms?
+Natural input of nutrients, i.e. from upwelling circulations
+
+Input of nutrients from anthropogenic activities
+
+Ocean warming",B,Y,
+"What does CTD stand for?
+Conductivity, temperature and depth
+
+Carbon, temperature and depth
+
+Calcium, temperature and depth",A,Y,
+"Are all algae harmful?
+Yes
+
+No",B,Y,
+"What type of instrument is used both in situ and on satellites to measure ocean colour?
+Altimeter
+
+Synthetic Aperture Radar (SAR)
+
+Radiometer
+
+Spectrophotometer",C,Y,
+"What tools can we use to predict ocean transport
+Hydrodynamic models
+
+Altimetry derived currents
+
+Theoretical particle/floats.","A, B, C",Y,"To predict ocean transport we can use tools such as hydrodynamic models, altimetry derived currents and theoretical particles or floats to track and simulate ocean movements."
+"Which sensor would be better for detecting small icebergs near the coast?
+Sentinel-3a
+
+Sentinel-2
+
+OCO-2
+
+IceSat",B,N,
+"What satellite sensors are used to detect oil?
+Altimeters
+
+Synthetic Aperture Radar (SAR)
+
+Infrared radiometers
+
+Optical imagers","B, D",Y,Satellite sensors that are used to detect oil include Synthetic Aperture Radar (SAR) and Optical imagers.
+"What are the challenges to understanding long term variability in phytoplankton dynamics?
+Differences between sensors
+
+Gaps in the satellite data record
+
+Many factors influence phytoplankton growth
+
+Limited interest in research","A, B, C",Y,"Challenges to understanding long term variability in phytoplankton dynamics include differences between sensors, gaps in the satellite data record and the many factors influencing phytoplankton growth."
+"What is the name of the ocean colour sensor on board Sentinel 3?
+SLSTR
+
+MERIS
+
+OLCI
+
+TROPOMI",C,Y,
+"Other than phytoplankton, where does carbon in the ocean come from?
+Rivers
+
+Rock weathering
+
+Absorbed from the atmosphere
+
+Fish","A, B, C",Y,"Carbon in the ocean also comes from rivers, rock weathering and is absorbed directly from the atmosphere."
+"What are the different pools of carbon in the oceans?
+Particulate Organic Carbon
+
+Particulate Inorganic Carbon
+
+Dissolved Organic Carbon
+
+Dissolved Inorganic Carbon","A, B, C, D",Y,"The different pools of carbon in the ocean are Particulate Organic Carbon, Particulate Inorganic Carbon, Dissolved Organic Carbon, and Dissolved Inorganic Carbon."
+"How are phytoplankton (observed from ocean colour) connected to fisheries?
+They are the basis of the ocean food chain
+
+Toxins they produce may kill fish or make them inedible
+
+They eat fish larvae","A, B",Y,"Phytoplankton observed from ocean colour are connected to fisheries because they are the basis of the ocean food chain, and the toxins they produce may kill fish or make them inedible."
+"What is oceanic primary production?
+The amount of fish and other creatures in the ocean
+
+The synthesis of organic compounds from carbon dioxide by phytoplankton
+
+The movement of ocean currents
+
+The process of ocean water evaporation",B,Y,
+"The Continuous Plankton Recorder (CPR) is solely designed to capture plankton samples from the water column.
+True
+
+False",B,N,
+"Tagged animals monitored by satellites can help us..?
+Understand their behaviour
+
+Understand where their prey lives
+
+Collect extra data on the oceans
+
+Track pollution","A, B, C",N,
+"How can satellite data help us to conserve biodiversity?
+Understand what species prefer which habitats.
+
+Help with decision making about the optimal locations for marine reserves.
+
+C. Measure changes in the environment that may affect different species.","A, B, C",Y,"Satellite data can help us to conserve biodiversity by identifying which species prefer specific habitats, aiding in decision-making for optimal locations of marine reserves, and measuring environmental changes that may impact different species."
+"What can biologists do with data they receive from tracking animals at sea?
+Determine their migration routes
+
+Identify their foraging areas
+
+Evaluate their life expectancy","A, B",Y,Biologists can use data from tracking animals at sea to determine their migration routes and identify their foraging areas.
+"How do phytoplankton interact with carbon dioxide?
+Absorb it when they photosynthesise
+
+Produce it when they photosynthesise
+
+Use it to build their cell walls",A,Y,
+"What are the two main ways phytoplankton influences the oceans?
+Photosynthesis
+
+Heating as a result of light absorption
+
+Predation of other organisms","A, B",N,
+"How might satellite data help fisheries be more sustainable?
+Indicate where there are likely to be the most fish so they can all be caught
+
+Indicate where fish nurseries are, so these can be avoided, supporting growth in stocks.
+
+Indicate where mature fish congregate, reducing fishing effort and increasing efficiency
+
+Indicate areas where top predators (e.g. sea birds and sharks) congregate, so fishermen can avoid catching them by accident.","B, C, D",Y,"Satellite data can help fisheries be more sustainable by indicating where fish nurseries are, so these can be avoided, supporting growth in stocks. It can also help identify where mature fish congregate, reducing fishing effort and increasing efficiency. Additionally it can Indicate areas where top predators congregate, so fishermen can avoid catching them by accident."
+"How can satellite data help us to measure biodiversity?
+Detect specific types of habitats
+
+Observe fish
+
+Follow tracked animals","A, C",Y,Satellite data can help us to measure biodiversity by detecting specific types of habitats and following tracked animals to monitor their movements.
+"What sort of uses do policy makers have for marine satellite data?
+Assessing marine tourism activities
+
+Quantifying ecosystem status
+
+Marine planning","B, C",Y,Policy makers use marine satellite data for quantifying ecosystem status and for marine planning.
+"What is an MPA?
+Marine Planning Authority
+
+Marine Protected Area
+
+Marine Protection Authority",B,N,
+"What benefits does satellite data have for policy makers?
+It gives them more of the whole picture in space and time, rather than individual points
+
+A stable, year-to-year time series
+
+Limited to short-term observations
+
+Can only be used for a specific region","A, B",Y,"The benefits satellite data has for policymakers includes giving them more of the whole picture in space and time, rather than individual points, and also providing them with a stable year-to-year time series"
+"What sort of industries depend on understanding the oceans?
+Fishing
+
+Transport
+
+Oil and gas
+
+Military
+
+Tourism
+
+Spacecraft Engineering","A, B, C, D, E",Y,"The sort of industries that depend on understanding the oceans includes the fishing, transport, oil and gas, military, and tourism industries."
+"What is the blue economy?
+The economy related to resources extracted directly from the ocean e.g. oil and gas
+
+All industries that contribute to the economy that depends on the ocean for resources
+
+Ocean tourism",B,Y,
+"Citizen science contributes real data to scientific research.
+True
+
+False",A,N,
+"Synthetic Aperture Radar (SAR) imagery provides information about the motion of the sea surface. What can changes in colour/shading indicate in a SAR image?
+Changes in sea surface temperature
+
+Changes in heat content
+
+Changes in the wind field",C,Y,
+"How long are the Copernicus programme’s sensors designed to continue?
+The next 5 years
+
+The next 20 years
+
+The next 50 years",B,Y,
+"What benefits does Copernicus have for policy makers?
+Continued data coverage into the future
+
+A range of ocean parameters from satellite
+
+Both satellite and model data
+
+Available at low cost
+
+Available free","A, B, C, E",Y,"The benefits that Copernicus provides for policy makers includes continued data coverage into the future, a range of ocean parameters from satellites, both satellite and model data, and the availability of data at no cost."
+"What climate does Greenland have?
+Mild arctic climate
+
+Semi-arid arctic climate
+
+Subarctic climate",B,Y,
+"Have Greenland ice losses increased or decreased over the past 2-3 decades?
+Increased
+
+Decreased",A,Y,
+"Which of the following is possible when using radar in measurements of snow physics?
+It can look at the microstructure of snow grains
+
+It can look at variations in density within the first 10 to 20 metres.
+
+It can measure variations in snow structure within the first 50 metres.",B,N,
+"How long has Greenland’s Ice Sheet been around for?
+50 000 years
+
+100 000 to 200 000 years
+
+400 000 years",B,Y,
+"How long is the cycle of an ice age?
+10,000 years
+
+100,000 years
+
+1 million years",B,Y,
+"How much of its volume did the Greenland Ice Sheet lose during the last interglacial?
+20%
+
+12%
+
+30%",C,Y,
+"How old are the most ancient rocks in Greenland?
+100 million years
+
+1.5 billion years
+
+3 to 4 billion years",C,Y,
+"What is the effect of the weight of the ice sheet on rock in the centre of Greenland
+There is no rock beneath the ice sheet
+
+The landmass in the centre of Greenland has been pushed below sea level by the weight of the ice
+
+The rock has been eroded by the ice",B,Y,
+"What does ELA stand for?
+Equilibrium Line Area
+
+Equilibrium Level Altitude
+
+Equilibrium Line Altitude",C,Y,
+"How many metres of ice have been lost at Swiss camp since 2000?
+12 metres
+
+15 metres
+
+10 metres",A,Y,
+"How much volume of ice is lost in Greenland by melt and fast-moving ice?
+around 160 cubic kilometre
+
+around 360 cubic kilometres
+
+around 560 cubic kilometre",B,Y,
+"What is needed to validate satellite data on the Greenland Ice Sheet? (Select all that apply)
+Ground-based measurements
+
+Continuous research over time
+
+Antarctic biomass readings","A, B",Y,"To validate satellite data on the Greenland Ice Sheet, ground-based measurements and continuous research over time are needed."
+"How many Automatic Weather Stations (AWS) are there in the Greenland Climate Network?
+20
+
+10
+
+3",A,Y,
+"How far has the ELA moved since the Swiss camp was set up?
+20-25km upslope
+
+30-40km upslope
+
+30-40km downslope",B,N,
+"What does a SnowMicroPen measure?
+The thickness of the ice
+
+The albedo
+
+The individual grain layers in the snow",C,Y,
+"What was agreed at the COP21 conference within the Paris Agreement?
+Global warming should keep well below 2 degrees C
+
+Global warming is not a long-term issue
+
+Global warming can be reversed",A,Y,
+"What year was the Swiss Camp climate research station in Greenland founded?
+1993
+
+1990
+
+1999",B,Y,
+"How far has Swiss camp station moved since 1990, due to the effects of climate change and ice melt?
+1 1/2km
+
+2 1/2km
+
+3 1/2km",B,N,
+"Which of the following measurements are done on Automatic Weather Stations in Greenland?
+Variability of temperature change
+
+Synthetic Aperture Radar imaging
+
+LIDAR remote sensing",A,Y,
+"What are the two types of satellite imagery used in observing the Greenland Ice Sheet? 
+Optical
+
+GPS
+
+Synthetic Aperture Radar (SAR)","A, C",Y,The two types of satellite imagery used in observing the Greenland Ice Sheet are optical and Synthetic Aperture Radar (SAR).
+"Where has ice speed-up predominantly occurred on Greenland?
+In the Southern region
+
+In the Northern region
+
+In the Eastern region",A,Y,
+"How much has Greenland’s melt area increased by since 1973?
+By 3 1/2 times
+
+By 2 times
+
+By 2 1/2 times",C,Y,
+"What is CryoSat?
+An altimetry satellite built by ESA and dedicated to polar observation
+
+An altimetry satellite built by NASA and dedicated to polar observation
+
+The fifth mission in ESA’s fleet of Earth explorers dedicated to provide the best-ever survey of the geomagnetic field and the electric field in the atmosphere",A,Y,
+"When was CryoSat-2 launched?
+March 2015
+
+April 2011
+
+April 2010",C,Y,
+"What type of measurement does CryoSat-2 take?
+Sea level
+
+Ice thickness and mass
+
+Chlorophyll levels",B,Y,
+"What is Firn?
+Deep glacial ice that formed over many years
+
+Newly fallen snow
+
+Porous snow that has survived at least one summer
+
+Chlorophyll levels",C,Y,
+"What does GPR stand for?
+Ground Pulsing Radar
+
+Ground Penetrating Radar
+
+Ground Projecting Radar",B,Y,
+"What can GPR measure in the snow-pack?
+Snow structure and thickness
+
+Water content
+
+Pollutants","A, B",Y,"In a snowpack, GPR can measure snow structure and thickness, and water content."
+"What is surface albedo?
+The speed at which a surface will melt
+
+The width of a surface
+
+The ratio of radiation reflected to the radiation incident on a surface",C,Y,
+"What is the effect on albedo when ice grains are coarse?
+The albedo is higher
+
+The albedo is smaller
+
+The albedo is the same",B,Y,
+"What is the rate at which Greenland’s Jakobshavn glacier is advancing?
+11km per year
+
+13km per year
+
+18km per year",C,Y,
+"What has caused the Greenland Ice Sheet to advance at a rate of 90cm each day, over the last few summers?
+Meltwater penetrating under the ice and acting as a lubricant
+
+Large icebergs breaking up in the centre of the ice sheet causing the edges to fall into the sea
+
+Increased snowfall compacting the ice more quickly",A,Y,
+"What do GPS instruments measure at Automatic Weather Stations in Greenland?
+Velocity and height change
+
+Ice thickness
+
+Sea level rise",A,Y,
+"What is an advantage of using synthetic aperture radar over optical imagery when looking at Greenland?
+It is higher resolution so details such as glacier features can be easily seen
+
+It can see through clouds, giving all weather, day and night capabilities
+
+It can take images over a very large area",B,Y,
+"What measures the height of the Earth’s surface on CryoSat-2?
+Altimeter
+
+Thermometer
+
+Scatterometer",A,Y,
+"What is hoar frost?
+Heavy snow
+
+Light snow
+
+Dark snow",B,Y,
+"Which instruments does CryoSat-2 use?
+SAR and ASM
+
+SIRAL and DORIS
+
+VFM and STM",B,Y,
+"What does ablation refer to?
+Melting of snow or ice
+
+Accumulation of snow or ice
+
+Surface albedo",A,Y,
+"What can only be measured with ground-based point measurements?
+Microstructure of snow
+
+Surface temperature
+
+Ice thickness",A,N,
+"Where do we expect the biggest contribution to sea level rise eventually to come from, in a warmer climate?
+Greenland
+
+Antarctica
+
+Arctic",B,Y,
+"What is a Moulin?
+A river of water
+
+Frozen sea ice
+
+A vertical or nearly vertical shaft in a glacier",C,Y,
+"What are melt lakes?
+Water from sea ice melt
+
+Small blue areas on top of the ice sheet where meltwater collects
+
+Pools of water that form from condensation",B,Y,
+"What are some of the benefits of sea ice cover?
+It absorbs pollutants
+
+It acts to insulate the warmer ocean from the cooler atmosphere
+
+It reflects a large percentage of solar radiation","B, C",Y,"Some of the benefits of sea ice cover include its ability to insulate the warmer ocean from the cooler atmosphere, and its ability to reflect a large percentage of solar radiation."
+"Approximately how much has summer sea ice extent declined by each decade since the late 1970s?
+20%
+
+13%
+
+40%",B,Y,
+"Which of the following can Greenland Ice Sheet melt have an impact on?
+Oceanic circulation
+
+Atmospheric circulation
+
+Weather
+
+Climate
+
+All of the above",E,N,
+"Ice speed can change in response to...?
+Long term climate change
+
+Short term climate changes
+
+Both",C,N,
+"What do interferograms measure?
+Deformation and motion of the ice’s surface
+
+Sea ice interference
+
+Sea level rise",A,Y,
+"What is the calving front of an ice stream?
+The area with the highest amount of calving
+
+The line between land ice and sea ice
+
+The point where icebergs are lost from a glacier",C,Y,
+"What does Altimetry measure?
+Surface elevation and elevation change
+
+Surface temperature
+
+The depth of the ice",A,Y,
+"What is the equivalent combined total area of Greenland's peripheral glaciers and ice caps?
+⅓ the size of England
+
+⅔ the size of England
+
+¾ the size of England",B,N,
+"What has been the estimated rate of coastal ice cap thinning in Greenland since 2003?
+50cm per year
+
+80cm per year
+
+70cm per year",A,Y,
+"What is PARCA?
+A collaboration of research centres measuring the Greenland Ice Sheet
+
+An instrument on CryoSat-2
+
+Climate change modelling system",A,N,
+"Which of the characteristics of ice and lake sediment cores below can reveal information about past environments and climate change?
+Biological remains
+
+Changes in the chemistry of air bubbles
+
+Temperature variation
+
+All of the above",D,N,
+"Which of the following ecosystem changes are linked to changes in the Greenland Ice Sheet?
+Plants are migrating further north
+
+Plants are migrating further south
+
+Longer growing seasons","A, C",N,
+"What is a grounding line?
+The line between the area of melt water and frozen glacier
+
+Lines carved out by a moving glacier
+
+The line where the glacier or ice shelf becomes afloat",C,Y,
+"What is a Floe?
+A flow of melt water
+
+A sheet of sea ice
+
+A large crack in the ice",B,Y,
+"Roughly how much sea level rise has there been globally since 2003 due to melting of Greenland's coastal ice caps?
+1mm
+
+2mm
+
+7mm",B,Y,
+"What is causing sea level to rise fastest?
+Glaciers
+
+Rainfall
+
+Melting sea ice",A,N,
+"What is the approximate combined contribution to global sea level rise caused by Greenland and Antarctica ice sheet melt?
+50%
+
+40%
+
+70%",B,Y,
+"When were the first aerial photographs taken?
+18th Century
+
+19th Century
+
+20th Century",B,Y,
+"Which of these is NOT an application of Earth Observation?
+Weather forecasting
+
+Forest cover
+
+Tropical cyclone formation
+
+Star brightness",D,N,
+"What do we call the part of the spectrum where most of the sun’s energy is concentrated?
+Optical
+
+Thermal
+
+Radar",A,Y,
+"The visible part of the electromagnetic spectrum is between which wavelengths?
+0.4-0.7 m
+
+400-700m
+
+400-700nm",C,N,
+"An atmospheric window is a region of the spectrum where…?
+We can view clouds?
+
+There is a hole in the atmosphere?
+
+Electromagnetic radiation is not absorbed, allowing us to view the surface of the Earth?",C,N,
+"RADAR wavelengths are useful for EO because..
+They allow us to see through clouds
+
+They interact more usefully with plants and other biological systems
+
+They allow us to see beneath the surface?",A,N,
+"What is the advantage of geostationary satellites?
+They orbit once per day and so see all of the Earth’s surface.
+
+They focus on one particular part of the Earth over time.
+
+They are high spatial resolution.",B,Y,
+"Observing land cover change is a key focus of satellite EO because?
+It shows that the Earth’s surface changes little.
+
+It is a highly effective way of observing changes in land use, especially those caused by man-made changes to the environment.
+
+It helps us monitor weather patterns.",B,N,
+"Observing lights from cities and other built areas is useful as a proxy indicator for? 
+Land cover change
+
+Poverty
+
+Forest cover","A, B",N,
+"What is one of the key advantages of having a ‘constellation’ of one or more satellites making the same observations?
+Redundancy – if one fails, we have a backup.
+
+Increased temporal coverage.
+
+Longer term monitoring.","A, B, C",N,
+"What does the Sentinel-2 mission consist of?
+Two optical instruments
+
+One radar and one optical instrument
+
+Two radar instruments",A,Y,
+"The spatial and temporal resolution of Sentinel 2 is…?
+Much higher than Landsat?
+
+Much lower than Landsat?
+
+About the same as Landsat?",A,N,
+"How many wavebands does Sentinel 2 sense in?
+12
+
+3
+
+13",C,Y,
+"Why do plants reflect more green light than other visible light?
+Green light is used in photosynthesis
+
+Green light is not used in photosynthesis",B,Y,
+"Does soil absorb more or less near infrared light than plants?
+More
+
+Less",A,Y,
+"What is LiDAR very good at measuring?
+Sea surface temperature
+
+Forest canopy height
+
+Biomass
+
+Land use change","B, C",Y,LiDAR is very good at measuring forest canopy height and biomass.
+"What form of remote sensing is LiDAR?
+Passive
+
+Active",B,N,
+"A key advantage of EO in the optical part of the electromagnetic spectrum is?
+We can measure the surface at night?
+
+We can measure surface temperature?
+
+We can use the sun’s reflected radiation to tell us about biological and physical processes?",C,N,
+"Life evolved to exploit optical radiation because? (select all that apply)
+The peak of the sun’s energy is here
+
+Chlorophyll absorbs strongly here
+
+It’s an accident of evolution","A, B",N,
+"Optical polar-orbiting satellites may only see the surface of the Earth relatively infrequently because of?
+Their orbit pattern
+
+Their field of view
+
+Cloud cover
+
+Atmospheric interference",C,N,
+"Observations using optical reflected EM radiation is processed using models in order to…?
+Provide a quantitative, physical interpretation of the data
+
+Provide better resolution
+
+To change the colour schemes of the observations we see to aid interpretation",A,N,
+"Observing ‘land use’ with satellite data enables the study of…?
+How much vegetation is on the surface?
+
+How humans use or have impacted on a particular area of land cover
+
+The range of materials in a particular area of land cover",B,N,
+"Since the 1970s the total area of the Aral sea has been observed using satellite data to have…?
+Grown
+
+Shrunk
+
+Stayed the same",B,N,
+"What is the so-called REDD+ Framework?
+Countries’ efforts to reduce emissions from deforestation and forest degradation.
+
+Measurements from Satellite EO most relevant to deforestation
+
+International Forestry Commission preserving Biodiversity",A,Y,
+"Why is fire important for some ecosystems?
+To remove old, dead vegetation and trigger new growth
+
+To remove unwanted insects and animals
+
+To change the ecosystem type",A,Y,
+"To estimate carbon emissions from burnt vegetation, we need to know the burnt area combined with what other information?
+The type of vegetation burnt
+
+The proportion of vegetation that actually burns
+
+The temperature of the fire",B,Y,
+"The use of EO for wildfire applications ideally needs which of the following?
+Frequent, rapidly updated image data
+
+Infrequent but very high spatial resolution image data
+
+Very low spatial resolution, but frequent data",A,N,
+"What are EBVs?
+Essential Biology Variables
+
+Essential Biodiversity Variables
+
+Essential Biodiversity of Vegetation",B,Y,
+"In the monitoring of biodiversity, EO is widely used for which of the following?
+Monitoring the loss of biodiversity
+
+Providing global, consistent observations of ecosystem services
+
+Tracking the migration patterns of marine life
+
+Measuring the extent of ecosystems and their changes","A, B, D",N,
+"Ecosystem fragmentation is an important indicator of biodiversity degradation because?
+It indicates the health of ecosystems and their resilience to change
+
+It assesses the size of land use parcels
+
+It measures land use change",A,N,
+"The use of EO in monitoring protected areas is particularly useful for…?
+gathering data over large areas
+
+Covering urban regions
+
+Coverage of inaccessible regions",C,N,
+"Bathymetry from optical EO data allows…? (select all that apply)
+Mapping and monitoring of shallow coastal systems
+
+Deep ocean mapping
+
+Glacial lake mapping","A, B",N,
+"\Mangroves are monitored using optical EO data because…?
+They reflect more infrared radiation than visible light
+
+They are easily seen in optical imagery
+
+They are difficult to access from the surface
+
+They are sensitive ecosystems","B, C, D",N,
+"The observation of inland waters with EO mainly includes...?
+Seas
+
+Lakes, reservoirs, and estuaries
+
+Oceans",B,N,
+"Optical EO data are used to measure the state of inland water bodies principally by assessing which of the following properties?
+Water colour and clarity
+
+Surface roughness
+
+Salinity levels
+
+Temperature",A,N,
+"What are the main challenges of using satellite data to observe inland waters?
+Obtaining suitable spatial resolution
+
+Observing differences between bright (land) and dark (water) targets
+
+Distinguishing between different types of constituents in the water (e.g. algae, sediments, dissolved substances).","A, B, C",Y,"The main challenges of using satellite data to observe inland waters are obtaining suitable spatial resolution, observing differences between bright (land) and dark (water) targets, and distinguishing between different types of constituents in the water."
+"The measurement of ‘Leaf Area Index’ (LAI) using satellite data relates to…?
+The ‘greenness’ of the vegetation
+
+The size of a forested area
+
+The amount of leaf area in a specific ground area of the surface",C,N,
+"Satellite data can be used to monitor the extent to which forests are exploited by humans for?
+Wood and fuel
+
+Raw materials for building
+
+Removal for agriculture and cattle farming
+
+Recreational activities","A, B, C",N,
+"What is the term used to describe the regular or seasonal changes in the ecosystem (which can be observed using satellite data) - including the greening and senescence of vegetation, and the duration of animal migration?
+Ecology
+
+Phenology
+
+Phrenology",B,Y,
+"What do NGOs such as WWF use remote sensing for?
+understanding wildlife migration patterns
+
+documenting illegal logging
+
+preventing wildfires","A, B",Y,NGOs such as WWF use remote sensing for understanding wildlife migration patterns and documenting illegal logging.
+"Eutrophication of water bodies (which can be observed using optical EO data) is the process of…?
+Increased nutrient input from the land to the water
+
+The change of water colour over time
+
+The change of water depth with evaporation",A,N,
+"Human population grew from 4 million to around 1 billion over roughly what period of time?
+A million years
+
+10,000 years
+
+100 years",B,Y,
+"Human impact on the atmosphere caused by CFCs was first seen in which part of the atmosphere?
+a) Stratosphere
+b) Troposphere
+c) Mesosphere",A,Y,
+"Optical EO can be used to measure atmospheric gases by observing…?
+How solar radiation is changed by absorption and scattering in the atmosphere
+
+The reflection of sunlight at the surface
+
+The change in the temperature of the atmosphere",A,N,
+"How does optical EO identify specific gas species in the atmosphere?
+By the reflective colour of gases
+
+By the brightness of the surface
+
+By the height of clouds",A,Y,
+"Optical EO uses what to measure the quantity of aerosols in the atmosphere?
+Their colour
+
+Their temperature
+
+The strength of the absorption",C,N,
+"Increasing NOx levels over China and elsewhere observed from the GOME and SIAMACHY instruments was due to?
+Increasing coal use as a result of rapid economic development
+
+Increased traffic levels
+
+Wildfire burning",A,N,
+"What are the two main methods by which Harmful Algal Blooms cause harm (select 2 answers)?
+Anoxia (removal of oxygen from the water).
+
+Making the water saltier
+
+Making the water warmer
+
+Toxins
+
+Adding nutrients to the water","A, D",N,
+"Can Harmful Algal Blooms occur naturally?
+Yes
+
+No",A,Y,
+"Where do we often see Harmful Algal Blooms ?
+In the open ocean
+
+In upwelling systems
+
+Near the poles
+
+Where nutrients enter the sea from the land","B, D",Y,Harmful Algal Blooms are often seen in upwelling systems and where nutrients enter the sea from the land.
+"How is ocean colour connected to fisheries?
+Algae/phytoplankton are the base of the marine food chain, providing food for nearly all other living things in the sea.
+
+Algal blooms can produce toxins that affect fisheries
+
+Ocean colour can detect large groups of fish","A, B",Y,"Ocean colour is connected to fisheries in several ways: Algae/phytoplankton are the base of the marine food chain, providing food for nearly all other living things in the sea. Additionally, algal blooms can produce toxins that affect fisheries"
+"Algal blooms pose a threat to which industries?
+Fishing
+
+Tourism
+
+Farming
+
+Aquaculture","A, B, D",Y,"Algal blooms pose a threat to the fishing, tourism and aquaculture industries."
+"Which type of satellite data is useful for managing fisheries?
+Sea surface height
+
+Sea surface temperature
+
+Atmospheric pressure",B,Y,
+"Ozone depletion in the stratosphere due to CFCs will take approximately how long to recover?
+10 years
+
+50 years
+
+100 years",B,Y,
+"Decreasing NOx observed over Europe from satellites was due to?
+Reduced traffic levels
+
+Changing solar radiation
+
+Changes in policy encouraging cleaner fuels",C,N,
+"Which of the following are ocean colour sensors ?
+MERIS
+
+AVHRR
+
+CryoSat
+
+MODIS
+
+GRACE
+
+SeaWiFS
+
+CZCS","A, D, F, G",N,
+"Why do algal blooms cause anoxia?
+Algae remove the oxygen when they photosynthesis
+
+Oxygen is removed when the algae die and decompose
+
+Algae produce harmful gases that replace oxygen in the water",B,Y,
+"Why is satellite data particularly useful for developing countries?
+It can provide a free source of data
+
+It can provide high spatial and temporal coverage
+
+It can observe remote regions
+
+It increases local employment opportunities","A, B, C",Y,"Satellite data is particularly useful for developing countries because it can provide a free source of data, high spatial and temporal coverage, and observe remote regions."
+"Which type of sensing can be used alongside Optical EO to assist observations when there is cloud cover, and reveal additional features?
+Altimetry
+
+SAR
+
+Gravimetry",B,Y,
+"UNOSAT provides support with satellite imagery analysis for which of the following?
+Disaster response
+
+Humanitarian support
+
+Human security
+
+Agricultural management
+
+Human rights","A, B, C, E",N,
+"What is the main cause of changes in ocean colour in coastal zones?
+Sediments caused by erosion
+
+Pollution from waste water
+
+Pollution from land run off",B,Y,
+"What is the main obstacle to using optical EO in the aftermath of a severe weather event?
+Tasking a satellite to image the relevant location
+
+Spatial resolution
+
+Cloud cover",C,Y,
+"Which satellites are effective in monitoring coastal zones?
+Sentinel 1 and Acqua
+
+Sentinel 2, Sentinel 3 and Landsat
+
+Explorer 1",B,Y,
+"What is the name of the UN agency responsible for using satellite data?
+UNHCR
+
+UNOSAT
+
+UNITAR",B,Y,
+"What are the two main obstacles to finding usable optical EO data of a location in the immediate aftermath of a disaster?
+Image resolution and time of day
+
+Legal agreements and cost
+
+Revisit time of satellites over the area, and cloud cover",C,Y,
+"What is the main advantage of remote sensing in near real time, when monitoring conflict zones, refugees and migration?
+Data is qualitative
+
+Data is quantitative
+
+Images are high resolution",A,Y,
+"What is the term typically used to describe the process of land cover change from fertile land to dry, arid landscape?
+Encroachment
+
+Drought
+
+Desertification",C,Y,
+"When can optical EO data be used to observe populated areas?
+Day and night
+
+Only during the day
+
+Only during the night",A,Y,
+"What changes in soil properties can we identify using Earth observation data?
+Salinity
+
+Colour
+
+Temperature",B,Y,
+"What is the minimum repeat visit time required for monitoring crop health?
+A few days
+
+A few weeks
+
+A few months",A,Y,
+"What other EO technologies can be used alongside optical for monitoring agriculture?
+Altimetry
+
+SAR (synthetic aperture radar)
+
+Gravimetry",B,Y,
+"What aspects of human activity can increase desertification?
+Urban growth
+
+Agriculture
+
+Industrial pollution
+
+Tourism development","A, B",Y,Aspects of human activity that can increase desertification are urban growth and agriculture.
+"What is the ‘UN-SPIDER’?
+A network of satellite data users
+
+A new satellite mission funded by the UN
+
+The international agreement for the use of satellite data in disaster relief",C,Y,
+"What are the legal restrictions on flying satellites over other countries?
+There are no laws to restrict this.
+
+The satellite must fly in an orbit authorised by the relevant nation.
+
+The satellite can fly over but must not take any images without permission from the relevant country.",A,Y,
+"What is the name of the UN agency that can activate the UNOSAT image analysis team in relation to refugee crises.
+WHO
+
+UNHCR
+
+UNESCO",B,Y,
+"What is the repeat visit time of Sentinel 2?
+20 days
+
+1 day
+
+5 days",C,Y,
+"Which aspects of a volcanic eruption can be monitored using optical EO?
+Gas emissions
+
+Lava flow
+
+Terrain changes
+
+Smoke plume and related aerosols","A, B, C, D",Y,"The aspects of a volcanic eruption which can be monitored using optical EO include gas emissions, lava flow, terrain changes and smoke plume and related aerosols."
+"What is a CubeSat?
+A large cubic satellite.
+
+A class of smaller satellites based on a 10cm cube
+
+Satellites flying in formation",B,Y,
+"What is the purpose of a ground station?
+To receive raw satellite data directly from the satellite
+
+To provide a network of computers to distribute satellite data
+
+To act as a storage facility for satellites",A,Y,
+"What is meant by open EO data?
+Incomplete data requiring more measurements
+
+Data that needs to be checked or validated
+
+Data that is made freely available through online data portals, to researchers, and the general public",C,Y,
+"What is the main limiting factor affecting the sensitivity of optical sensors to longer wavelengths?
+The size of the sensor
+
+The resolution of the sensor
+
+The materials from which the sensor is made",C,Y,
+"Which data collection method provides a wide range of different types of environmental information that is global, comprehensive, accurate, repeatable and timely?
+Satellite Earth Observation 
+
+In Situ Observation
+
+Interviews and Focus Groups
+
+Surveying",A,Y,
+"Which Partnership Agreement was signed by the World Bank and European Space Agency in 2015?
+A. Eoworld
+B. Earth observation for sustainable development (EO4SD) 
+C. Earth observation for global development assistance (GDA)",B,Y,
+"What is the name given to the process of developing and strengthening the skills, instincts, abilities, processes and resources that organizations and communities need to survive, adapt, and thrive?
+Technical co-operation
+
+Conflict resolution
+
+Development Assistance
+
+Capacity Building",D,N,
+"For policymakers at the national and local levels to be able to use EO data, a number of conditions must be met. What are these conditions? (Select multiple answers)
+Transform and process large amounts of data into information that is practical
+
+To know how to transform the data into actions
+
+The capacity to collect local data on the ground to complement EO data
+
+For all levels of society to be able to comprehend the data","A, B, C, D",N,
+"Which role does EO play in Monitoring the Amazon? 
+Understand the change in forest cover and deforestation
+
+Understand changes in land use at large scales 
+
+Understand where deforestation will happen next 
+
+Understand what is causing deforestation and land use change","A, B",Y,"EO plays a crucial role in monitoring the Amazon by tracking changes in forest cover and deforestation, and understanding large-scale land use changes."
+"How can EO help with disaster response?
+Providing hazard mapping
+
+supporting services for assessing exposure, vulnerability, and risk
+
+Reconstruction monitoring","A, B, C",Y,"EO helps with disaster response by providing hazard mapping, supporting services for assessing exposure, vulnerability, and risk, and through reconstruction monitoring."
+"Why is the region of Latin America and the Caribbean becoming more vulnerable to natural disasters? 
+Increase in urbanisation
+
+Increase in agriculture
+
+Climate change increasing the intensity of disasters
+
+Sea level rise","A, C",Y,Latin America and the Caribbean is becoming more vulnerable to natural disasters due to an increase in urbanisation and climate change increasing the intensity of disasters.
+"How did the Northern Uganda Social Action Fund project help to protect the Mogo district during El Niño?
+By creating evacuation plans
+
+By creating an early warning system for droughts through the use of EO
+
+By using EO imagery to create Hazard maps",B,Y,
+"How did the European Space Agency and the Asian Development Bank collaborate to aid recovery efforts in Palu following the Sulawesi Earthquake in Indonesia? 
+Using EO to see where the stable areas and stable buildings are
+
+Provide a clear picture of how many houses are being rebuilt or are in the process of being rebuilt.
+
+Provide software tools and continuous training for local capacity building
+
+Create a warning system for future earthquakes using EO data","A, B, C",Y,"The European Space Agency and the Asian Development Bank collaborated to aid recovery efforts in Palu following the Sulawesi Earthquake by using Earth observation data to identify stable areas and buildings, providing a clear picture of how many houses were being rebuilt or were in the process of being rebuilt. They also provided software tools and continuous training to build local capacity."
+"How much must food production increase by 2050 in order to feed nearly 10 billion people?
+50%
+
+56%
+
+70%
+
+78%",B,Y,
+"How can EO-derived information support sustainable development activities in marine and coastal environments?
+Mapping coastal bathymetry and coastline change
+
+Mapping changes in coastal land cover and land use
+
+Monitoring of water quality and marine pollution
+
+Assessments of coastal habitat extent and status
+
+All of the above",E,Y,
+"What are three main trends that are impacting our world today besides technology?
+Urbanisation
+
+Climate change
+
+Land use change
+
+Conflict
+
+Droughts","A, B, D",N,
+"How is EO used to support growth and sustainability in fast growing urban areas such as in Latin America?
+For modelling and mapping cities and their trends going forward, in order to get ahead of the curve towards a greener pattern for urban areas
+
+For mapping where cities are now in order to change the layout of the cities to make them more sustainable and less crowded
+
+By providing satellite images of fast-food restaurants and shopping malls, so that city planners can strategically place them in areas that need a boost in economic growth.",A,Y,
+"Why is EO extremely advantages in conflict-affected areas?
+It provides a cost-effective way to get a comprehensive picture of the situation
+
+It allows for regular monitoring of reconstruction efforts during the recovery phase
+
+It provides a safe way to get data that cannot be done on the ground","A, B, C",Y,"Earth observation is extremely advantages in conflict-affected areas as it provides a cost-effective way to get a comprehensive picture of the situation, allows for regular monitoring of reconstruction efforts during the recovery phase, and provides a safe way to get data that cannot be done on the ground."
+"What is the main focus of the World Bank's recent embrace of data?
+Producing glossy publications without datasets or code
+
+Developing capacity building programmes with datasets and code
+
+To focus on ground-based data collection to build up their own datasets",B,N,
+"What are the aims of Sentinel 5p? 
+To measure sea-surface topography, sea- and land-surface temperature and ocean- and land-surface colour 
+
+To measure atmospheric composition to enhance our knowledge of climate change and air pollution
+
+To monitor Vegetation, soil, and coastal areas 
+
+To collect the space-based measurements needed to quantify variations in the column averaged atmospheric carbon dioxide",B,Y,
+"Which of the following are notable characteristics of the TROPOMI instrument? (Choose multiple answers) 
+It has a high spatial resolution
+
+It provides daily coverage
+
+Is the 5th atmospheric satellite in history 
+
+It has a low spatial resolution","A, B",N,
+"Which instrument did the Aeolus satellite carry? 
+GOME-2 - Global Ozone Monitoring Experiment–2 
+
+OLCI - Ocean and Land Colour Instrument 
+
+TROPOMI - Tropospheric Monitoring Instrument 
+
+ALADIN – the Atmospheric Laser Doppler instrument",D,Y,
+"Which is the most abundant gas in the atmosphere?  
+Oxygen 
+
+Nitrogen
+
+Argon 
+
+Carbon Dioxide",B,Y,
+"In which layer of the Atmosphere are satellites found? 
+Troposphere 
+
+Stratosphere 
+
+Mesosphere 
+
+Thermosphere 
+
+Exosphere",D,Y,
+"In which layer of the Atmosphere is the ozone layer found? 
+Troposphere 
+
+Stratosphere
+
+Mesosphere 
+
+Thermosphere 
+
+Exosphere",B,Y,
+"How do scientists produce Atmospheric composition forecasts? 
+Using knowledge about current climate patterns 
+
+By measuring current anthropogenic emissions and the impact these have on existing compounds 
+
+Using state-of-the art models that aggregate data from current satellite observations of chemical species",C,Y,
+"What is the name given to data derived from current and historical satellite instruments and in-situ instruments, combined with computer models?
+Reanalysis data
+
+Forecasting data 
+
+Regression data 
+
+Descriptive data",A,Y,
+"Which role do organisations such as Copernicus have with government intuitions? 
+Scientists from these organisations are experts in climate therefore they have a direct and active role in decision making and designing policy. 
+
+Data from these organisations is used to inform policy makers and their decision making. 
+
+These Institutions supply raw data and mathematical models to Policy makers so that policy makers can interpret the information and make decisions. 
+
+Copernicus and other organisations work within government and are largely made up of policy makers.",B,Y,
+"What is the definition of an Essential Climate Variable (ECV)? 
+A scientifically relevant component of the Earth’s climate 
+
+A physical, chemical, or biological variable or a group of linked variables that critically contributes to the characterisation of Earth’s climate 
+
+The chemical constituents of the atmosphere that is vital to human life",B,Y,
+"Which of the following is an example of how ECVs are used? 
+To provide the empirical evidence to support climate science and better predict future change
+
+To guide climate change mitigation and adaptation measures
+
+To assess climate risks
+
+To attribute climatic events to underlying mechanisms
+
+To support climate services
+
+All of the above",F,N,
+"How do scientists evaluate the accuracy of ECVs? 
+By comparing them to other satellite observations
+
+By comparing them to independent field measurements 
+
+By comparing them to model simulation results","B, C",Y,Scientists evaluate the accuracy of ECVs by comparing them to independent field measurements and to model simulation results.
+"What are Greenhouse Gases (GHG)? 
+The gases found in our atmosphere that are harmful to human health
+
+A mixture of gases found in our atmosphere that absorb and emit infrared radiation, causing the greenhouse effect 
+
+The gases with a fixed composition within our atmosphere",B,Y,
+"What, according to the Anthropocene Working Group (AWG), is the Anthropocene epoch?
+The era in which humans started to walk this planet 
+
+The era in which human activity started to have a significant impact on the Atmosphere’s composition (Around 1950 - present)
+
+The era of the industrial revolution that saw greater emissions in our planet (1760 to 1840)
+
+The era of Agricultural revolution that saw huge scale impact on the Earth’s surface (12,000–15,000 years ago)",B,Y,
+"Which gas contributes to 60% of the additional heat to our atmosphere since the 1960s? 
+Carbon Dioxide (CO2)
+
+Nitrogen Dioxide (NO2) 
+
+Methane (CH4) 
+
+Water Vapour (H2O)",A,Y,
+"What is calculated in and around an atmospheric model's ""grid box""?
+Chemistry, aerosol distribution, and wind 
+
+Trace gas distribution, chemistry and solar radiation
+
+Chemistry and wind",A,Y,
+"What is a Coupled Chemistry-Climate Model (CCM)?
+A model which simulates the radiative transfer interactions of light scattering and absorption through the atmosphere.
+
+A model that predicts both the chemistry and climate
+
+A model which simulates atmospheric chemistry and may give air pollution forecasting.",B,Y,
+"In the atmospheric sciences, what are radiative transfer models (RTMs) used for?
+To calculate radiative forcing for greenhouse gases, aerosols, or clouds 
+
+To forecast where aerosols will go 
+
+To calculate where emission sources are likely to be",A,Y,
+"What are atmospheric trace gases? 
+ Gases that are present in large concentrations in the atmosphere including Nitrogen Dioxide and Oxygen 
+
+Gases that are present in small concentrations in the atmosphere including Nitrogen, Oxygen and Argon 
+
+ Gases that are present in large concentrations of the atmosphere including Nitrogen, Oxygen, and Argon 
+
+Gases that are present in small concentrations of the atmosphere including Methane, Ammonia, and Formaldehyde",D,Y,
+"What technique do satellites use to identify and measure different trace gases? 
+Spectroscopy 
+
+Microscopy 
+
+Stereochemistry 
+
+Entropy",A,Y,
+"Which one of the following statements is true? 
+TROPOMI was the original instrument produced to identify Electromagnetic radiation 
+
+GOME-1 and GOME-2 are built on the legacy of TROPOMI 
+
+TROPOMI is the best instrument to date, and it is built upon the heritage of previous instruments: GOME and GOME 2 
+
+GOME is the best instrument we must measure electromagnetic radiation",C,N,
+"How is TROPOMI used to support policy making? 
+By providing accurate and useable data about atmospheric composition in a range of gases in specified local and global areas
+
+TROPOMI takes in-situ samples of air and gives a detailed breakdown analysis of atmospheric composition this information is used to inform policy makers",A,Y,
+"Which statements accurately describe Nadir and Limb observations 
+Nadir- viewing scans horizontal positions of the horizon to observe paths through the atmosphere at different altitudes 
+
+Nadir viewing mode looks vertically down to measure radiation emitted or scattered. 
+
+Limb Observation scans horizontal positions of the horizon to observe paths through the atmosphere at different altitudes 
+
+Limb observations look vertically down to measure radiation emitted or scattered.","B, C",N,
+"Which one of ENVISAT’s instruments can observe both Nadir and Limb views? 
+SCIAMACHY Instrument 
+
+MWR Instrument 
+
+RA-2 
+
+DORIS",A,Y,
+"What range do the viewing instruments perform? 
+Limb Viewing has a high Vertical resolution over a short space 
+
+Limb Viewing has low spatial resolution horizontally
+
+Nadir has high spatial resolution in the Horizontal direction 
+
+Nadir Viewing has low resolution over large areas","A, C",N,
+"When did the British Antarctic Survey first recognise the significant depletion of Ozone above the South Pole? 
+1930s 
+
+1960s 
+
+1980’s 
+
+2000s",C,Y,
+"Select the false statement relating to the Ozone hole. 
+Replenishing the Ozone hole is a gradual process and it depends on international cooperation 
+
+The chemicals released into the atmosphere 40 years ago will be around for 100 years 
+
+The process of recovering the Ozone hole is irreversible 
+
+GOME instrument, the optical sensor on board ERS-2 Satellite can detect numerous trace gasses.",C,N,
+"Which two statements below affect the concentrations of stratospheric Ozone?
+Naturally occurring chemical reactions and exchanges of Ozone in the stratosphere 
+
+Seasonal variations in plant respiration and photosynthesis
+
+Increases in intensive dairy farming
+
+Ozone depleting chemicals resulting from through human activities","A, E",N,
+"Which environmental treaty was successfully implemented in the 1980s to phase out the use of ozone depleting substances? 
+The Montreal Protocol 
+
+The Kyoto Protocol 
+
+The Protocol on Environmental Protection to the Antarctic Treaty 
+
+The Paris Agreement",A,Y,
+"Why do global Carbon Dioxide (CO2) levels vary throughout the year?
+
+Because of plant respiration and photosynthesis causing a decrease in CO2 in spring and summer
+
+ Because of chemical reactions in the atmosphere triggered by cooler weather
+
+It varies due to CO2 emissions from industries stopping and starting",A,Y,
+"Which of the following is the term for a ‘reservoir’ on the Earth’s surface that can absorb or remove Carbon Dioxide (CO2) from the atmosphere? 
+Carbon drain 
+
+Carbon sponge 
+
+Carbon Sink
+
+Carbon Well",C,Y,
+"When compared to Europe, North America, and Asia, why were CO2 levels in parts of Africa high but NO2 levels low?
+
+Because high levels of industry were the primary sources of CO2 emissions 
+
+Because biomass burning was the primary source of CO2 emissions
+
+Because burning of fossil fuels was the primary source of CO2 emissions
+
+Because cattle farming was the primary source of CO2 emissions",B,N,
+"Which of the following is NOT a satellite used to measure CO2? 
+OCO-2 
+
+Aura 
+
+GOSAT 
+
+GRACE",D,N,
+"Finish this statement: To understand the processes that control greenhouse gases: 
+ We need to measure the amount of CO2 in the atmosphere to understand Greenhouse gases. 
+
+We need to understand where the CO2 in the atmosphere came from to understand the processes that control the amount of CO2 in the atmosphere 
+
+We need to predict measurements of CO2 to understand Greenhouse Gasses 
+
+We need to predict measurements of CO2 to understand the processes that control the amount of CO2 in the Atmosphere.",B,N,
+"What is the FORUM Mission? 
+Far-infrared Outgoing Radiation Understanding and Monitoring 
+
+Far-Ozone climate Radiation Understanding and Monitoring 
+
+Feedback Outgoing Radiation Understanding and Monitoring 
+
+Far-Infrared Outgoing Radiation Understanding and Modelling",A,Y,
+"Which is the largest single Greenhouse Gas? 
+Carbon Dioxide 
+
+Water Vapour
+
+Nitrogen Dioxide 
+
+Methane",B,Y,
+"Why does water vapour have a significant impact on temperature?
+Water vapour contains heat in its molecules 
+
+Water vapour traps heat
+
+Water vapour emits heat",B,Y,
+"Where does Rome’s main source of air pollution come from?
+International flights 
+
+Factories 
+
+Motor Vehicles
+
+Grazing of cattle",C,Y,
+"How frequently is the data collected from ARPA's 54-unit station analysed? 
+Hourly 
+
+Daily
+
+Weekly 
+
+Monthly",B,N,
+"What is an aerosol?
+An aerosol is a gas.
+
+An aerosol is a mixture of gases and fine particles or liquid droplets.
+
+An aerosol is a mixture of only fine solid particles suspended in a gas.
+
+An aerosol is a mixture of only liquid droplets suspended in a gas.",B,Y,
+"What are natural sources of aerosols?
+desert dust
+
+Fossil fuel combustion
+
+Sea salt
+
+Volcanic ash
+
+Biomass burning","A, C, D",Y,"Natural sources of aerosols are from desert dust, sea salt, and volcanic ash."
+"Which of the following statement is not true?
+Photochemical smog makes the brown haze in cities. 
+
+NO2 contributes to the formation of photochemical smog 
+
+The main emission sources of NO2 in cities are natural 
+
+Poor air quality causes millions of premature deaths worldwide each year.",C,N,
+"How are aerosols and pollutants monitored using satellite data? 
+ Satellite instruments can identify the different particulate matter in the atmosphere through macroscopic lenses and air samples. 
+
+Satellites measure the light that is reflected by the Earth and the atmosphere, and this is compared with models of ‘clean air’ to predict the pollutants causing the light to scatter 
+
+Aerosols have a specific wavelength that they absorb so you can use spectroscopy to identify them. 
+
+Lasers and lidars are used to detect reflected light of aerosols.","B, D",Y,"Aerosols and pollutants are monitored using satellite data by measuring the light reflected by the Earth and atmosphere, which is then compared with models of 'clean air' to identify pollutants causing light scattering. Additionally, lasers and lidars are used to detect the reflected light from aerosols, helping to measure their concentration and distribution."
+"Which variable is not considered in models when monitoring air pollutants? 
+Temperature and Wind 
+
+Rainfall 
+
+Air pressure 
+
+Population Density",D,N,
+"Why can’t we predict air pollution levels long into the future? 
+Air pollutants are short lived 
+
+Air pollutants are long lived 
+
+Air pollutants are difficult to identify 
+
+We have not yet found an accurate model formular to help us predict future pollutant levels",A,Y,
+"Where do aerosols come from? 
+Aerosols are anthropogenic, they cannot come from natural sources such as deserts, volcanic emissions, or sea salt. 
+
+Aerosols only come from Anthropogenic sources such as industrial processes, burning of fuels and more. 
+
+Aerosols can be natural and anthropogenic so they can be from both natural sources, desert dust, sea salt etc and industrial processes. 
+
+Aerosols are naturally occurring particulates in the atmosphere like desert Dust, they do not come from anthropogenic sources.",C,Y,
+"What size are coarse particles of aerosols?
+Less than 10 micrometres
+
+Less than 5 micrometres
+
+Less than 2.5 micrometres",A,Y,
+"How will MAIA measure aerosols?
+MAIA will make infrared measurements
+
+MAIA will make polarimetric and helioseismic measurements
+
+MAIA will make radiometric and polarimetric measurements",C,Y,
+"Why is it important to measure the trace gases Formaldehyde (HCHO) and Glyoxal (CHOCHO)? 
+Despite the fact that formaldehyde (HCHO) and glyoxal (CHOCHO) have short lifetimes, we need to understand the chemistry of the atmosphere in order to understand its composition and how different reactions occur.
+
+Formaldehyde (HCHO) and Glyoxal (CHOCHO) have long lifetimes and are therefore hugely detrimental to human health. 
+
+Formaldehyde (HCHO) and Glyoxal (CHOCHO) have a long lifetime so their impact on atmospheric chemistry needs monitoring for us to understand the atmosphere. 
+
+Trace gases make up most of our atmosphere so we need to understand the chemistry so we can understand how they interact with the greenhouse gases on a global scale.",A,Y,
+"How are Trace gases measured? 
+Trace gases can only be measured in situ at source. 
+
+Trace gases can only be used by instruments on board satellites 
+
+Trace gases can be measured in situ and by using satellites data. 
+
+Trace gases are predicted my models but there is no way of measuring them directly.",C,Y,
+"Which of the following are anthropogenic sources of Formaldehyde?
+Industrial combustion processes
+
+Fuel combustion from traffic
+
+Cattle ranching
+
+Biomass decomposition","A, B",N,
+"What is the main anthropogenic source of Ammonia? 
+Motor Vehicles 
+
+Mining 
+
+Agriculture
+
+Waste composting",C,Y,
+"How have Ammonia Emission trends changed? 
+Since the 1980’s Ammonia has increased in our atmosphere, however now they are starting to flatten. 
+
+Since 1980's Ammonia has decreased in our atmosphere, however now levels are starting to flatten
+
+Since the 1980s Ammonia has decrease in our atmosphere however, now they are starting to increase. 
+
+Since the 1980s Ammonia has increased in our atmosphere, however in the past two years they are starting to decrease.",A,N,
+"How does Ammonia influence the climate 
+Ammonia is a greenhouse gas and directly contributed to warming up the climate 
+
+Ammonia pure is a solid particulate that directly impacts human health and retains heat from the sun 
+
+Ammonia reacts with acidic pollutants to produce ammonium aerosol which is believed to influence the climate. 
+
+Ammonia is a trace gas, and it has no impact on the climate.",C,Y,
+"Why are in situ measurements used as well as satellite measurements? 
+In situ observations provide quality control on the combined information from models and satellite observations. 
+
+In situ measurements can provide global coverage where satellites can’t 
+
+Satellites are used to validate in situ instruments",A,Y,
+"What is the DOAS method?
+the Differential Optical Absorption Spectroscopy-Method
+
+the Differential Outdoor Absorption System-Method
+
+the Dedicated Optical Absorption in Situ-Method",A,Y,
+"Which of the following is the main advantage of taking measurements from aircraft instead of satellites?
+They provide better global coverage than satellites do due to being lower in the atmosphere
+
+There are no advantages
+
+They can fly lower in the atmosphere than satellites, which gives them a better spatial resolution 
+
+They can be used to provide quality control for satellite measurements and ground-based measurements",B,N,
+"What is HALO? 
+A High Altitude and Long-Range Research Aircraft 
+
+A Helium at Long Range Observation balloon
+
+A High Ammonium Long Range Observation Aircraft
+
+A High-Altitude Low Range Research Aircraft",A,N,
+"What does EMeRGe stand for? 
+Effect of Megacities on the Transport and Transformation of Pollutants on the Regional to Global Scales 
+
+Emission monitoring on the Transport and Transformation of pollutants on the Regional to Global Scales. 
+
+Effect of Monitoring transport and transformation of pollutants on the Regional to Global Scales. 
+
+Effect of monitoring on the transport and transformation of pollutants on the Regional to Global Scales.",A,N,
+"Which chemical species does the EMeRGe project focus on?
+Photochemical O3
+
+PM2.5
+
+Nitrogen oxides
+
+Volatile Organic Compounds (VOCs)
+
+Greenhouse gases","A, C, D, E",Y,"The EMeRGe project focuses on photochemical O3, Nitrogen oxides, Volatile Organic Compounds (VOCs), and Greenhouse gases."
+"The First stage of EMeRGe was in which City in 2017? 
+Budapest, Hungary 
+
+Oberpfaffenhofen, Germany 
+
+Taipei, Taiwan",B,N,
+"Who can access open EO data? 
+The data is open, which means that only policy makers and decision makers can access it 
+
+The data is open, which means that only the scientific community can access it 
+
+The data is open, which means that people beyond the scientific community have access to it. 
+
+The data is open, which means that anybody with significant capital to access the data can use it.",C,Y,
+"How is open Earth Observation data used in policymaking? 
+Earth observation data is sufficient, and it is used to sort and understand complex problems. 
+
+Earth Observation data supplements a huge variety of data sources to build a strong evidence base for decision making 
+
+EO data is not used for Policy decision making. 
+
+Policy makers directly work with Earth Observation data to inform their decisions.",B,Y,
+"Which role does Open Earth Observation data have? 
+EO data is only used for decision making 
+
+EO data is only used to verify the efficacy of policies 
+
+EO data is only used to understand past and current situations. 
+
+EO data is used in understanding past situations, monitoring current states, and verifying the efficacy of international agreements and policies.",D,N,
+"What was the purpose of the Aeolus Satellite? 
+To measure trace gases
+
+To measures local wind speed in multiple layers of the atmosphere 
+
+To measures global wind speed in multiple layers of the atmosphere
+
+To measure anthropogenic carbon dioxide","C, D",Y,"The Aeolus satellites purpose was to measure global wind speed in multiple layers of the atmosphere, and anthropogenic carbon dioxide."
+"How can a Satellite be used to understand forest fires? 
+Satellites can measure directly what forest fires are putting into the atmosphere - the aerosols and trace gases. 
+
+Satellites can measure the wind in different parts of the Atmosphere and therefore we can predict the way in which the fire will spread. 
+
+You can view and map the burned area of the forest fire based on the Infrared sensors, the radiated heat.","A, B, C",Y,"Satellites can be used to understand forest fires by measuring directly what forest fires are putting into the atmosphere - the aerosols and trace gases. They can also measure the wind in different parts of the Atmosphere and therefore we can predict the way in which the fire will spread. Additionally they can view and map the burned area of the forest fire based on the Infrared sensors, the radiated heat."
+"Which of the following statements is true? 
+Wind is the only condition that determines the spread of particulates and other atmospheric components. 
+
+Satellites help us improve models, which include wind analysis, so that we can predict the movement of particulate matter in the atmosphere. 
+
+Wind has little effect on the distribution of particulate matter and aerosols because they have a short life",B,N,
+"Aeolus measured which conditions? 
+Light reflected from the ground 
+
+Precipitation 
+
+Winds in the atmosphere",C,N,
+"What is the name of the effect when light changes colour due to a change in the wave frequency? 
+Doppler Shift 
+
+Vascular Shift 
+
+Wave Shift",A,Y,
+"How do climate models and weather models relate? 
+
+Climate models are the same as weather models. 
+
+Climate models are like weather models, and they are coupled with Earth System Models (Atmosphere, land, ocean, and Ice) on a scale of years rather than days. 
+
+Climate models have no relation to weather models.",B,Y,
+"What is ‘prescribed burning’ 
+An estimate of the area that will undergo a wildfire outbreak 
+
+Intentional and controlled burning of an area to manage and prevent wildfire outbreaks 
+
+Unintentional burning of an area also known as a wildfire outbreak",B,Y,
+"What is the purpose of experimental fires? 
+So that data read from overhead aircraft during an experimental fire, can help scientists to understand how the imagers respond when they collect data from fires 
+
+Instruments that detect the smoke from experimental fires on the ground can tell us what chemicals are in the smoke; these readings help us to validate satellite information. 
+
+Scientists experiment with these particular fires to train other scientists how best to manage and put out the fire.","A, B",Y,"The purpose of experimental fires is firstly, data collected from overhead aircraft during an experimental fire helps scientists understand how imagers respond when collecting data from actual fires. Secondly, instruments that detect smoke from experimental fires on the ground can identify the chemicals in the smoke, which helps validate satellite information."
+"Which of the following statements about the composition of smoke produced by forest fires is incorrect? 
+The type of vegetation that is burned impacts the composition of smoke produced by forest fires. 
+
+The wind conditions impact the composition of smoke produced by forest fires. 
+
+The temperature of the fire impacts the composition of smoke produced by forest fires. 
+
+Smoke has the same chemical composition, there is just more or less dependent on how much water vapour is in the mix.",D,N,
+"How does the Infrared Spectrometer instrument work? 
+The instrument collects small vials of gases that are tested inside the machine to show what chemicals and particulates are present 
+
+The instrument sends out a beam of light which is then absorbed and reflected by the molecules in the smoke. These absorptions create a frequency that acts as a fingerprint to identify various compounds in the smoke. 
+
+The instrument has a filter that absorbed the particulate matter, the solid compounds on the filter can then be studied to identify the particles present.",B,Y,
+"Which two Greenhouse gases released by agricultural activity have the most significant impact on the atmosphere? 
+Carbon dioxide
+
+Hydrogen chloride
+
+Methane
+
+Water vapour
+
+Nitrous oxide 
+
+Ozone","C, E",N,
+,,,
+"Around how much carbon is added into the atmosphere each year as a result of land-use change?
+1 Gt
+
+1.6 Gt
+
+2.7 Gt
+
+7.6Gt",B,Y,
+"Which chemical species have been found to have increased in concentration in the atmosphere over Maritime Southeast Asia in El Niño years in October?
+Tropospheric ozone
+
+Carbon monoxide
+
+Methane
+
+Nitrogen oxide
+
+Smoke aerosols","A, B, D, E",Y,"During El Niño years in October, tropospheric ozone, carbon monoxide, nitrogen oxide, and smoke aerosols have been found to increase in concentration in the atmosphere over Maritime Southeast Asia."
+"Which statement is true about a Volcano's impact on humans and animals? 
+Volcanoes only impact local people and animals. Soot, lava, and gas is produced in high quantities at the source, but rarely does it travel beyond a couple of KMs. 
+
+Volcanoes release magma with soot and gas that can impact local areas and downwind environment in a short space of time. 
+
+It takes a long space of time for volcanic ash, gas, and debris to circulate beyond the local area.",B,N,
+"Which two Satellite instruments make it possible to detect emissions produced by Volcanoes? 
+TROPOMI measures atmospheric columns 
+
+Aeolus determines winds and the thickness of ash plumes 
+
+DUS-T Detector measures the solid particulate matters in the air.","A, B",N,
+"Which of the following are the main gases that are released in Volcanic eruptions? 
+Water vapor 
+
+Methane
+
+Carbon dioxide 
+
+Sulphur dioxide 
+
+Oxygen","A, C, D",N,
+"What is Saharan Dust? 
+Saharan Dust is a mineral dust, part of the aerosol group. 
+
+A satellite that measures dust quantities 
+
+Saharan dust is a mixture of minerals and gases found in the Saharan atmosphere",A,Y,
+"When does the Saharan Air Layer form? 
+Between late Spring and Early Autumn 
+
+Between Early Autumn and Late winter 
+
+Between Early Winter and Late Spring",A,Y,
+"Hurricane Ophelia caused the sun and skies to have which colour glow? 
+Red sun and pink skies 
+
+Red sun and yellow skies 
+
+Pink sun and purple skies",B,N,
+"Who is the Copernicus data available to?
+Policy Makers
+
+Paying businesses and consumers
+
+Researchers
+
+Freely available to everyone",D,Y,
+"What are the key thematic areas covered by Copernicus?
+Transport and Aviation
+
+Land Management, the Marine Environment
+
+Atmosphere, Emergency Response
+
+Security and Climate Change","B, C, D",Y,"The key thematic areas covered by Copernicus are Land Management, the Marine Environment, Atmosphere, Emergency Response, Security, and Climate Change"
+"What name is given to the main Satellite mission in the Copernicus programme?
+Sentinel
+
+Landsat
+
+Terra
+
+World view",A,Y,
+,,,
+"What area of interest does Copernicus CAMS focus on?
+Climate Monitoring
+
+Atmosphere Monitoring
+
+Ocean Monitoring
+
+Land Monitoring",B,Y,
+"Which Copernicus service supports society by providing information about past, present and future climate in Europe and globally?
+
+CAMS
+
+CLMS
+
+CMEMS
+
+C3S",D,Y,
+"AI and ML can be a solution to which of the following challenges presented by data recorded by satellites? (Select all that apply)
+Quantity of data
+
+Storage of data
+
+Analysis of data 
+
+Training the data
+
+Resources used to process the data","A, B, C, D, E",N,
+"AI and ML helps us to process and understand data. About how much data do the Sentinels generate?
+Gigabytes
+
+petabytes
+
+terabytes
+
+megabytes",B,N,
+"What is the name of the EU Copernicus DIAS reference service for environmental data, virtual processing, and skilled user support?
+CREODIAS 
+
+WEkEO
+
+ONDA
+
+Sobloo",B,Y,
+"What are the aims of the Copernicus programme? 
+Monitor and forecast the state of the environment on land, sea and in the atmosphere
+
+Support climate change mitigation and adaptation strategies
+
+To be the leading business driven operational agency in Europe for Earth observation satellite programmes
+
+To sell EO data to businesses for applications","A, B",Y,"The main aims of the Copernicus Programme are to monitor and forecast the state of the environment on land, sea and in the atmosphere, and support climate change mitigation and adaptation strategies."
+"What is Sentinel-3's main area of research?
+Air quality 
+
+Land use change
+
+Marine environment
+
+Land vegetation",C,Y,
+"What role does data fusion have within EO? 
+It Integrates multiple data sources to produce more consistent, accurate, and useful information
+
+It helps to find more connections between the data 
+
+To minimise the amount of data that is being captured
+
+To provide more general and comprehensive answers","A, B, D",Y,"The role that data fusion has with EO includes to integrate multiple data sources to produce more consistent, accurate, and useful information; help to find more connections between the data; and provide more general and comprehensive answers."
+"What are the challenges that make using AI and Earth monitoring different from other computer vision problems?
+Earth observation imagery is very large so it takes much longer to process through models
+
+Training data sets for EO are few and far between at the moment and they take a long time to create.
+
+Combining different types of EO data sets is challenging 
+
+in order to fuse EO data with other data sources, it may need to be geo-located which can be complicated
+
+AI supporting IT systems are limited, which slows down the use of AI for EO","B, C, D",Y,"The challenges of using AI for Earth observation (EO) compared to other computer vision problems include the scarcity of training datasets that are time-consuming to create, the difficulty of combining different types of EO datasets, and the complexity of geo-locating data to fuse it with other sources."
+"What are TWO advantages of using Jupyter Notebooks for data science? 
+You can see both code and results 
+
+It is very easy to test long asynchronous tasks
+
+Provides interactive code and data exploration","A, C",N,
+"Artificial Intelligence relies on…?
+Machines thinking consciously for themselves
+
+Training data built by humans for machines
+
+Training data built by machines for machines
+
+Algorithms built by humans for machines","B, D",N,
+"What can cause problems for AI Earth Monitoring using Optical imagery and object recognition? 
+Clouds
+
+Shadows
+
+Pixel resolution
+
+Increased solar radiation","A, B, C",Y,"Problems for AI Earth Monitoring using optical imagery and object recognition can be caused by clouds, shadows and pixel resolution."
+"Which statements are incorrect? (Select all that apply)
+Unsupervised learning is where ML is given a training data set that does have labels
+
+Unsupervised learning is where ML is given a training data set that does not have labels
+
+Supervised learning is a method of training an algorithm where a data set consists of two parts: The data itself and a label. 
+
+Supervised learning is a method of training an algorithm where data has no labels.","A, D",N,
+"Which ML algorithm is described as a simple classification and regression method and is one of the most used learning algorithms?
+K-Nearest Neighbour
+
+L- Further Neighbour
+
+K- Nearest Partner
+
+K- Classification Neighbour",A,Y,
+"In terms of ethics, where do we tend to have information gaps of which we need to be aware of when understanding Data Bias?
+Europe and America
+
+Global North
+
+Global South
+
+Major cities",C,N,
+"To Mitigate against data use that may be harmful, how are scientists developing their research?
+Bottom- up research and development approaches
+
+Top-down research and development approaches
+
+Awareness of data bias
+
+Making data open and available",,N,
+"What is an example of a Python framework?
+Tensorflow
+
+TensorGo
+
+React
+
+Gradient boosting",A,N,
+"What Machine Learning paradigm involves training ML models to make a sequence of decisions?
+Supervised Learning
+
+Unsupervised Learning
+
+Reinforcement Learning
+
+Gradient boosting",C,Y,
+"What type of machine learning algorithm separates data into different classes linearly? 
+Decision trees
+
+Support Vector Machines
+
+K-Nearest Neighbour
+
+Gradient boosting",B,Y,
+"What are some ethical considerations that need to be considered when working with EO data and AI? (Choose all that apply)
+Whether the data collection will be breaching GDPR
+
+Whether the algorithms may be biased due to biased training data
+
+Whether using unlabelled data with unsupervised methods will make the results inaccurate
+
+Whether the data used is correct and accurate","A, B, D",N,
+"What is xgboost?
+A neural network that is best for image recognition
+
+An end-to-end open-source platform for machine learning that uses the K-Nearest Neighbour technique
+
+An ensemble technique that uses a ‘boosting’ method to combine decision trees
+
+A gradient boosting library designed for speed and performance.",D,Y,
+"What is the main purpose of unsupervised learning? 
+To find correlations among unlabelled data 
+
+To train or “supervise” algorithms into classifying data or predicting outcomes accurately
+
+To predict the correct label for newly presented input data",A,Y,
+"What is Copernicus CLMS?
+The Copernicus Climate Change for Society Group
+
+Copernicus Land Monitoring Service
+
+Copernicus Land Management Service
+
+Copernicus Local Monitoring Service",B,Y,
+"What spatial resolution does Sentinel-2 provide for its optical imagery?
+100 - 200m
+
+300 - 400m
+
+10 - 60m
+
+2 - 2.5m",C,Y,
+"In the example given in topic 3a, what can satellites tell us about the quality of the forests that grow in areas cleared from logging?
+Less quality of biodiversity
+
+Less layers of vegetation
+
+Less diverse species of vegetation
+
+Shorter tree species","A, B, C",N,
+"AI and Satellites give us information about Soil Sealing, and they can detect when changes occur. What is Soil Sealing?
+A process by which contaminated soils cover forested areas, which results in animals and vegetation dying.
+
+Where impervious materials cover the soil.
+
+The high use of soil in areas that are then compressed to create a seal over previously concreted area.",B,Y,
+"What is method of crop management based on observing, measuring and responding to inter and intrafield variability of crops
+Accurate Agriculture (AA)
+
+Precision Agriculture (PA)
+
+Direct Agriculture (DA)",B,Y,
+"In terms of the case study detailing the Picture Pile tool, what is a micro task?
+A machine performs a micro task when it identifies a small area for example, a single pixel as an object. 
+
+A microtask is a small task completed by a citizen to help train larger data sets.
+
+A Microtask is a small function that allows machines to learn a larger patterns.
+
+A microtask is a short function executed by the app after a person has made a decision.",B,N,
+"What are TWO disadvantages of using optical imagery for monitoring forest fires?
+The data on the ground can be obscured by cloud and smoke
+
+There is limited data acquisition speed of fast fires
+
+Small fires on the ground can be missed due to Coarse resolution
+
+It can be hard to distinguish between burned areas and low-albedo surfaces","A, B",Y,
+"What information does the backscatter detected by Sentiel-1 tell us in relation to fires?
+Backscatter can tell us about the structure of the ground target
+
+Backscatter can tell us about the moisture of the ground target
+
+Back scatter can tell us neither the structure nor the moisture of the ground target.
+
+Backscatter can tell us about both the structure and moisture of the ground target",D,Y,
+"It is estimated that by 2025, the global slum population will reach…?
+2.4 billion people
+
+1.8 billion people
+
+1.9 billion people
+
+1.6 billion people",B,N,
+"What is the name of the AI/ML method used to identify the type of roofs in the informal settlement case study?
+Canonical correlation forests (CCFs)
+
+Split Tree Forests (STF)
+
+Mixed Branch Identification Tree (MBIT)
+
+Descriptive Correlation Forest (DCF)",A,N,
+"What are the two future Copernicus missions that will monitor Land?
+Copernicus Hyperspectral Imaging Mission (CHIME)
+
+Land Surface Temperature Mission (LSTM)
+
+Landlocked Water Monitoring Mission (LLWM)
+
+Gas, Plume, and Thermal Monitoring Mission (GPT)","A, B",Y,"Two future Copernicus missions that will monitor Land are Copernicus Hyperspectral Imaging Mission (CHIME), and Land Surface Temperature Mission (LSTM)."
+"What is the name of the management strategy that uses satellite spatial and temporal data as well as other technologies to help improve the efficiency and sustainability of agricultural operations?
+Precision Agriculture
+
+Data agriculture
+
+Satellite agriculture
+
+AI targeted agriculture",A,Y,
+"To make sure crop identification is accurate, efficient and reliable, how do EFTAS crop analyser identify crops?
+Visual interpretation of satellite images is sufficient
+
+Visual analysis of satellite images is sufficient 
+
+Visual interpretation and analysis of satellite data is sufficient
+
+Visual interpretation, visual analysis and ground-based crop verification using photos and archives.",D,N,
+"How can members of the public help train AI technologies?
+Citizen scientists can be engaged to identify objects and train algorithms to improve accuracy rates. 
+
+Citizen scientists can be called upon to write code for AI that identify objects.
+
+Citizen scientists are invited to give their opinions on way to improve physical land use and scientists work with their ideas and create identification labels for AI.
+
+Citizen scientists are invited to upload images that AI can identify.",A,Y,
+"How do optical sensors onboard satellites detect forest fires?
+Optical sensors detect flames
+
+Optical sensors detect the heat from the fire
+
+Optical sensors detect the smoke from the fire
+
+Optical sensors detect the carbon monoxide of the fire.",C,Y,
+"Which sources do the Copernicus Marine Service gather data from?
+Satellites
+
+In situ Buoys 
+
+Ocean models
+
+Coastal Towers","A, B, C",Y,"The sources that the Copernicus Marine Service gather data from are satellites, in situ buoys, and ocean models."
+"What is the ‘Digital Twin of the Ocean’ (DTO)?
+A 3D computerised model of the ocean
+
+A framework to integrate a wide range of existing and new marine data sources, with tools to provide access to all these different sources of information
+
+A concept to encourage the use of AI and other new technology for marine data gathering",B,Y,
+"Which Sentinel Satellite is used to distinguish the different objects and ocean Debris?
+Sentinel -1 
+
+Sentinel- 2
+
+Sentiel-3
+
+Sentinel- 4",B,N,
+"What is the aim of the Jelly X algorithm?
+
+To Identify the numerical relationship of jellyfish proliferation with the ocean- environment parameters thus overtaking the understanding of ecological drivers that in turn sheds light on those drivers.
+
+Identifying the symbiotic relationship of jellyfish with other marine animals within the ocean- environment thus overtaking the understanding of ecological drivers.
+
+Identifying the dependent relationship of Jellyfish with the ocean environment to understand ecological drivers.",A,N,
+"What type of fish does the Species Distribution Modelling Via Feature Engineering and Machine Learning identify? 
+Pelagic Fish
+
+Mesopelagic Fish
+
+Demersal fish
+
+Benthic fish",A,N,
+"What kind of Neural Network allows us to obtain 3D reconstructions of the ocean?
+Convolutional Neural Network (CNN)
+
+Recurrent Neural Network (RNN)
+
+Multi-Layer-Perceptron (MLP) network
+
+Generative Adversarial Network (GAN)",C,Y,
+"What makes Sentinel-3 level 4 products different from levels 1-3?
+They include in situ and model data
+
+They include a neural network for atmospheric correction
+
+They include composites to get rid of cloud cover",A,Y,
+"What is Case-1 water?
+Blue water with low levels of phytoplankton
+
+Green water with high levels of phytoplankton
+
+Cloudy water with high levels of inorganic particles 
+
+Blue water with low levels of phytoplankton and Green Water with high levels of phytoplankton",D,Y,
+"What is the name of the sensor on board the Sentinel-3 Satellite that measure ocean colour?
+OLCI
+
+OLBI
+
+OLDI
+
+OLGI",A,Y,
+"What are some ocean parameters that Sentinel-3 can measure? 
+Deep sea temperature (> 5m)
+
+Ocean colour
+
+Sea surface temperature
+
+Sea level","B, C, D",Y,"Ocean parameters that Sentinel-3 can measure include ocean colour, sea surface temperature, and sea level."
+"How can we measure sea-level rise from satellites?
+Using LiDAR 
+
+Using satellite Radiometers
+
+Using satellite Altimeters
+
+Using Microwave Radiometers",C,Y,
+"Why is it beneficial to track in real-time maritime traffic and weather conditions? 
+Reduce CO₂ and SOx emissions
+
+Reduce NH₃ emissions
+
+Fuel cost savings
+
+Increase safety
+
+Increase security","A, C, D, E",Y,"It is beneficial to track in real-time maritime traffic and weather conditions because it can reduce CO₂ and SOx emissions, reduce fuel costs, and increase safety and security."
+"What type of Marine debris is detected by Satellites and is important to identify to avoid at-sea accidents?
+Ocean foam
+
+Drift wood from flooding 
+
+Sea grass
+
+Plastics","B, D",Y,"The type of marine debris that can be detected by satellites and is important to identify to avoid at-sea accidents, are drift wood from flooding, and plastics."
+"What is the European Space Agency World Ocean Circulation project retrieving using deep neural networks? 
+A 3D model of the Thermohaline Ocean circulation
+
+A full 3D model of the global ocean, including currents, wave height, and ocean bathymetry
+
+3D structures of ocean temperature and salinity from sea surface measurements of temperature, salinity and sea surface level",C,Y,
+"Why is it important to identify and understand how much chlorophyll is in our oceans?
+Chlorophyll releases toxic gas and disturbed the ocean ecosystem. It is important to identify so that we can reduce its impact.
+
+Chlorophyll absorbs radiation from the sun and causes the oceans to warm, thus it is important to eliminate Chlorophyll as best we can.
+
+Chlorophyll absorbs masses of CO2 and is good for the environment.
+
+Chlorophyll is the basis of the food chain in our ocean so it sustains the oceans.","C, D",Y,"It is important to identify and understand how much chlorophyll is in our oceans because chlorophyll absorbs masses of CO2 and is good for the environment, and is the basis of the food chain in our oceans, so it sustains the oceans."
+"Marine Analyst is a digital platform created using Python and R and running on WEkEO, what does it use machine learning for? 
+To automatically identify marine debris in satellite images
+
+To organise different marine imagery into categories
+
+To provide some environmental parameters for users",C,Y,
+"What data does CAMS provide? 
+Reanalysis data of past atmosphere
+
+Information related to air pollution, and heath, solar energy, greenhouse gases and climate forcing
+
+Regular climate updates on surface air temperature, sea ice, precipitation and soil moisture",B,Y,
+"Which instrument on board Sentinel-5P can track air pollution?
+
+TROPOMI
+
+Microwave radiometer
+
+Infrared Camera
+
+Synthetic-aperture radar (SAR)",A,Y,
+"The use of a Neural Network based emulator can effectively replicate spectra simulated by LINTRAN, explaining 99% of the variance and to within ~3% uncertainty. Up to how much times faster is this method than using the Radiative Transfer Model alone? 
+
+500 times
+
+1000 times
+
+1500 times
+
+10000 times",D,N,
+"What is the prevailing element in the Earths water cycle?
+Advection
+
+Precipitation
+
+Condensation
+
+Evaporation",B,Y,
+"Where is it challenging to monitor the quantity of precipitation? 
+Developing countries
+
+Remote locations
+
+The Oceans
+
+Developed cities","A, B, C",N,
+"What type of data is used for Weatherbench?
+Historical data
+
+Weather data
+
+Reanalysis data
+
+Analysis data",C,Y,
+"What is one advantage that data from satellites give us for studying the atmosphere?
+They give us long-term coverage
+
+They give us short-term coverage
+
+They only provide ground-based observations
+
+They are only effective for ocean studies",A,Y,
+"Why is Methane one of the most important contributors to the anthropogenically enhanced greenhouse effect? 
+It is more efficient at trapping heat from the sun than carbon dioxide and other gasses
+
+It has a long life-time in the atmosphere
+
+There is more methane in the atmosphere than carbon dioxide therefore it is more potent and contributes more to the greenhouse effect",A,Y,
+"How can AI help with predicting extreme weather events?
+It can help to predict weather events months in advance
+
+It can help to extract the right signal in the vast amounts of weather data
+
+It can accurately predict when hurricanes are likely to form",B,Y,
+"What is a current limitation of WeatherBench ML weather forecasting? 
+They are very efficient at long-term weather prediction but limited for very short-term (‘now casting’) prediction
+
+They are not very efficient at getting weather forecasting correct 
+
+They are very efficient at very short-term (‘now casting’) weather prediction but limited at longer term",C,Y,
+"What is Copernicus C3S?
+The Copernicus free Service
+
+A platform for accessing all Copernicus EO data
+
+The Copernicus Climate Change Service 
+
+C3S data store",C,Y,
+"Clouds are important as they are more than 2/3rds of the Earth’s surface and they reflect what percentage of the Sun’s radiation back into Space?
+
+½ 
+
+¼ 
+
+¾
+
+2/3",B,N,
+"Which parameters, distinguished by ML, are important for understanding Seagrass classification?
+Bathymetry
+
+Chlorophyll
+
+Distance from ships
+
+Distance from coast","A, B, D",Y,"The parameters important for understanding seagrass classification, as distinguished by machine learning (ML), include bathymetry, Chlorophyll, and distance from coast."
+"What is the most important element to firstly monitor for climatic studies?
+Greenhouse gas concentrations
+
+The energy balance of the Earth
+
+Global precipitation",B,N,
+"Why can cloud classification be challenging to complete with data from satellites? 
+Satellite Passive instruments cannot measure cloud depth, which is needed for some cloud classification types
+
+We do not have a long enough time-series of cloud data to use for classification
+
+Satellite Active sensors can only give us a narrow swath of data, which is not good enough for global cloud classification 
+
+Satellites cannot measure clouds","A, C",Y,"Cloud classification can be challenging to complete with data from satellites, because satellite Passive instruments cannot measure cloud depth, which is needed for some cloud classification types, and satellite Active sensors can only give us a narrow swath of data, which is not good enough for global cloud classification."
+"What ice type is classified from SAR polarimetric data as bright regions with strong back scatter? 
+Open water
+
+First Year Ice
+
+Rough first year ice
+
+Young Ice",C,Y,
+"Why is Sentinel-1’s Radar instrument useful for monitoring mangroves? 
+It can measure through clouds to show us the canopy of mangroves
+
+It gives us data which is useful for discerning what is land and what is water
+
+It gives us data in the visible spectrum, as well as near-infrared and shortwave infrared","A, C",Y,"Sentinel-1’s Radar instrument is useful for monitoring mangroves because it can measure through clouds to show the canopy of the mangroves, and it provides data in the visible spectrum, as well as near-infrared and shortwave infrared."
+"Why did COVID-19 have an impact on the atmosphere?
+The COVID-19 virus which spread globally produces gasses which change atmospheric composition
+
+The spread of COVID-19 meant many governments took measures to control the virus. Measures such as the restriction of travel, had an impact on anthropogenic emissions in the atmosphere
+
+The COVID-19 Virus led most industries to increase their production for online sales, therefore we see an increase in emissions on a global scale.",B,Y,
+"What did scientists hypothesise about Nitrogen Dioxide (NO2) levels during the lockdown period?
+An increased spread of NO₂ due to an increased spread of day time population with dispersed residential buildings heating their spaces individually.
+
+C. An increase in NO₂ due to a higher number of people working from home.
+
+A reduction in NO₂ due to a decrease in vehicle traffic.
+
+No change in NO₂ levels because the lockdown would have impact on air quality.",C,N,
+"Why couldn’t the initial decreases in NO₂ measurements found over China, South Korea, northern Italy and the US in Spring 2020 compared to Spring 2019, from Sentinel-5P columns, be directly attributed to COVID-19 lockdown measures?
+Because Sentinel-5P had made errors in 2020 so the measurements were not accurate
+
+Because it was found that meteorology supported low NO2 values for Spring 2020 compared to Spring 2019, and this was already being experienced in February 2020, before most areas had entered lockdowns
+
+Because these decreases were attributed to 2020 Spring storms which decreased NO2 amounts in the atmosphere worldwide.",B,N,
+"How did the NO2 COVID study solve the problem of finding out if NO2 distributions are influenced by COVID lockdowns, and not by meteorology only?
+By looking at and comparing very short term (monthly) NO2 emission estimates rather than long-term (several years or months), which was made possible by TROPOMI’s high spatial resolution
+
+By looking at and comparing long-term emission estimates (years), so we could see the larger pattern of NO2 emissions.
+
+By seeing what the sources of NO2 were by looking at satellite imagery, which was made possible by TROPOMI’s high spatial resolution",A,N,
+"True or false: Though we can estimate changes in Nitrogen Dioxide in the atmosphere from Space using satellites, they cannot tell us about the sources and why the change occurred.
+True
+
+False",A,N,
+"What is the primary source of carbon dioxide emissions?
+Agriculture
+
+Burning of fossil fuels, oil, coal and gas
+
+Vehicle traffic",B,Y,
+"Why was it a challenge to use satellite data (from OCO-2 and GOSAT) to obtain information on COVID-19 related CO2 emission reductions?
+Because these satellites have very high resolutions, making it hard to see where the sources of CO2 came from. 
+
+Because these satellites only give us information on xCO2 and not CO2
+
+Because these satellites have been optimised to obtain information on large scale terrestrial biosphere carbon fluxes.",C,Y,
+"Why was it particularly important to measure levels of Aerosols during the COVID-19 pandemic? 
+Because of the health impacts of aerosols which can deeply penetrate into human lungs and cause serious respiratory problems, which could then potentially increase the number of severe cases of COVID-19
+
+So we can see what happens to aerosols during periods of reduced traffic and reduced industrial outputs, and see how they are transported",A,Y,
+"Did aerosol optical depth (AOD) observed over Northern Italy after the implementation of COVID lockdown, increase or decrease? 
+Decrease
+
+Increase",B,Y,
+"Did in situ ground-based measurements of NO2 in Europe match up with the satellite data in the ICOVAC study? 
+Yes
+
+No",A,Y,
+"Why couldn’t Methane (CH4) and Carbon Monoxide (CO) measurements be estimated for the COVID Lockdowns?
+Because the variability of these species is much higher, thus preventing any detection of a significant signal due to covid lockdown
+
+Because there were not any local measurements for this these species available
+
+Because these are trace gasses and so the amounts of them in the atmosphere are hard to measure accurately",A,N,
+"Why did concentrations of secondary pollutants such as ozone increase in some regions during COVID lockdowns? 
+Because of increase used of heating in residential buildings
+
+Because of the reductions in NOx 
+
+Because of meteorological phenomenon",B,Y,
+"What is the difference between weather and climate?
+Climate is short term variations. 
+
+They are both the same
+
+Climate is the average weather over long periods",C,Y,
+"What could changing regional climates alter?
+Forests
+
+Crop yields
+
+Water supply
+
+Solar radiation levels","A, B, C",Y,"Changing regional climates could alter forests, crop yields and water supply."
+"What are the three key services provided by C3S?
+Weather forecasts
+
+Ozone forecasts
+
+The CCI
+
+The CDS
+
+Data in action
+
+Climate Bulletins","D, E, F",Y,"The three key services provided by C3S are the Climate Data Store (CDS), data in action and climate bulletins."
+"What are the five data product types available on the C3S Climate Data Store?
+Reanalysis
+
+Climate projections
+
+Proxy indices
+
+Satellite observations
+
+Climate indices
+
+Seasonal forecasts","A, B, D, E, F",Y,"The five data product types available on the C3S Climate Data Store are reanalysis, climate projections, satellite observations, climate indices, and seasonal forecasts."
+"Excluding observations from satellite and in situ monitoring systems, what are the other sources of climate data in the C3S CDS?
+Seasonal predictions, climate reanalysis and climate projections
+
+Seasonal predictions, indirect observations, climate reanalysis
+
+Weather maps, climate reanalysis, climate projections",A,Y,
+"What is ERA5 data?
+Numerical models of the climate system
+
+Data from several state-of-the-art seasonal prediction systems
+
+Historical observations into global estimates using advanced modelling and data assimilation systems.",C,Y,
+"What are climate projections?
+Simulations on the climate until the end of the century
+
+Information about the climate for the next six months",A,Y,
+"What are the C3S Climate Data Store Applications? 
+Applications that allow for users to build visualisations of the data
+
+Applications used for downloading the data
+
+Pre-built interactive visualisations of the data",C,Y,
+"What does the Copernicus C3S Toolbox enable users to do?
+To install the CDS API onto your computer.
+
+Develop custom-made applications using the Python programming language.
+
+To download satellite imagery to be processed elsewhere.",B,Y,
+"What line of code is used to retrieve data from the Copernicus Climate Data Store (CDS) via the C3S toolbox.?
+data = ct.catalogue.retrieve
+
+data = ct.data.retrieve
+
+data = ct.catalogue.get",A,N,
+"What is the best way to start building an application in the C3S toolbox?
+Code it from scratch
+
+Copy the source code from a pre-built CDS application and analyse and make changes to the code",B,N,
