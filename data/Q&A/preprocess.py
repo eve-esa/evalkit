@@ -79,11 +79,12 @@ def remove_space(answer):
     return answer.replace(' ', '')
 
 
-def to_hf_dataset(df, output_path):
+def to_hf_dataset():
+    df = process()
     # Drop the convertible column
     df.drop(labels=['convertible', 'open-ended answer'], inplace=True, axis=1)
     hf_dataset = datasets.Dataset.from_pandas(df, preserve_index=False)
-    hf_dataset.push_to_hub("antoniolopez00/MOOCQAs")
+    hf_dataset.push_to_hub("eve-esa/eve-is-mcqa", private=True)
     return hf_dataset
 
 
@@ -153,6 +154,7 @@ def process():
     #alpaca = to_alpaca(hf_dataset)
 
     return df
+
 
 
 def generate_alpaca():
