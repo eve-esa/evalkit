@@ -1,4 +1,4 @@
-evaluate
+evaluate==0.4.0
 lm-eval
 datasets
 torch
@@ -6,3 +6,4 @@ pandas
 tqdm
 bert_score
 click
+openai
