@@ -26,7 +26,7 @@ def lm_eval(model_path, output_path=None, tasks=['mmlu']):
 
     tasks_str = ','.join(tasks)
     os.system(
-        f"lm_eval --model hf --model_args pretrained={model_path} --tasks {tasks_str} --output_path {output_path}")
+        f"lm_eval --model vllm --model_args pretrained={model_path} --tasks {tasks_str} --output_path {output_path}")
 
     model_name = model_path.split('/')[-1]
     # Workaround to get the output file since lm_eval ignores the output_path argument
@@ -43,7 +43,7 @@ def mmlu_eval(model_path, output_path=None, file_name='mmlu.json'):
         output_path = os.path.join(model_path, 'evaluation')
 
     os.system(
-        f"lm_eval --model hf --model_args pretrained={model_path} --tasks mmlu --device cuda:0 --batch_size 8 --output_path {output_path}")
+        f"lm_eval --model vllm --model_args pretrained={model_path} --tasks mmlu  --output_path {output_path}")
 
     model_name = model_path.split('/')[-1]
     # Workaround to get the output file since lm_eval ignores the output_path argument
@@ -95,7 +95,6 @@ def main(model_path, run_folder, tasks='all'):
 
     # Parse tasks by comma
     tasks = tasks.split(',')
-    print(model_path)
     if run_folder:
         eval_all_checkpoints(model_path, tasks)
     else:
