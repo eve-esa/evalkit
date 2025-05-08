@@ -23,17 +23,22 @@ def get_results_file(eval_path, task_name):
     files = os.listdir(eval_path)
     # Filter the files that contain the task name
     files = [f for f in files if task_name in f]
-    # Return the first file
-    return files[0]
-
-
+    if files:
+        return files[0]
+    else:
+        return None
 
 
 def read_metrics(model_path, task='mmlu', metric='f1_mean'):
     checkpoints = get_checkpoints(model_path)
     scores = []
     for checkpoint in checkpoints:
-        file_path = os.path.join(model_path, checkpoint, 'evaluation', get_results_file(model_path, task))
+        eval_path = os.path.join(checkpoint, 'evaluation')
+        result_file = get_results_file(eval_path, task)
+        if result_file is None:
+            print(f'No result file found for {checkpoint}')
+            continue
+        file_path = os.path.join(eval_path, result_file)
         # Read the evaluation file
         with open(file_path) as f:
             data = json.load(f)
@@ -55,38 +60,54 @@ def get_checkpoints(model_path: str):
     return checkpoints
 
 
+import plotly.graph_objects as go
 
-def plot_comparison(models, task='mmlu,is_mcqa', metric='acc', output_path=None):
+
+def plot_comparison(models, task='mmlu,is_mcqa', metric='acc', output_path=None, names=None, title=None):
     """
-    Plot the comparison between the models
-    :param models:
-    :param metric:
-    :param sub_metric:
-    :return:
+    Plot the comparison between the models using Plotly.
+    :param models: List of model names
+    :param task: The task name
+    :param metric: The evaluation metric
+    :param output_path: If specified, saves the figure
     """
-    for model in models:
+    fig = go.Figure()  # Initialize a figure
+    if names is None:
+        names = models[0].split('/')[-1]
+    if title is None:
+        title = f'{task.capitalize()} {metric} scores'
+
+    for model, name in zip(models, names):
         scores = read_metrics(model, task, metric)
         checkpoints = get_checkpoints(model)
         checkpoints_number = [int(f.split('-')[-1]) for f in checkpoints]
-        # Plot scores on Y axis and checkpoints on X axis
-        plt.graph_objs.Figure.add_trace(plt.graph_objs.Scatter(x=checkpoints_number, y=scores, name=model))
-    # Add title and labels
-    plt.graph_objs.Figure.update_layout(title=f'{task} {metric} scores',
-                                        xaxis_title='Checkpoints',
-                                        yaxis_title=metric,
-                                        width=1200,
-                                        height=800)
+
+        # Add trace for each model
+        fig.add_trace(go.Scatter(x=checkpoints_number, y=scores, mode='lines+markers', name=name))
+
+    # Update layout
+    fig.update_layout(
+        title=title,
+        xaxis_title='Checkpoints',
+        yaxis_title=metric,
+        width=1200,
+        height=800
+    )
 
     if output_path is None:
         # Save the plot
         output_path = f"./plots/{task}_{metric}.png"
-    # Save the plot
-    os.makedirs(os.path.dirname(output_path), exist_ok=True)
-    plt.graph_objs.Figure.write_image(output_path)
+        os.makedirs(os.path.dirname(output_path), exist_ok=True)
+    fig.write_image(output_path)  # Save as an image if output_path is provided
 
 
 
-def plot_scores(model_path, task='mmlu', metric='acc', output_path=None):
+
+def plot_scores(model_path, task='mmlu', metric='acc', output_path=None, name=None, title=None):
+    if name is None:
+        name = model_path.split('/')[-1]
+    if title is None:
+        title = f'Model: {name}\n{task.capitalize()} {metric} scores'
     scores = read_metrics(model_path, task, metric)
     checkpoints = get_checkpoints(model_path)
     checkpoints_number = [int(f.split('-')[-1]) for f in checkpoints]
@@ -94,7 +115,7 @@ def plot_scores(model_path, task='mmlu', metric='acc', output_path=None):
     fig = plt.graph_objs.Figure()
     fig.add_trace(plt.graph_objs.Scatter(x=checkpoints_number, y=scores))
     # Add title and labels
-    fig.update_layout(title=f'{task} {metric} scores',
+    fig.update_layout(title=title,
                       xaxis_title='Checkpoints',
                       yaxis_title=metric,
                       width=1200,
@@ -112,11 +133,16 @@ def plot_scores(model_path, task='mmlu', metric='acc', output_path=None):
 @click.option('--task', help='Task to plot', default='mmlu')
 @click.option('--metric', help='Metric to plot', default='f1_mean')
 @click.option('--output_path', help='Output path')
-def main(model_path, task='mmlu', metric='acc', output_path='plots'):
+@click.option('--names', help='Names of the model in the comparison')
+@click.option('--title', help='Title of the plot', default='Amazing plot')
+def main(model_path, task='mmlu', metric='acc', output_path=None, names=None, title=None):
     if ',' in model_path:
         models = model_path.split(',')
-        plot_comparison(models, task, metric, output_path)
-    plot_scores(model_path, task, metric, output_path)
+        if names is not None:
+            names = names.split(',')
+        plot_comparison(models, task, metric, output_path, names, title)
+    else:
+        plot_scores(model_path, task, metric, output_path, names, title)
 
 
 if __name__ == '__main__':
