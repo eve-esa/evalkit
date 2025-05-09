@@ -6,6 +6,8 @@ from datasets import load_dataset
 from tqdm import tqdm
 import torch
 import click
+import wandb
+
 
 
 def load_checkpoint_model(model_path: str) -> tuple[AutoModelForCausalLM, AutoTokenizer]:
@@ -39,6 +41,26 @@ def lm_eval(model_path, output_path=None, tasks=['mmlu']):
 
 
 
+def load_on_wandb(step: int, metrics: dict, wandb_id: str, metric_prefix: str = 'eval_'):
+    """
+    Logs evaluation metrics to an existing Weights & Biases run.
+
+    Args:
+        step (int): The training or evaluation step number.
+        metrics (dict): A dictionary of evaluation metrics to log.
+        wandb_id (str): The unique ID of the wandb run.
+    """
+    wandb.init(id=wandb_id, resume="allow", reinit=True)
+
+    # Add the prefix to the metrics
+    metrics = {f"{metric_prefix}{k}": v for k, v in metrics.items()}
+
+    # Log metrics at the specified step
+    wandb.log(metrics, step=step)
+
+    wandb.finish()
+
+
 def evaluate_model(model_path: str, tasks=None):
     # Load environment variables
     # dotenv.load_dotenv()
@@ -56,7 +78,7 @@ def evaluate_model(model_path: str, tasks=None):
     lm_eval(model_path, output, tasks=tasks)
 
 
-def eval_all_checkpoints(model_path: str, metrics=None):
+def eval_all_checkpoints(model_path: str, metrics=None, wandb_id=None):
     if metrics is None:
         metrics = ['mmlu']
     checkpoints = get_checkpoints_path(model_path)
@@ -76,12 +98,13 @@ def get_checkpoints_path(model_path: str):
 @click.option('--model_path', help='Path to the model checkpoint')
 @click.option('--tasks', help='Metrics to evaluate', default='all')
 @click.option('--run_folder', help='Run evaluation on all checkpoints', is_flag=True)
-def main(model_path, run_folder, tasks='all'):
+@click.option('--wandb_id', help='Id of the wandb run to upload to', default=None)
+def main(model_path, run_folder, tasks='all', wandb_id=None):
 
     # Parse tasks by comma
     tasks = tasks.split(',')
     if run_folder:
-        eval_all_checkpoints(model_path, tasks)
+        eval_all_checkpoints(model_path, tasks, wandb_id=wandb_id)
     else:
         evaluate_model(model_path, tasks)
 

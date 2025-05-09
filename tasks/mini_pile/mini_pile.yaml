@@ -1,8 +1,7 @@
 task: mini_pile
 dataset_path: JeanKaddour/minipile
-dataset_name: minipile
 output_type: loglikelihood_rolling
-test_split: validation
+test_split: 'validation'
 doc_to_text: ""
 doc_to_target: "{{text}}"
 should_decontaminate: true
