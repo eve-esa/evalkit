@@ -38,21 +38,6 @@ def lm_eval(model_path, output_path=None, tasks=['mmlu']):
     os.system(f"rm -r {os.path.join(output_path, tmp_dir)}")
 
 
-def mmlu_eval(model_path, output_path=None, file_name='mmlu.json'):
-    if output_path is None:
-        output_path = os.path.join(model_path, 'evaluation')
-
-    os.system(
-        f"lm_eval --model vllm --model_args pretrained={model_path} --tasks mmlu  --output_path {output_path}")
-
-    model_name = model_path.split('/')[-1]
-    # Workaround to get the output file since lm_eval ignores the output_path argument
-    tmp_dir = [x for x in os.listdir(output_path) if model_name in x][0]
-    result_file = [x for x in os.listdir(os.path.join(output_path, tmp_dir)) if 'results' in x][0]
-
-    os.system(f"mv {os.path.join(output_path, tmp_dir, result_file)} {os.path.join(output_path, file_name)}")
-    os.system(f"rm -r {os.path.join(output_path, tmp_dir)}")
-
 
 def evaluate_model(model_path: str, tasks=None):
     # Load environment variables
