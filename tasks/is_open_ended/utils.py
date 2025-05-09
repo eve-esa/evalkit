@@ -65,7 +65,7 @@ def get_chat_completion(prompt: list[dict[str, str]]) -> str:
     while attempt < max_retries:
         try:
             response = client.chat.completions.create(messages=prompt,
-                                                        model='gpt-4-turbo')
+                                                        model='gpt-4o-mini-2024-07-18')
             return response.choices[0].message.content
         except Exception as e:
             print(f"An error occurred: {str(e)}")
