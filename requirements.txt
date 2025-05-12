@@ -8,3 +8,4 @@ tqdm
 bert_score
 click
 openai
+wandb==
