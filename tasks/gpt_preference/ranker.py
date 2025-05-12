@@ -1,10 +1,14 @@
 import json
 from random import random
 from typing import Dict, Tuple
+from pydantic import BaseModel
+from pydantic import Field
 
 from openai import OpenAI
 import os
 
+class Answer(BaseModel):
+    answer: str = Field(..., description="Answer to the question.")
 
 class GPTPreferenceRanker:
     def __init__(self):

@@ -1,8 +1,10 @@
-task: is_open_ended
+task: gpt_preference
 dataset_path: 'eve-esa/llama-rag'
 test_split: 'train'
-doc_to_target: !function gpt_preference.create_context_prompt
+doc_to_text: !function utils.create_context_prompt
+doc_to_target: '{{original_answer}}'
 process_results: !function utils.process_results
+apply_chat_template: true
 metric_list:
   - metric: 'win'
     aggregation: mean
