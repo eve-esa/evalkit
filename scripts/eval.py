@@ -39,9 +39,16 @@ def lm_eval(model_path, output_path=None, tasks=['mmlu']):
     os.system(f"mv {os.path.join(output_path, tmp_dir, result_file)} {os.path.join(output_path, file_name)}")
     os.system(f"rm -r {os.path.join(output_path, tmp_dir)}")
 
+    # Read the evaluation results
+    with open(os.path.join(output_path, file_name)) as f:
+        results = json.load(f)
+
+    return results
 
 
-def load_on_wandb(step: int, metrics: dict, wandb_id: str, metric_prefix: str = 'eval_'):
+
+
+def load_on_wandb(results: dict, wandb_id: str, metric_prefix: str = 'eval_', step: int = None):
     """
     Logs evaluation metrics to an existing Weights & Biases run.
 
@@ -50,10 +57,17 @@ def load_on_wandb(step: int, metrics: dict, wandb_id: str, metric_prefix: str = 
         metrics (dict): A dictionary of evaluation metrics to log.
         wandb_id (str): The unique ID of the wandb run.
     """
-    wandb.init(id=wandb_id, resume="allow", reinit=True)
+    run = wandb.init(id=wandb_id, resume="allow", reinit=True)
+
+    if step is None:
+        # Access history
+        api = wandb.Api()
+        api_run = api.run(f"{run.entity}/{run.project}/{run.id}")
+        history = api_run.history()
+        step = history["_step"].dropna().max()
 
     # Add the prefix to the metrics
-    metrics = {f"{metric_prefix}{k}": v for k, v in metrics.items()}
+    metrics = {f"{metric_prefix}{k}": v for k, v in results.items()}
 
     # Log metrics at the specified step
     wandb.log(metrics, step=step)
@@ -61,7 +75,7 @@ def load_on_wandb(step: int, metrics: dict, wandb_id: str, metric_prefix: str = 
     wandb.finish()
 
 
-def evaluate_model(model_path: str, tasks=None):
+def evaluate_model(model_path: str, tasks=None, wandb_id=None):
     # Load environment variables
     # dotenv.load_dotenv()
     if tasks is None:
@@ -75,7 +89,14 @@ def evaluate_model(model_path: str, tasks=None):
     #if os.path.exists(os.path.join(output, file_name)):
    #     print(f"Metrics already computed for {model_path}")
    # else:
-    lm_eval(model_path, output, tasks=tasks)
+    results = lm_eval(model_path, output, tasks=tasks)
+    if 'checkpoint' in model_path:
+        step = int(model_path.split('/')[-1].split('-')[-1])
+    else:
+        step = None
+
+    if wandb_id is not None:
+        load_on_wandb(results, wandb_id, metric_prefix='eval_', step=step)
 
 
 def eval_all_checkpoints(model_path: str, metrics=None, wandb_id=None):
@@ -83,7 +104,7 @@ def eval_all_checkpoints(model_path: str, metrics=None, wandb_id=None):
         metrics = ['mmlu']
     checkpoints = get_checkpoints_path(model_path)
     for checkpoint in checkpoints:
-        evaluate_model(checkpoint, metrics)
+        evaluate_model(checkpoint, metrics, wandb_id=wandb_id)
 
 
 def get_checkpoints_path(model_path: str):
