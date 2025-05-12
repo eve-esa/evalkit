@@ -1,13 +1,10 @@
 import os
-import pandas as pd
 import json
 from transformers import AutoModelForCausalLM, AutoTokenizer
-from datasets import load_dataset
-from tqdm import tqdm
 import torch
 import click
 import wandb
-
+import pathlib
 
 
 def load_checkpoint_model(model_path: str) -> tuple[AutoModelForCausalLM, AutoTokenizer]:
@@ -27,8 +24,11 @@ def lm_eval(model_path, output_path=None, tasks=['mmlu']):
     file_name = ','.join(tasks) + '.json'
 
     tasks_str = ','.join(tasks)
+    script_path = pathlib.Path(__file__).parent.resolve()
+    parent_path = script_path.parent
+    tasks_path = parent_path / 'tasks'
     os.system(
-        f"lm_eval --model vllm --model_args pretrained={model_path} --tasks {tasks_str} --output_path {output_path}")
+        f"lm_eval --model vllm --model_args pretrained={model_path} --tasks {tasks_str} --output_path {output_path} --include_path tasks_path")
 
     model_name = model_path.split('/')[-1]
     # Workaround to get the output file since lm_eval ignores the output_path argument
