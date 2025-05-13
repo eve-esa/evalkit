@@ -18,7 +18,7 @@ def load_checkpoint_model(model_path: str) -> tuple[AutoModelForCausalLM, AutoTo
 
 
 
-def lm_eval(model_path, output_path=None, tasks=['mmlu']):
+def lm_eval(model_path, output_path=None, tasks=['mmlu'], apply_chat_template=False):
     if output_path is None:
         output_path = os.path.join(model_path, 'evaluation')
     file_name = ','.join(tasks) + '.json'
@@ -27,8 +27,9 @@ def lm_eval(model_path, output_path=None, tasks=['mmlu']):
     script_path = pathlib.Path(__file__).parent.resolve()
     parent_path = script_path.parent
     tasks_path = parent_path / 'tasks'
+    chat_template = '--apply_chat_template' if apply_chat_template else ''
     os.system(
-        f"lm_eval --model vllm --model_args pretrained={model_path} --tasks {tasks_str} --output_path {output_path} --include_path tasks_path")
+        f"lm_eval --model hf --model_args pretrained={model_path} --tasks {tasks_str} --output_path {output_path} --include_path {tasks_path} {chat_template}")
 
     model_name = model_path.split('/')[-1]
     # Workaround to get the output file since lm_eval ignores the output_path argument
@@ -41,7 +42,7 @@ def lm_eval(model_path, output_path=None, tasks=['mmlu']):
 
     # Read the evaluation results
     with open(os.path.join(output_path, file_name)) as f:
-        results = json.load(f)
+        results = json.load(f)['results']
 
     return results
 
@@ -57,7 +58,7 @@ def load_on_wandb(results: dict, wandb_id: str, metric_prefix: str = 'eval_', st
         metrics (dict): A dictionary of evaluation metrics to log.
         wandb_id (str): The unique ID of the wandb run.
     """
-    run = wandb.init(id=wandb_id, resume="allow", reinit=True)
+    run = wandb.init(id=wandb_id, resume="must")
 
     if step is None:
         # Access history
@@ -69,13 +70,38 @@ def load_on_wandb(results: dict, wandb_id: str, metric_prefix: str = 'eval_', st
     # Add the prefix to the metrics
     metrics = {f"{metric_prefix}{k}": v for k, v in results.items()}
 
+    # define our custom x axis metric
+    wandb.define_metric("eval/step")
+    wandb.define_metric("eval/*", step_metric="eval/step")
+
+    # Add step to the metric
+    metrics['eval/step'] = step
     # Log metrics at the specified step
-    wandb.log(metrics, step=step)
+    wandb.log(metrics)
 
     wandb.finish()
 
 
-def evaluate_model(model_path: str, tasks=None, wandb_id=None):
+def process_metric_names(results: dict) -> dict:
+    flattened_results = {}
+    for task_name, results in results.items():
+        new_results = {}
+        # Remove alias if present from the keys of the dict
+        if 'alias' in results:
+            del results['alias']
+        # For each key keep only the left part before the ','
+        for key in results.keys():
+            new_key = f"{task_name}"
+            if ',' in key:
+                new_key = new_key + '_' + key.split(',')[0]
+            else:
+                new_key = new_key + '_' + key
+            new_results[new_key] = results[key]
+        flattened_results.update(new_results)
+    return flattened_results
+
+
+def evaluate_model(model_path: str, tasks=None, wandb_id=None, apply_chat_template=False):
     # Load environment variables
     # dotenv.load_dotenv()
     if tasks is None:
@@ -86,20 +112,22 @@ def evaluate_model(model_path: str, tasks=None, wandb_id=None):
     os.makedirs(output, exist_ok=True)
     # Check if the metric is already computed
     file_name = ','.join(tasks) + '.json'
-    #if os.path.exists(os.path.join(output, file_name)):
-   #     print(f"Metrics already computed for {model_path}")
-   # else:
-    results = lm_eval(model_path, output, tasks=tasks)
+    # if os.path.exists(os.path.join(output, file_name)):
+    #     print(f"Metrics already computed for {model_path}")
+    # else:
+    results = lm_eval(model_path, output, tasks=tasks, apply_chat_template=apply_chat_template)
+    results = process_metric_names(results)
+
     if 'checkpoint' in model_path:
+        # Take last part of the path
         step = int(model_path.split('/')[-1].split('-')[-1])
     else:
         step = None
 
     if wandb_id is not None:
-        load_on_wandb(results, wandb_id, metric_prefix='eval_', step=step)
+        load_on_wandb(results, wandb_id, metric_prefix='eval/', step=step)
 
-
-def eval_all_checkpoints(model_path: str, metrics=None, wandb_id=None):
+def eval_all_checkpoints(model_path: str, metrics=None, wandb_id=None, apply_chat_template=False):
     if metrics is None:
         metrics = ['mmlu']
     checkpoints = get_checkpoints_path(model_path)
@@ -120,14 +148,15 @@ def get_checkpoints_path(model_path: str):
 @click.option('--tasks', help='Metrics to evaluate', default='all')
 @click.option('--run_folder', help='Run evaluation on all checkpoints', is_flag=True)
 @click.option('--wandb_id', help='Id of the wandb run to upload to', default=None)
-def main(model_path, run_folder, tasks='all', wandb_id=None):
+@click.option('--apply_chat_template', is_flag=True)
+def main(model_path, run_folder, tasks='all', wandb_id=None, apply_chat_template=False):
 
     # Parse tasks by comma
     tasks = tasks.split(',')
     if run_folder:
-        eval_all_checkpoints(model_path, tasks, wandb_id=wandb_id)
+        eval_all_checkpoints(model_path, tasks, wandb_id, apply_chat_template)
     else:
-        evaluate_model(model_path, tasks)
+        evaluate_model(model_path, tasks, wandb_id, apply_chat_template)
 
 
 if __name__ == '__main__':
