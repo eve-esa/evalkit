@@ -8,4 +8,5 @@ tqdm
 bert_score
 click
 openai
-wandb==
+transformers
+langchain_core

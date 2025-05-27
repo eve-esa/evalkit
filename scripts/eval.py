@@ -5,17 +5,7 @@ import torch
 import click
 import wandb
 import pathlib
-
-
-def load_checkpoint_model(model_path: str) -> tuple[AutoModelForCausalLM, AutoTokenizer]:
-    # local_path = f"{path}/model-out/{checkpoint_name}/"
-    # local_path = f"{path}/{checkpoint_name}/"
-    model = AutoModelForCausalLM.from_pretrained(model_path, device_map='auto', torch_dtype=torch.bfloat16)
-    tokenizer = AutoTokenizer.from_pretrained("meta-llama/Llama-3.1-8B", token=os.environ["HF_TOKEN"],
-                                              padding_side='left')
-
-    return tokenizer, model
-
+from peft import PeftConfig
 
 
 def lm_eval(model_path, output_path=None, tasks=['mmlu'], apply_chat_template=False):
@@ -28,8 +18,20 @@ def lm_eval(model_path, output_path=None, tasks=['mmlu'], apply_chat_template=Fa
     parent_path = script_path.parent
     tasks_path = parent_path / 'tasks'
     chat_template = '--apply_chat_template' if apply_chat_template else ''
-    os.system(
-        f"lm_eval --model hf --model_args pretrained={model_path} --tasks {tasks_str} --output_path {output_path} --include_path {tasks_path} {chat_template}")
+
+    # Check if peft model by checking if there is an adapter file in directory
+    files = os.listdir(model_path)
+    if any('adapter' in file for file in files):
+        # Load adapter config to find correct base model
+        peft_config = PeftConfig.from_pretrained(model_path)
+        base_model_id = peft_config.base_model_name_or_path
+        cmd = f'lm_eval --model hf --model_args pretrained={base_model_id},peft={model_path} --tasks {tasks_str} --output_path {output_path} --include_path {tasks_path} {chat_template}'
+    else:
+        cmd = f'lm_eval --model hf --model_args pretrained={model_path} --tasks {tasks_str} --output_path {output_path} --include_path {tasks_path} {chat_template}'
+
+
+
+    os.system(cmd)
 
     model_name = model_path.split('/')[-1]
     # Workaround to get the output file since lm_eval ignores the output_path argument
