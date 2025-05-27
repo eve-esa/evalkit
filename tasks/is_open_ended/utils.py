@@ -5,7 +5,12 @@ from openai import OpenAI
 import time
 import os
 import logging
+from sentence_transformers import SentenceTransformer, util
 
+
+# Load indus model
+model = SentenceTransformer("nasa-impact/nasa-smd-ibm-st-v2")
+# Load benchmarks
 bertscore = evaluate.load("bertscore", lang="en-sci")
 bleu = evaluate.load("bleu")
 #bleurt = evaluate.load("bleurt", module_type="metric")
@@ -115,6 +120,13 @@ def bleu_metric(predictions: list[str], references: list[list[str]], threshold=0
     return result
 
 
+def similarity_metric(prediction: list[str], references: list[str]) -> dict[str, float]:
+    prediction_embd = model.encode(prediction)
+    references_embd = model.encode(references)
+    cosine_scores = util.cos_sim(prediction_embd, references_embd)
+    return {'similarity_score': cosine_scores.item()}
+
+
 #def bleurt_metric(predictions: list[str], references: list[str], threshold=0.50) -> dict[str, float]:
 #    result = bleurt.compute(predictions=predictions, references=references)
 #    score = result['scores'][0]
@@ -129,10 +141,12 @@ def process_results(doc, results):
     bertscore_results = bertscore_metric(predictions=results, references=[doc['answer']])
     # bleurt_results = bleurt_metric(predictions=results, references=[doc['answer']])
     llm_result = llm_as_judge(doc['question'], results[0], doc['answer'])
+    sim_score = similarity_metric(prediction=results, references=[doc['answer']])
 
     #dict_results.update(bleu_score)
     dict_results.update(bertscore_results)
     dict_results.update(llm_result)
+    dict_results.update(sim_score)
 
     return dict_results
 
