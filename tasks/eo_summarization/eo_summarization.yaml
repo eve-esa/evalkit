@@ -1,20 +1,10 @@
-task: gpt_preference
+task: eo_summarization
 dataset_path: 'eve-esa/summarization_ds_10k_sample_split'
 test_split: 'dev'
-doc_to_text: 'Summarize the following the following document: \n{{input}}'
+doc_to_text: 'Summarize the following document: \n{{input}}'
 doc_to_target: '{{output}}'
-process_results: !function utils.process_results
 gen_prefix: 'Summary: '
-metric_list:
-  - metric: cosine_sim
-    aggregation: mean
-    higher_is_better: true
-  - metric: rouge1
-    aggregation: mean
-    higher_is_better: true
-  - metric: rougeL
-    aggregation: mean
-    higher_is_better: true
+process_results: !function utils.process_results
 metadata:
   version: 2.0
 dataset_kwargs:

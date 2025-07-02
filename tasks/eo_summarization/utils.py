@@ -1,17 +1,16 @@
 from metrics.metrics import bertscore_indus, rouge, cosine_sim
 from metrics.llm_judge.correctness import LLMCorrectnessEvaluator
 
-prompt_path = 'metrics/llm_judge/prompts/qa_eval.yaml'
+prompt_path = 'metrics/llm_judge/prompts/summary_eval.yaml'
 
 def process_results(doc, results):
-    reference = [doc['answer']]
-    rouge_score = rouge(reference, results)
+    reference = [doc['output']]
     cosine_score = cosine_sim(reference, results)
     bertscore_score = bertscore_indus(reference, results)
 
-    judge = LLMCorrectnessEvaluator(prompt_path=prompt_path, results_file='test.txt')
+    judge = LLMCorrectnessEvaluator(prompt_path=prompt_path)
 
-    sample = {'question': doc['question'], 'output': results[0], 'reference': doc['answer']}
+    sample = {'prediction': results[0], 'reference': doc['output']}
 
     judge_score = judge.judge(sample)
 
@@ -19,7 +18,7 @@ def process_results(doc, results):
         'cosine_sim': cosine_score,
         'llm_judge': judge_score
     }
-    scores.update(rouge_score)
+    #scores.update(rouge_score)
     scores.update(bertscore_score)
 
     return scores

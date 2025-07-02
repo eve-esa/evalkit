@@ -8,11 +8,16 @@ from langchain_core.output_parsers import PydanticOutputParser
 from pydantic import BaseModel
 from pydantic import Field
 
+from metrics.metrics import bertscore_indus, rouge, cosine_sim
+from metrics.llm_judge.correctness import LLMCorrectnessEvaluator
+
 from openai import OpenAI
 import os
 
+
 class Answer(BaseModel):
     answer: str = Field(..., description="Answer to the question.")
+
 
 class GPTPreferenceRanker:
     def __init__(self):
@@ -156,7 +161,6 @@ class GPTPreferenceRanker:
             print(f"Response was: {response}")
             return response, {}
 
-
     def translate_rankings(self, ranking: Dict[str, int], mapping: Dict[str, str]) -> Dict[str, int]:
         """
         Translate the rankings from the shuffled order back to the original.
@@ -236,7 +240,8 @@ parser = PydanticOutputParser(pydantic_object=Answer)
 def create_context_prompt(doc) -> str:
     context = doc['context']
     question = doc['question']
-    formatted_prompt = prompt.format(context=context, question=question, format_instructions=parser.get_format_instructions())
+    formatted_prompt = prompt.format(context=context, question=question,
+                                     format_instructions=parser.get_format_instructions())
     print(formatted_prompt)
 
     return formatted_prompt
@@ -261,17 +266,54 @@ def process_answer(answer):
     return ""
 
 
+def process_answer(answer):
+    # Try JSON-style answers first
+    json_answer_match = re.search(r'"answer"\s*:\s*"((?:[^"\\]|\\.)*)"', answer)
+    if json_answer_match:
+        return json_answer_match.group(1).strip()
+
+    # Try plain format like: "Answer: ..."
+    plain_answer_match = re.search(r'Answer\s*:\s*(.*)', answer)
+    if plain_answer_match:
+        return plain_answer_match.group(1).strip()
+
+    # Otherwise, fallback to last non-empty line (excluding the prompt)
+    lines = [line.strip() for line in answer.strip().splitlines() if line.strip()]
+    if lines:
+        return lines[-1]
+
+    return ""
+
+
+prompt_path = 'metrics/llm_judge/prompts/qa_eval.yaml'
+
 def process_results(doc, results):
-    model_pred = results[0]
-    print('Model prediction: ', model_pred)
-    model_answer = process_answer(model_pred)
-    print('Model answer processed: ', model_answer)
+    reference = [doc['answer']]
+    results = [process_answer(results[0])]
+    print('GPT answer: ', results[0])
+
+    rouge_score = rouge(reference, results)
+    cosine_score = cosine_sim(reference, results)
+    bertscore_score = bertscore_indus(reference, results)
+
+    judge = LLMCorrectnessEvaluator(prompt_path=prompt_path, results_file='test.txt')
+
     ranker = GPTPreferenceRanker()
-    result = ranker.evaluate(model_answer, doc['answer'], doc['original_answer'])
 
-    if result != 1:
-        result = 0
+    sample = {'question': doc['question'], 'output': results[0], 'reference': doc['answer']}
 
-    return {'win': result}
+    judge_score = judge.judge(sample)
+    preference = ranker.evaluate(results[0], doc['answer'], doc['answer'])
+    if preference != 1:
+        preference = 0
+    scores = {
+        'cosine_sim': cosine_score,
+        'llm_judge': judge_score,
+        'win':preference
+    }
+    scores.update(rouge_score)
+    scores.update(bertscore_score)
+
+    return scores
 
 
