@@ -296,7 +296,7 @@ def process_results(doc, results):
     cosine_score = cosine_sim(reference, results)
     bertscore_score = bertscore_indus(reference, results)
 
-    judge = LLMCorrectnessEvaluator(prompt_path=prompt_path, results_file='test.txt')
+    judge = LLMCorrectnessEvaluator(prompt_path=prompt_path)
 
     ranker = GPTPreferenceRanker()
 
