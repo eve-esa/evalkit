@@ -6,32 +6,7 @@ doc_to_target: '{{answer}}'
 gen_prefix: 'A: '
 description: "Answer these questions:\n"
 process_results: !function utils.process_results
-metric_list:
-  - metric: 'bertscore_f1'
-    aggregation: mean
-    higher_is_better: true
-  - metric: 'bertscore_precision'
-    aggregation: mean
-    higher_is_better: true
-  - metric: 'bertscore_recall'
-    aggregation: mean
-    higher_is_better: true
-  - metric: 'bertscore_accuracy'
-    aggregation: mean
-    higher_is_better: true
-  - metric: 'llm_judge_accuracy'
-    aggregation: mean
-    higher_is_better: true
-#  - metric: 'llm_judge_accuracy_2'
-#    aggregation: mean
-#  - metric: 'bleu_score'
-#    aggregation: mean
-#  - metric: 'bleurt_score'
-#    aggregation: mean
-#  - metric: 'bleu_accuracy'
-#    aggregation: mean
-#  - metric: 'bleurt_accuracy'
-#    aggregation: mean
+
 metadata:
   version: 2.0
 dataset_kwargs:

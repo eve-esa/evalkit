@@ -1,4 +1,4 @@
-task: gpt_preference
+task: is_open_ended_hard
 dataset_path: 'eve-esa/llama-rag'
 test_split: 'train'
 doc_to_text: !function utils.create_context_prompt
