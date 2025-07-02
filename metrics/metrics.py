@@ -58,3 +58,21 @@ def test_metric(references, predictions):
 
 
 
+def subset_accuracy(references, predictions):
+    correct_count = 0
+    for correct, pred in zip(references, predictions):
+        if set(correct) == set(pred):
+            correct_count += 1
+    return correct_count / len(references)
+
+
+def jaccard_index(references, predictions):
+    jaccard_scores = []
+    for correct, pred in zip(references, predictions):
+        intersection = len(set(correct) & set(pred))
+        union = len(set(correct) | set(pred))
+        jaccard_scores.append(intersection / union)
+
+    if len(jaccard_scores) == 0:
+        return 0
+    return sum(jaccard_scores) / len(jaccard_scores)

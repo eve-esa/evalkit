@@ -16,7 +16,7 @@ aws s3 cp s3://llm4eo-s3/eve_checkpoint_data/{your_folder} . --recursive --exclu
 Init local env
 ```bash
 python -m venv venv
-source venv
+source venv/bin/activate
 ```
 
 Install requirements
