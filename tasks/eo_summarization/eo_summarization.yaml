@@ -1,0 +1,11 @@
+task: eo_summarization
+dataset_path: 'eve-esa/summarization_ds_10k_sample_split'
+test_split: 'dev'
+doc_to_text: 'Summarize the following document: \n{{input}}'
+doc_to_target: '{{output}}'
+gen_prefix: 'Summary: '
+process_results: !function utils.process_results
+metadata:
+  version: 2.0
+dataset_kwargs:
+  trust_remote_code: true

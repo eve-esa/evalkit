@@ -29,18 +29,18 @@ export HF_TOKEN=<your_hf_token>
 To evaluate a specific model checkpoint:
 
 ```bash
-python script.py --model_path /path/to/model --metric all
+python script.py --model_path /path/to/model --tasks mmlu
 ```
 
 To evaluate all checkpoints in a given folder:
 
 ```bash
-python script.py --model_path /path/to/run --run_folder
+python script.py --model_path /path/to/run --run_folder tasks mmlu,gpqa
 ```
 
 ### Arguments
 
 - `--model_path` (str): Path to the model checkpoint.
-- `--metric` (str, default: `all`): Evaluation metric (`mmlu`, `qa50`, or `all`).
+- `--tasks` (str, default: `mmlu`): separe them with a comma as `mmlu,gpqa`.
 - `--run_folder` (flag): Run evaluation on all checkpoints in the given model path.
 
