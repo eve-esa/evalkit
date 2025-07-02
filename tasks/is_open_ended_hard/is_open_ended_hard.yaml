@@ -4,7 +4,7 @@ test_split: 'train'
 doc_to_text: !function utils.create_context_prompt
 doc_to_target: '{{original_answer}}'
 process_results: !function utils.process_results
-gen_prefix: 'Output: '
+gen_prefix: 'Answer: '
 metric_list:
   - metric: 'win'
     aggregation: mean

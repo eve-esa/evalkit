@@ -19,6 +19,22 @@ class Answer(BaseModel):
     answer: str = Field(..., description="Answer to the question.")
 
 
+
+logging.getLogger("openai").setLevel(logging.ERROR)
+
+# Get the directory of the current script
+script_dir = os.path.dirname(os.path.abspath(__file__))
+
+# Build the full path to the file
+file_path = os.path.join(script_dir, "prompt")
+
+# Now load the file
+with open(file_path, 'r') as f:
+    prompt = f.read()
+
+parser = PydanticOutputParser(pydantic_object=Answer)
+
+
 class GPTPreferenceRanker:
     def __init__(self):
         """
@@ -123,7 +139,7 @@ class GPTPreferenceRanker:
         Returns:
             Tuple of (justification text, ranking dictionary)
         """
-        print(response)
+        #print(response)
         try:
             # Match any JSON object (flat or nested), capture as few chars as needed to include output_1 and output_2
             pattern = r'''
@@ -222,27 +238,12 @@ class GPTPreferenceRanker:
         return translated_ranking['current_model']
 
 
-logging.getLogger("openai").setLevel(logging.ERROR)
-
-# Get the directory of the current script
-script_dir = os.path.dirname(os.path.abspath(__file__))
-
-# Build the full path to the file
-file_path = os.path.join(script_dir, "prompt")
-
-# Now load the file
-with open(file_path, 'r') as f:
-    prompt = f.read()
-
-parser = PydanticOutputParser(pydantic_object=Answer)
-
 
 def create_context_prompt(doc) -> str:
     context = doc['context']
     question = doc['question']
     formatted_prompt = prompt.format(context=context, question=question,
                                      format_instructions=parser.get_format_instructions())
-    print(formatted_prompt)
 
     return formatted_prompt
 
@@ -290,7 +291,6 @@ prompt_path = 'metrics/llm_judge/prompts/qa_eval.yaml'
 def process_results(doc, results):
     reference = [doc['answer']]
     results = [process_answer(results[0])]
-    print('GPT answer: ', results[0])
 
     rouge_score = rouge(reference, results)
     cosine_score = cosine_sim(reference, results)
