@@ -28,11 +28,12 @@ def get_judge_client_and_prompt():
     global _JUDGE_CLIENT, _PROMPT_TEMPLATE
 
     if _JUDGE_CLIENT is None:
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("MISTRAL_API_KEY")
+        base_url = os.getenv("MISTRAL_BASE_URL")
         if not api_key:
-            raise ValueError("OPENAI_API_KEY environment variable not set.")
+            raise ValueError("MISTRAL_API_KEY environment variable not set.")
 
-        _JUDGE_CLIENT = OpenAI(api_key=api_key)
+        _JUDGE_CLIENT = OpenAI(api_key=api_key, base_url=base_url)
         print("Initialized LLM Judge client.")
 
     if _PROMPT_TEMPLATE is None:
