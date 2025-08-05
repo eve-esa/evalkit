@@ -88,3 +88,8 @@ Run evaluation (example with GPT)
 ``` bash
 lm_eval --model openai-completions --model_args model=gpt-4o-mini-2024-07-18  --tasks eo_summarization --include tasks
 ```
+
+Run evaluation (example with local Mistral Small)
+``` bash
+lm_eval --model vllm  --model_args pretrained=mistralai/Mistral-Small-3.2-24B-Instruct-2506,tensor_parallel_size=2,config_format=mistral,load_format=mistral,tokenizer_mode=mistral,tool_call_parser=mistral --tasks eo_summarization --include tasks
+```
