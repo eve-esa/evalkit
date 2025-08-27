@@ -76,3 +76,4 @@ def jaccard_index(references, predictions):
     if len(jaccard_scores) == 0:
         return 0
     return sum(jaccard_scores) / len(jaccard_scores)
+
