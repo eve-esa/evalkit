@@ -33,7 +33,6 @@ else
     fi
     cd "$REPO_DIR" || { echo "Failed to enter $REPO_DIR"; exit 1; }
     pip install -e .
-    pip install -e .[vllm]
 fi
 
 # Add the metrics folder to PYTHONPATH if it exists
