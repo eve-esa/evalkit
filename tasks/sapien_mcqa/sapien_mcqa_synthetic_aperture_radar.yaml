@@ -1,5 +1,5 @@
 "dataset_name": "synthetic_aperture_radar"
-"tag": "synthetic_aperture_radar"
+"tag": "synthetic_aperture_radar_mcqa"
 "include": "_sapien_mcqa_template_yaml"
-"task": "synthetic_aperture_radar"
+"task": "synthetic_aperture_radar_mcqa"
 

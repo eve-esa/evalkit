@@ -1,4 +1,4 @@
 "dataset_name": "satellite_observation"
-"tag": "satellite_observation"
+"tag": "satellite_observation_mcqa"
 "include": "_sapien_mcqa_template_yaml"
-"task": "satellite_observation"
+"task": "satellite_observation_mcqa"

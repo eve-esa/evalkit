@@ -1,4 +1,4 @@
 "dataset_name": "lidar"
-"tag": "lidar"
+"tag": "lidar_mcqa"
 "include": "_sapien_mcqa_template_yaml"
-"task": "lidar"
+"task": "lidar_mcqa"

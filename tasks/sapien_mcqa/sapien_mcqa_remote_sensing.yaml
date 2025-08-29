@@ -1,4 +1,4 @@
 "dataset_name": "remote_sensing"
-"tag": "remote_sensing"
+"tag": "remote_sensing_mcqa"
 "include": "_sapien_mcqa_template_yaml"
-"task": "remote_sensing"
+"task": "remote_sensing_mcqa"

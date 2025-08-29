@@ -1,17 +1,17 @@
 group: sapien_mcqa
 task:
-  - atmospheric_observations
-  - earth_monitoring
-  - earth_observation_and_earth_sciences
-  - environmental_monitoring
-  - geospatial_monitoring
-  - land_use_land_cover
-  - lidar
-  - miscellaneous
-  - multispectral_imaging
-  - remote_sensing
-  - satellite_observation
-  - synthetic_aperture_radar
+  - atmospheric_observations_mcqa
+  - earth_monitoring_mcqa
+  - earth_observation_and_earth_sciences_mcqa
+  - environmental_monitoring_mcqa
+  - geospatial_monitoring_mcqa
+  - land_use_land_cover_mcqa
+  - lidar_mcqa
+  - miscellaneous_mcqa
+  - multispectral_imaging_mcqa
+  - remote_sensing_mcqa
+  - satellite_observation_mcqa
+  - synthetic_aperture_radar_mcqa
 aggregate_metric_list:
   - metric: acc
     weight_by_size: True
