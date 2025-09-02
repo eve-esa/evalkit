@@ -1,0 +1,5 @@
+"dataset_name": "synthetic_aperture_radar"
+"tag": "synthetic_aperture_radar_w_context"
+"include": "_sapien_open_ended_template_yaml"
+"task": "synthetic_aperture_radar_w_context"
+

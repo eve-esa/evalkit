@@ -1,0 +1,17 @@
+group: sapien_open_ended_w_context
+task:
+  - atmospheric_observations_w_context
+  - earth_monitoring_w_context
+  - earth_observation_and_earth_sciences_w_context
+  - environmental_monitoring_w_context
+  - geospatial_monitoring_w_context
+  - land_use_land_cover_w_context
+  - lidar_w_context
+  - multispectral_imaging_w_context
+  - remote_sensing_w_context
+  - satellite_observation_w_context
+  - synthetic_aperture_radar_w_context
+aggregate_metric_list:
+  - metric: llm_judge_future
+    weight_by_size: True
+    aggregation: mean
