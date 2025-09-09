@@ -1,4 +1,4 @@
-dataset_path: eve-esa/sapien_mcqa
+dataset_path: eve-esa/sapien_mcqa_hard
 test_split: train
 fewshot_split: 'train'
 fewshot_config:

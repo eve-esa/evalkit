@@ -1,4 +1,4 @@
-group: sapien_mcqa
+group: sapien_mcqa_hard
 task:
   - atmospheric_observations_mcqa
   - earth_monitoring_mcqa
@@ -13,6 +13,6 @@ task:
   - satellite_observation_mcqa
   - synthetic_aperture_radar_mcqa
 aggregate_metric_list:
-  - metric: acc
+  - metric: exact_match
     weight_by_size: True
     aggregation: mean
