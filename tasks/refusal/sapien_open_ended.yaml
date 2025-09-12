@@ -1,0 +1,17 @@
+group: sapien_open_ended_refusal
+task:
+  - atmospheric_observations_refusal
+  - earth_monitoring_refusal
+  - earth_observation_and_earth_sciences_refusal
+  - environmental_monitoring_refusal
+  - geospatial_monitoring_refusal
+  - land_use_land_cover_refusal
+  - lidar_refusal
+  - multispectral_imaging_refusal
+  - remote_sensing_refusal
+  - satellite_observation_refusal
+  - synthetic_aperture_radar_refusal
+aggregate_metric_list:
+  - metric: llm_judge_future
+    weight_by_size: True
+    aggregation: mean
