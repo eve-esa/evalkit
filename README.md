@@ -88,3 +88,6 @@ Run evaluation (example with GPT)
 ``` bash
 lm_eval --model openai-completions --model_args model=gpt-4o-mini-2024-07-18  --tasks eo_summarization --include tasks
 ```
+
+
+## List of benchmarks available

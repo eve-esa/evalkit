@@ -5,7 +5,7 @@ doc_to_text: !function utils_open.doc_to_text_tr
 doc_to_target: '{{Answer}}'
 gen_prefix: 'A: '
 description: "Answer these questions using the provided document:\n"
-process_results: !function utils_open.process_results2
+process_results: !function utils_open.process_results
 output_type: generate_until
 generation_kwargs:
    until:

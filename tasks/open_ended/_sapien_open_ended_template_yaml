@@ -5,13 +5,12 @@ doc_to_text: "Q: {{Question}}\n"
 doc_to_target: '{{Answer}}'
 gen_prefix: 'A: '
 description: "Answer these questions:\n"
-process_results: !function utils_open.process_results2
+process_results: !function utils_open.process_results
 metric_list:
   - metric: llm_judge_future
     aggregation: !function utils_open.aggregate_llm_judge
     higher_is_better: true
     alias: llm_judge
-
 metadata:
   version: 2.1
 dataset_kwargs:
