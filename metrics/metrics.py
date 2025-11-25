@@ -2,7 +2,8 @@ from sentence_transformers import SentenceTransformer, util
 from rouge_score import rouge_scorer
 from transformers import AutoTokenizer, AutoModel
 from bert_score import score as bertscore_score
-#from llm_judge.correctness import LLMCorrectnessEvaluator
+
+# from llm_judge.correctness import LLMCorrectnessEvaluator
 # Load your custom model and tokenizer
 model_path = "nasa-impact/nasa-smd-ibm-st-v2"
 indus = SentenceTransformer("nasa-impact/nasa-smd-ibm-st-v2")
@@ -15,17 +16,18 @@ def cosine_sim(references, predictions):
     return util.cos_sim(query, targets).item()
 
 
-
-def bertscore_indus(references: list[str], predictions: list[str], threshold=0.50) -> dict[str, float]:
+def bertscore_indus(
+    references: list[str], predictions: list[str], threshold=0.50
+) -> dict[str, float]:
     # Compute BERTScore with custom model and tokenizer
     P, R, F1 = bertscore_score(
         cands=predictions,
         refs=references,
         model_type=model_path,  # Use model path here
-        num_layers=12,          # Adjust if needed for your model
+        num_layers=12,  # Adjust if needed for your model
         verbose=False,
         idf=False,
-        lang="en"
+        lang="en",
     )
 
     f1 = F1[0].item()
@@ -34,28 +36,23 @@ def bertscore_indus(references: list[str], predictions: list[str], threshold=0.5
     accuracy = 1 if f1 > threshold else 0
 
     result = {
-        'bertscore_f1': f1,
-        'bertscore_precision': precision,
-        'bertscore_recall': recall,
-        'bertscore_accuracy': accuracy
+        "bertscore_f1": f1,
+        "bertscore_precision": precision,
+        "bertscore_recall": recall,
+        "bertscore_accuracy": accuracy,
     }
     return result
 
 
-
 def rouge(references, predictions):
-    scorer = rouge_scorer.RougeScorer(['rouge1', 'rougeL'], use_stemmer=True)
+    scorer = rouge_scorer.RougeScorer(["rouge1", "rougeL"], use_stemmer=True)
     scores = scorer.score(references[0], predictions[0])
-    return {
-        'rouge1': scores['rouge1'].fmeasure,
-        'rougeL': scores['rougeL'].fmeasure
-    }
+    return {"rouge1": scores["rouge1"].fmeasure, "rougeL": scores["rougeL"].fmeasure}
 
 
 def test_metric(references, predictions):
     print(references, predictions)
     return cosine_sim(references, predictions)
-
 
 
 def subset_accuracy(references, predictions):

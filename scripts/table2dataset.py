@@ -1,10 +1,10 @@
 """
 Convert a table to a dataset format.
 """
+
 import os
 import datasets
 import mysql.connector
-
 
 
 def get_table():
@@ -20,12 +20,7 @@ def get_table():
     db_password = os.getenv("DB_PASSWORD")
     db_name = os.getenv("DB_NAME")
 
-    db_config = {
-        'host': db_host,
-        'user': db_user,
-        'password': db_password,
-        'database': db_name
-    }
+    db_config = {"host": db_host, "user": db_user, "password": db_password, "database": db_name}
     try:
         # Establish database connection
         conn = mysql.connector.connect(**db_config)
@@ -49,6 +44,7 @@ def get_table():
     except mysql.connector.Error as err:
         print(f"Database error: {err}")
         return []
+
 
 def main():
     """

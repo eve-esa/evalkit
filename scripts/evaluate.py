@@ -71,7 +71,9 @@ def _register_yaml_tags():
             raise NotImplementedError(f"Tag {node.tag} is not supported")
         return FieldReference(reference_name=node.value)
 
-    def yaml_type_conversion_tag_constructor(_: yaml.SafeLoader, node: yaml.Node) -> FieldWithMaybeType:
+    def yaml_type_conversion_tag_constructor(
+        _: yaml.SafeLoader, node: yaml.Node
+    ) -> FieldWithMaybeType:
         """Converts a field from one type to another as specified by the tag in the YAML
         file."""
         if not isinstance(node, yaml.ScalarNode):
@@ -96,7 +98,7 @@ def _register_yaml_tags():
 
 def resolve_refs(config_dict: dict) -> dict:
     """Resolve FieldReference objects in the config."""
-    constants = config_dict.get('constants', {})
+    constants = config_dict.get("constants", {})
 
     def _resolve(obj):
         if isinstance(obj, FieldReference):
@@ -143,29 +145,40 @@ def parse_task_config(task_data) -> TaskConfig:
         # Simple task name string
         return TaskConfig(name=task_data)
     elif isinstance(task_data, dict):
-        # Task with parameters
-        return TaskConfig(
-            name=task_data['name'],
-            max_tokens=task_data.get('max_tokens', 512),
-            num_fewshot=task_data.get('num_fewshot', 0),
-            temperature=task_data.get('temperature', 0.0),
-            judge_api_key=task_data.get('judge_api_key', ''),
-            judge_base_url=task_data.get('judge_base_url', ''),
-            judge_name=task_data.get('judge_name', ''),
-            limit=task_data.get('limit', None)
-        )
+        # Task with parameters - use dataclass defaults for missing values
+        # Build kwargs dict only with provided values
+        kwargs = {"name": task_data["name"]}
+
+        if "max_tokens" in task_data:
+            kwargs["max_tokens"] = task_data["max_tokens"]
+        if "num_fewshot" in task_data:
+            kwargs["num_fewshot"] = task_data["num_fewshot"]
+        if "temperature" in task_data:
+            kwargs["temperature"] = task_data["temperature"]
+        if "judge_api_key" in task_data:
+            kwargs["judge_api_key"] = task_data["judge_api_key"]
+        if "judge_base_url" in task_data:
+            kwargs["judge_base_url"] = task_data["judge_base_url"]
+        if "judge_name" in task_data:
+            kwargs["judge_name"] = task_data["judge_name"]
+        if "limit" in task_data:
+            kwargs["limit"] = task_data["limit"]
+
+        return TaskConfig(**kwargs)
     else:
         raise ValueError(f"Invalid task data: {task_data}")
 
 
 def load_samples(output_dir: str, model_name: str, task_name: str) -> list[dict] | None:
     """Load evaluation samples from JSONL files, selecting the newest version of each file."""
-    task_output_dir = Path(output_dir) / model_name.replace('/', '_') / task_name / model_name.replace('/', '__')
+    task_output_dir = (
+        Path(output_dir) / model_name.replace("/", "_") / task_name / model_name.replace("/", "__")
+    )
 
     print(f"Loading samples from: {task_output_dir}")
 
     # Find all JSONL files
-    jsonl_files = list(task_output_dir.glob('**/*.jsonl'))
+    jsonl_files = list(task_output_dir.glob("**/*.jsonl"))
     if not jsonl_files:
         print(f"Warning: No JSONL files found for {model_name} / {task_name}")
         return None
@@ -173,7 +186,7 @@ def load_samples(output_dir: str, model_name: str, task_name: str) -> list[dict]
     # Pattern to extract base name and timestamp from filename
     # Example: samples_lidar_2025-11-17T13-05-01.938804.jsonl
     # Timestamp pattern: YYYY-MM-DDTHH-MM-SS.microseconds
-    timestamp_pattern = re.compile(r'(.+)_(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d+)\.jsonl$')
+    timestamp_pattern = re.compile(r"(.+)_(\d{4}-\d{2}-\d{2}T\d{2}-\d{2}-\d{2}\.\d+)\.jsonl$")
 
     # Group files by base name and track the newest version
     file_groups = defaultdict(list)
@@ -188,8 +201,8 @@ def load_samples(output_dir: str, model_name: str, task_name: str) -> list[dict]
             try:
                 # Format: 2025-11-17T13-05-01.938804 -> 2025-11-17T13:05:01.938804
                 # Split on 'T' to separate date and time, then replace '-' with ':' only in time part
-                date_part, time_part = timestamp_str.split('T')
-                time_normalized = time_part.replace('-', ':')
+                date_part, time_part = timestamp_str.split("T")
+                time_normalized = time_part.replace("-", ":")
                 timestamp_normalized = f"{date_part}T{time_normalized}"
                 timestamp = datetime.fromisoformat(timestamp_normalized)
                 file_groups[base_name].append((timestamp, jsonl_file))
@@ -209,13 +222,15 @@ def load_samples(output_dir: str, model_name: str, task_name: str) -> list[dict]
         newest_file = files[0][1]
         selected_files.append(newest_file)
         if len(files) > 1:
-            print(f"  Found {len(files)} versions of '{base_name}', using newest: {newest_file.name}")
+            print(
+                f"  Found {len(files)} versions of '{base_name}', using newest: {newest_file.name}"
+            )
 
     # Load all samples from selected files
     all_samples = []
     for sample_file in selected_files:
         try:
-            with open(sample_file, 'r') as f:
+            with open(sample_file, "r") as f:
                 for line in f:
                     if line.strip():
                         sample = json.loads(line)
@@ -235,8 +250,7 @@ def calculate_weighted_stderr(task_stderrs, task_sizes, total_size):
     SE_combined = sqrt(sum((n_i/N)^2 * SE_i^2))
     """
     weighted_var = sum(
-        ((size / total_size) ** 2) * (stderr ** 2)
-        for stderr, size in zip(task_stderrs, task_sizes)
+        ((size / total_size) ** 2) * (stderr**2) for stderr, size in zip(task_stderrs, task_sizes)
     )
     return math.sqrt(weighted_var)
 
@@ -252,14 +266,14 @@ def add_aggregate_metrics_to_results(results_file: Path) -> bool:
     """
     try:
         # Load results
-        with open(results_file, 'r') as f:
+        with open(results_file, "r") as f:
             data = json.load(f)
     except Exception as e:
         print(f"  Warning: Failed to load results file: {e}")
         return False
 
     # Check if there are any groups
-    groups = data.get('groups', {})
+    groups = data.get("groups", {})
     if not groups:
         return False
 
@@ -268,13 +282,13 @@ def add_aggregate_metrics_to_results(results_file: Path) -> bool:
     # Process each group
     for group_name, group_data in groups.items():
         # Get subtasks for this group
-        subtasks = data.get('group_subtasks', {}).get(group_name, [])
+        subtasks = data.get("group_subtasks", {}).get(group_name, [])
         if not subtasks:
             continue
 
         # Check if aggregate metric is already present
-        group_results = data['results'].get(group_name, {})
-        if 'exact_match,get_response' in group_results:
+        group_results = data["results"].get(group_name, {})
+        if "exact_match,get_response" in group_results:
             # Metric already exists
             continue
 
@@ -285,13 +299,13 @@ def add_aggregate_metrics_to_results(results_file: Path) -> bool:
 
         for task_name in subtasks:
             # Get exact_match score
-            task_result = data['results'].get(task_name, {})
-            score = task_result.get('exact_match,get_response')
-            stderr = task_result.get('exact_match_stderr,get_response')
+            task_result = data["results"].get(task_name, {})
+            score = task_result.get("exact_match,get_response")
+            stderr = task_result.get("exact_match_stderr,get_response")
 
             # Get sample size
-            n_samples_data = data.get('n-samples', {}).get(task_name, {})
-            size = n_samples_data.get('effective', n_samples_data.get('original', 0))
+            n_samples_data = data.get("n-samples", {}).get(task_name, {})
+            size = n_samples_data.get("effective", n_samples_data.get("original", 0))
 
             if score is not None and size > 0:
                 task_scores.append(score)
@@ -304,38 +318,39 @@ def add_aggregate_metrics_to_results(results_file: Path) -> bool:
         # Calculate weighted average (weight by size)
         total_size = sum(task_sizes)
         weighted_avg = sum(
-            score * (size / total_size)
-            for score, size in zip(task_scores, task_sizes)
+            score * (size / total_size) for score, size in zip(task_scores, task_sizes)
         )
 
         # Calculate weighted standard error
         weighted_stderr = calculate_weighted_stderr(task_stderrs, task_sizes, total_size)
 
         # Update the group results
-        if group_name not in data['results']:
-            data['results'][group_name] = {}
+        if group_name not in data["results"]:
+            data["results"][group_name] = {}
 
-        data['results'][group_name]['exact_match,get_response'] = weighted_avg
-        data['results'][group_name]['exact_match_stderr,get_response'] = weighted_stderr
+        data["results"][group_name]["exact_match,get_response"] = weighted_avg
+        data["results"][group_name]["exact_match_stderr,get_response"] = weighted_stderr
 
         # Also update groups section
-        if isinstance(data['groups'][group_name], dict):
-            data['groups'][group_name]['exact_match,get_response'] = weighted_avg
-            data['groups'][group_name]['exact_match_stderr,get_response'] = weighted_stderr
+        if isinstance(data["groups"][group_name], dict):
+            data["groups"][group_name]["exact_match,get_response"] = weighted_avg
+            data["groups"][group_name]["exact_match_stderr,get_response"] = weighted_stderr
         else:
             # If groups entry is just a string, convert to dict
-            data['groups'][group_name] = {
-                'alias': group_name,
-                'exact_match,get_response': weighted_avg,
-                'exact_match_stderr,get_response': weighted_stderr
+            data["groups"][group_name] = {
+                "alias": group_name,
+                "exact_match,get_response": weighted_avg,
+                "exact_match_stderr,get_response": weighted_stderr,
             }
 
-        print(f"  ✓ Added aggregate metrics for {group_name}: {weighted_avg:.4f} ± {weighted_stderr:.4f}")
+        print(
+            f"  ✓ Added aggregate metrics for {group_name}: {weighted_avg:.4f} ± {weighted_stderr:.4f}"
+        )
         modified = True
 
     # Write back to file if modified
     if modified:
-        with open(results_file, 'w') as f:
+        with open(results_file, "w") as f:
             json.dump(data, f, indent=2)
 
     return modified
@@ -343,12 +358,14 @@ def add_aggregate_metrics_to_results(results_file: Path) -> bool:
 
 def load_eval_results(output_dir: str, model_name: str, task_name: str) -> dict | None:
     """Load evaluation results from lm_eval output directory, selecting the newest file."""
-    task_output_dir = Path(output_dir) / model_name.replace('/', '_') / task_name / model_name.replace('/', '__')
+    task_output_dir = (
+        Path(output_dir) / model_name.replace("/", "_") / task_name / model_name.replace("/", "__")
+    )
 
     print(f"Loading results from: {task_output_dir}")
 
     # Find results.json file
-    results_files = list(task_output_dir.glob('**/*.json'))
+    results_files = list(task_output_dir.glob("**/*.json"))
     if not results_files:
         print(f"Warning: No json found for {model_name} / {task_name}")
         return None
@@ -360,10 +377,10 @@ def load_eval_results(output_dir: str, model_name: str, task_name: str) -> dict 
     if len(results_files) > 1:
         print(f"  Found {len(results_files)} result files, using newest: {results_file.name}")
 
-    with open(results_file, 'r') as f:
+    with open(results_file, "r") as f:
         data = json.load(f)
 
-    return data.get('results', {})
+    return data.get("results", {})
 
 
 def flatten_metrics(results: dict, original_task_name: str) -> dict:
@@ -373,12 +390,12 @@ def flatten_metrics(results: dict, original_task_name: str) -> dict:
     for task_name, metrics in results.items():
         # Skip 'alias' and 'group' keys
         for key, value in metrics.items():
-            if key in ['alias', 'group']:
+            if key in ["alias", "group"]:
                 continue
 
             # Create hierarchical metric name: original_task/subtask/metric
             # Remove any commas from metric names (lm_eval uses commas for variants)
-            clean_key = key.split(',')[0] if ',' in key else key
+            clean_key = key.split(",")[0] if "," in key else key
 
             # If task_name is different from original_task_name, it's a subtask
             if task_name != original_task_name:
@@ -404,7 +421,7 @@ def init_wandb_for_task(wandb_config: WandbConfig, model: ModelConfig, task: Tas
             wandb.login(key=wandb_config.api_key)
 
         # Create run name: prefix_model_task
-        model_short_name = model.name.split('/')[-1]
+        model_short_name = model.name.split("/")[-1]
         run_name_parts = []
         if wandb_config.run_name:
             run_name_parts.append(wandb_config.run_name)
@@ -413,24 +430,24 @@ def init_wandb_for_task(wandb_config: WandbConfig, model: ModelConfig, task: Tas
 
         # Initialize wandb run
         run_config = {
-            'model_name': model.name,
-            'task_name': task.name,
-            'temperature': model.temperature,
-            'max_tokens': task.max_tokens,
-            'num_fewshot': task.num_fewshot,
+            "model_name": model.name,
+            "task_name": task.name,
+            "temperature": model.temperature,
+            "max_tokens": task.max_tokens,
+            "num_fewshot": task.num_fewshot,
         }
 
         wandb_init_kwargs = {
-            'project': wandb_config.project,
-            'name': run_name,
-            'config': run_config,
+            "project": wandb_config.project,
+            "name": run_name,
+            "config": run_config,
         }
 
         if wandb_config.entity:
-            wandb_init_kwargs['entity'] = wandb_config.entity
+            wandb_init_kwargs["entity"] = wandb_config.entity
 
         if wandb_config.tags:
-            wandb_init_kwargs['tags'] = wandb_config.tags
+            wandb_init_kwargs["tags"] = wandb_config.tags
 
         run = wandb.init(**wandb_init_kwargs)
         return run
@@ -454,13 +471,13 @@ def create_samples_table(samples: list[dict]) -> wandb.Table:
         all_columns.update(sample.keys())
 
         # Add doc fields with 'doc.' prefix
-        doc = sample.get('doc', {})
+        doc = sample.get("doc", {})
         if isinstance(doc, dict):
             for key in doc.keys():
-                all_columns.add(f'doc.{key}')
+                all_columns.add(f"doc.{key}")
 
     # Sort columns for consistent ordering, with important fields first
-    priority_fields = ['doc_id', 'doc.Topic', 'doc.Question', 'target', 'filtered_resps']
+    priority_fields = ["doc_id", "doc.Topic", "doc.Question", "target", "filtered_resps"]
     columns = []
 
     # Add priority fields first if they exist
@@ -478,23 +495,23 @@ def create_samples_table(samples: list[dict]) -> wandb.Table:
     # Populate table
     for sample in samples:
         row = []
-        doc = sample.get('doc', {})
+        doc = sample.get("doc", {})
 
         for col in columns:
-            if col.startswith('doc.'):
+            if col.startswith("doc."):
                 # Handle doc fields
                 field_name = col[4:]  # Remove 'doc.' prefix
-                value = doc.get(field_name, '')
+                value = doc.get(field_name, "")
             else:
                 # Handle top-level fields
-                value = sample.get(col, '')
+                value = sample.get(col, "")
 
             # Convert value to string representation for table
             if value is None:
-                row.append('')
+                row.append("")
             elif isinstance(value, list):
                 # For lists, join elements or show first element
-                if col == 'filtered_resps' and value:
+                if col == "filtered_resps" and value:
                     # For model responses, take first one
                     row.append(str(value[0]))
                 else:
@@ -519,7 +536,7 @@ def log_task_metrics_to_wandb(task_metrics: dict, model: ModelConfig, task: Task
 
     for metric_name, value in sorted(task_metrics.items()):
         # Split metric_name (format: task/metric or task/subtask/metric)
-        parts = metric_name.split('/')
+        parts = metric_name.split("/")
 
         if len(parts) == 2:
             # Format: task/metric - just use the metric name
@@ -557,21 +574,26 @@ def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str) -> int
     model_args = ",".join(model_args_parts)
 
     # Create output directory for this specific evaluation
-    task_output_dir = Path(output_dir) / model.name.replace('/', '_') / task.name
+    task_output_dir = Path(output_dir) / model.name.replace("/", "_") / task.name
     task_output_dir.mkdir(parents=True, exist_ok=True)
-
 
     # Build the command as a list (safer than shell=True)
     eval_command = [
         "lm_eval",
-        "--model", "openai-chat-completions",
-        "--model_args", model_args,
-        "--include", "tasks",
-        "--tasks", task.name,
-        "--num_fewshot", str(task.num_fewshot),
-        "--output_path", str(task_output_dir),
+        "--model",
+        "openai-chat-completions",
+        "--model_args",
+        model_args,
+        "--include",
+        "tasks",
+        "--tasks",
+        task.name,
+        "--num_fewshot",
+        str(task.num_fewshot),
+        "--output_path",
+        str(task_output_dir),
         "--log_samples",
-        "--apply_chat_template"
+        "--apply_chat_template",
     ]
     # Add limit if specified
     if task.limit is not None and task.limit > 0:
@@ -579,15 +601,15 @@ def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str) -> int
 
     # Set API key as environment variable (more secure than command line)
     env = os.environ.copy()
-    env['OPENAI_API_KEY'] = model.api_key
+    env["OPENAI_API_KEY"] = model.api_key
 
     # Set judge environment variables if provided
     if task.judge_api_key:
-        env['JUDGE_API_KEY'] = task.judge_api_key
+        env["JUDGE_API_KEY"] = task.judge_api_key
     if task.judge_base_url:
-        env['JUDGE_BASE_URL'] = task.judge_base_url
+        env["JUDGE_BASE_URL"] = task.judge_base_url
     if task.judge_name:
-        env['JUDGE_NAME'] = task.judge_name
+        env["JUDGE_NAME"] = task.judge_name
 
     print(f"\nRunning evaluation:")
     print(f"  Model: {model.name}")
@@ -597,12 +619,7 @@ def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str) -> int
     print("-" * 80)
 
     try:
-        result = subprocess.run(
-            eval_command,
-            env=env,
-            check=True,
-            capture_output=False
-        )
+        result = subprocess.run(eval_command, env=env, check=True, capture_output=False)
         print(f"✓ Completed: {model.name} on {task.name}")
         return result.returncode
     except subprocess.CalledProcessError as e:
@@ -633,7 +650,7 @@ def main(config_file: str):
     _register_yaml_tags()
 
     # Load and parse config
-    with open(config_file, 'r') as f:
+    with open(config_file, "r") as f:
         config_dict = yaml.load(f, Loader=yaml.SafeLoader)
 
     # Resolve !ref references
@@ -641,31 +658,32 @@ def main(config_file: str):
 
     # Parse wandb config if present
     wandb_config = WandbConfig()
-    if 'wandb' in config_dict:
-        wandb_data = config_dict['wandb']
+    if "wandb" in config_dict:
+        wandb_data = config_dict["wandb"]
         wandb_config = WandbConfig(
-            enabled=wandb_data.get('enabled', False),
-            project=wandb_data.get('project', 'eve-evaluation'),
-            entity=wandb_data.get('entity'),
-            run_name=wandb_data.get('run_name'),
-            tags=wandb_data.get('tags', []),
-            api_key=wandb_data.get('api_key')
+            enabled=wandb_data.get("enabled", False),
+            project=wandb_data.get("project", "eve-evaluation"),
+            entity=wandb_data.get("entity"),
+            run_name=wandb_data.get("run_name"),
+            tags=wandb_data.get("tags", []),
+            api_key=wandb_data.get("api_key"),
         )
 
     # Parse into dataclass structure
     eval_config = EvaluationConfig(
         models=[
             ModelConfig(
-                name=model['name'],
-                base_url=model['base_url'],
-                api_key=model.get('api_key', ''),
-                temperature=model.get('temperature', 0.0),
-                num_concurrent=model.get('num_concurrent', 3),
-                tasks=[parse_task_config(task) for task in model['tasks']]
-            ) for model in config_dict['models']
+                name=model["name"],
+                base_url=model["base_url"],
+                api_key=model.get("api_key", ""),
+                temperature=model.get("temperature", 0.0),
+                num_concurrent=model.get("num_concurrent", 3),
+                tasks=[parse_task_config(task) for task in model["tasks"]],
+            )
+            for model in config_dict["models"]
         ],
-        output_dir=config_dict.get('output_dir', 'eval_results'),
-        wandb=wandb_config
+        output_dir=config_dict.get("output_dir", "eval_results"),
+        wandb=wandb_config,
     )
 
     # Create output directory
@@ -691,8 +709,13 @@ def main(config_file: str):
                 continue  # Skip failed tasks
 
             print(f"\nChecking aggregate metrics for {task.name}...")
-            task_output_dir = Path(eval_config.output_dir) / model.name.replace('/', '_') / task.name / model.name.replace('/', '__')
-            results_files = list(task_output_dir.glob('**/*.json'))
+            task_output_dir = (
+                Path(eval_config.output_dir)
+                / model.name.replace("/", "_")
+                / task.name
+                / model.name.replace("/", "__")
+            )
+            results_files = list(task_output_dir.glob("**/*.json"))
             if results_files:
                 # Use the newest results file
                 results_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
@@ -765,14 +788,8 @@ def main(config_file: str):
 
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(
-        description="Run lm_eval harness based on a YAML config file"
-    )
-    parser.add_argument(
-        "config",
-        type=str,
-        help="Path to the YAML configuration file"
-    )
+    parser = argparse.ArgumentParser(description="Run lm_eval harness based on a YAML config file")
+    parser.add_argument("config", type=str, help="Path to the YAML configuration file")
 
     args = parser.parse_args()
 

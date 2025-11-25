@@ -35,9 +35,7 @@ def format_multiple_choice(question, choices):
     letters = [chr(65 + i) for i in range(len(choices))]
 
     # Build the formatted string
-    formatted_choices = "\n".join(
-        f"{letter}. {choice}" for letter, choice in zip(letters, choices)
-    )
+    formatted_choices = "\n".join(f"{letter}. {choice}" for letter, choice in zip(letters, choices))
 
     return f"{question}\n{formatted_choices}\n:"
 
@@ -60,7 +58,6 @@ def doc_to_multiple_choice(doc):
 
     # Handle multiple questions
     if isinstance(doc, list):
-        return [format_multiple_choice(item["Question"], item["choices"])
-                for item in doc]
+        return [format_multiple_choice(item["Question"], item["choices"]) for item in doc]
 
     raise ValueError("Document must be a dict or list of dicts")
