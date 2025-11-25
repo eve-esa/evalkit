@@ -1,4 +1,12 @@
+import re
+import sys
+from pathlib import Path
+
 import datasets
+
+# Add parent directory to path to import common MCQA utilities
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from mcqa_utils import extract_labels
 
 
 def subset_accuracy(references, predictions):
@@ -35,9 +43,19 @@ def doc_to_text(doc):
 
 
 def process_answer(answer):
-    answers_list = answer.split(",")
-    answers_list = [ans.strip() for ans in answers_list]
-    return answers_list
+    """
+    Process model answer to extract letter choices.
+
+    This is a wrapper around the common extract_labels function from mcqa_utils.
+
+    Handles multiple formats:
+    - Simple letters: "A", "B, C", "A,B,C"
+    - Letter with period: "D.", "A. B."
+    - Letter with full text: "D. Sea ice forms on ocean water..."
+    - Multiple letters with text: "A. text, B. more text"
+    - With prefix: "Answer: C. SIRAL"
+    """
+    return extract_labels(answer)
 
 
 def process_dataset(dataset: datasets.Dataset):

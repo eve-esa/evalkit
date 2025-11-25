@@ -9,7 +9,8 @@ process_results: !function utils_open.process_results
 output_type: generate_until
 generation_kwargs:
    until:
-     - </s>
+     - <|im_end|>
+   max_gen_toks: 50000
 metric_list:
   - metric: llm_judge_future
     aggregation: !function utils_open.aggregate_llm_judge

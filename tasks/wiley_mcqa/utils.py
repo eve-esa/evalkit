@@ -1,3 +1,22 @@
+"""
+Wiley MCQA utilities for formatting multiple choice questions.
+
+Note: Label extraction for this task is handled by the regex pattern in the YAML
+configuration file (_wiley_mcqa_template). The regex pattern is defined in the
+common mcqa_utils module (tasks/mcqa_utils.py) as LABEL_EXTRACTION_REGEX.
+
+If you need to modify label extraction logic, update the mcqa_utils module
+and the regex pattern in the YAML file accordingly.
+"""
+
+import sys
+from pathlib import Path
+
+# Add parent directory to path to import common MCQA utilities
+sys.path.insert(0, str(Path(__file__).parent.parent))
+from mcqa_utils import extract_label, LABEL_EXTRACTION_REGEX  # noqa: F401
+
+
 def format_multiple_choice(question, choices):
     """
     Format a multiple choice question with dynamic letter labels.

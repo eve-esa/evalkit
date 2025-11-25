@@ -1,1 +1,6 @@
-./lm_eval_out/
+./lm_eval_out/*
+./evaluation_results/*
+./__pycache__/*
+./evals_outputs/*/*
+.idea/*
+./notebooks/

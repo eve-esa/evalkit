@@ -11,10 +11,13 @@ metric_list:
     aggregation: !function utils_open.aggregate_llm_judge
     higher_is_better: true
     alias: llm_judge
+generation_kwargs:
+  until:
+    - "</s>"
+    - "<|im_end|>"
+  max_gen_toks: 40000
 metadata:
   version: 2.1
-dataset_kwargs:
-  trust_remote_code: true
 num_fewshot: 5
 fewshot_split: 'train'
 fewshot_config:

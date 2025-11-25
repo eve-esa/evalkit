@@ -46,7 +46,7 @@ def doc_to_text(doc: dict) -> str:
     if doc['Doc 3'] is not None:
         context += f"Document {idx}: {doc['Doc 3']}\n"
 
-    print(f"Context: {context}\n\nQuestion: {doc['Question']}\n")
+    # print(f"Context: {context}\n\nQuestion: {doc['Question']}\n")
     return f"Context: {context}\n\nQuestion: {doc['Question']}\n"
 
 
@@ -54,5 +54,5 @@ def doc_to_text_tr(doc: dict) -> str:
     """Converts a document dictionary to a text representation."""
     context = doc['Context']
 
-    print(f"Context: {context}\n\nQuestion: {doc['Question']}\n")
+    # print(f"Context: {context}\n\nQuestion: {doc['Question']}\n")
     return f"Context: {context}\n\nQuestion: {doc['Question']}\n"

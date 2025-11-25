@@ -1,4 +1,4 @@
-dataset_path: eve-esa/sapien_mcqa_hard
+dataset_path: eve-esa/sapien_mcqa_hard_filtered
 test_split: train
 fewshot_split: 'train'
 fewshot_config:
@@ -12,8 +12,11 @@ filter_list:
   - name: get_response
     filter:
       # Filter everything after the first break line
+      # This regex pattern is defined in tasks/mcqa_utils.py as LABEL_EXTRACTION_REGEX
+      # To modify label extraction logic, update the common mcqa_utils module
+      # Handles both regular format (A, A., Answer: A) and bold markdown format (**A**)
       - function: "regex"
-        regex_pattern: "^\\s*(?:Answer:\\s*)?([A-Z])(?:\\.|\\s|$)"
+        regex_pattern: "^\\s*(?:Answer:\\s*)?(?:\\*\\*([A-Z])\\*\\*|([A-Z])(?:\\.|\\s|$))"
       - function: take_first
 metadata:
   version: 3.0
