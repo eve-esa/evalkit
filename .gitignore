@@ -3,4 +3,4 @@
 ./__pycache__/*
 ./evals_outputs/*/*
 .idea/*
-./notebooks/
+/notebooks/
