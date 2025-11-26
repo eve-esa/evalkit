@@ -44,6 +44,7 @@ class ModelConfig:
     tasks: list[TaskConfig]
     temperature: float = 0.0
     num_concurrent: int = 3  # Number of concurrent API requests
+    timeout: int = 300  # Timeout in seconds (default: 300s / 5 minutes)
 
 
 @dataclasses.dataclass
@@ -570,6 +571,7 @@ def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str) -> int
         f"num_concurrent={model.num_concurrent}",
         f"max_tokens={task.max_tokens}",
         f"temperature={task.temperature if task.temperature > 0 else model.temperature}",
+        f"timeout={model.timeout}",
     ]
     model_args = ",".join(model_args_parts)
 
@@ -678,6 +680,7 @@ def main(config_file: str):
                 api_key=model.get("api_key", ""),
                 temperature=model.get("temperature", 0.0),
                 num_concurrent=model.get("num_concurrent", 3),
+                timeout=model.get("timeout", 300),
                 tasks=[parse_task_config(task) for task in model["tasks"]],
             )
             for model in config_dict["models"]
