@@ -7,7 +7,7 @@ requires-python = ">=3.10"
 dependencies = [
     "evaluate>=0.4.0",
     "numpy>=1.26.4",
-    "lm-eval @ git+https://github.com/elements72/lm-evaluation-harness.git",
+    "lm-eval @ https://github.com/eve-esa/lm-evaluation-harness.git",
     "datasets>=2.0.0",
     "torch>=2.0.0",
     "pandas>=2.0.0",
