@@ -1,0 +1,10 @@
+site_name: EVE
+site_url: https://example.com
+theme:
+  name: material
+  logo: assets/esa_logo.svg
+  favicon: assets/esa_favicon.ico
+  palette:
+      primary: custom
+extra_css:
+  - stylesheets/extra.css

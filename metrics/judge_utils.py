@@ -53,10 +53,7 @@ class LoggableFuture:
         return self.__repr__()
 
 
-def get_judge_client(
-    api_key: Optional[str] = None,
-    base_url: Optional[str] = None
-) -> OpenAI:
+def get_judge_client(api_key: Optional[str] = None, base_url: Optional[str] = None) -> OpenAI:
     """
     Initializes and returns a singleton litellm client.
 
@@ -113,7 +110,7 @@ def judge_qa_with_llm(
     sample: dict,
     model_name: Optional[str] = None,
     api_key: Optional[str] = None,
-    base_url: Optional[str] = None
+    base_url: Optional[str] = None,
 ) -> int:
     """
     Calls the LLM judge for QA evaluation with binary (0/1) scoring.
@@ -128,11 +125,7 @@ def judge_qa_with_llm(
         Integer score: 1 for correct, 0 for incorrect.
     """
     if model_name is None:
-        model_name = (
-            os.getenv("JUDGE_NAME")
-            or os.getenv("JUDGE_MODEL")
-            or "mistral-large-latest"
-        )
+        model_name = os.getenv("JUDGE_NAME") or os.getenv("JUDGE_MODEL") or "mistral-large-latest"
 
     client = get_judge_client(api_key=api_key, base_url=base_url)
     prompt_template = get_qa_prompt_template()
@@ -149,13 +142,13 @@ def judge_qa_with_llm(
                     "score": {
                         "type": "integer",
                         "enum": [0, 1],
-                        "description": "1 if correct, 0 if incorrect"
+                        "description": "1 if correct, 0 if incorrect",
                     }
                 },
                 "required": ["score"],
-                "additionalProperties": False
-            }
-        }
+                "additionalProperties": False,
+            },
+        },
     }
 
     # Simple schema for format instructions
@@ -225,13 +218,12 @@ def judge_qa_with_llm(
         return 0
 
 
-
 def process_qa_results(
     doc: dict,
     results: list[str],
     question_key: str = "question",
     answer_key: str = "answer",
-    sleep_time: float = 0.0
+    sleep_time: float = 0.0,
 ) -> dict:
     """
     Process QA results with LLM judge in background thread.
@@ -244,7 +236,7 @@ def process_qa_results(
         sleep_time: Optional delay before submitting (for rate limiting).
 
     Returns:
-        Dictionary with "llm_judge_future" key containing LoggableFuture.
+        Dictionary with "llm_as_judge" key containing LoggableFuture.
     """
     sample = {
         "question": doc[question_key],
@@ -257,8 +249,7 @@ def process_qa_results(
     if sleep_time > 0:
         time.sleep(sleep_time)
 
-    return {"llm_judge_future": LoggableFuture(future)}
-
+    return {"llm_as_judge": LoggableFuture(future)}
 
 
 def aggregate_llm_judge(items: Union[List[LoggableFuture], List[Future]]) -> float:

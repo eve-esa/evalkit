@@ -1,0 +1,28 @@
+task: hallucination_detection
+dataset_path: 'eve-esa/hallucination'
+test_split: 'train'
+doc_to_text: !function utils_hallucination.doc_to_text
+doc_to_target: 'label'
+process_results: !function utils_hallucination.process_results
+gen_prefix: 'Answer: '
+description: 'You are an expert in detecting hallucinations in Earth Observation answers. Your task is to determine if the given answer contains hallucinations (false or unsupported information). Answer with a single letter corresponding to your choice.\n'
+metric_list:
+  - metric: "acc"
+    aggregation: mean
+    higher_is_better: true
+  - metric: "f1"
+    aggregation: mean
+    higher_is_better: true
+generation_kwargs:
+  until:
+    - "</s>"
+    - "<|im_end|>"
+  max_gen_toks: 100
+metadata:
+  version: 1.0
+dataset_kwargs:
+  trust_remote_code: true
+num_fewshot: 0
+fewshot_split: 'train'
+fewshot_config:
+  sampler: first_n

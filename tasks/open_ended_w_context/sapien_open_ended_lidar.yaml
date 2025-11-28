@@ -1,4 +1,0 @@
-"dataset_name": "lidar"
-"tag": "lidar_w_context"
-"include": "_sapien_open_ended_template_yaml"
-"task": "lidar_w_context"
