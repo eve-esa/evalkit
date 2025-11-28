@@ -17,8 +17,8 @@ def doc_to_text(doc):
     - 'question': The original question
     - 'answer': The answer to evaluate for hallucination
     """
-    question = doc.get('question', '')
-    answer = doc.get('answer', '')
+    question = doc.get("Question", "")
+    answer = doc.get("Answer", "")
 
     string = f"Question: {question}\n"
     string += f"Answer: {answer}\n\n"
@@ -57,78 +57,18 @@ def map_label_to_letter(is_hallucinated):
     """
     # Handle various formats
     if isinstance(is_hallucinated, bool):
-        return 'A' if is_hallucinated else 'B'
+        return "A" if is_hallucinated else "B"
     elif isinstance(is_hallucinated, int):
-        return 'A' if is_hallucinated == 1 else 'B'
+        return "A" if is_hallucinated == 1 else "B"
     elif isinstance(is_hallucinated, str):
         # Handle string representations
         lower = is_hallucinated.lower().strip()
-        if lower in ['true', 'yes', '1', 'a', 'hallucinated']:
-            return 'A'
+        if lower in ["true", "yes", "1", "a", "hallucinated"]:
+            return "A"
         else:
-            return 'B'
+            return "B"
     else:
-        return 'B'  # Default to not hallucinated
-
-
-def calculate_f1(references, predictions):
-    """
-    Calculate F1 score for binary classification.
-
-    Args:
-        references: List of ground truth labels (letters)
-        predictions: List of predicted labels (letters)
-
-    Returns:
-        float: F1 score
-    """
-    true_positives = 0
-    false_positives = 0
-    false_negatives = 0
-
-    for ref, pred in zip(references, predictions):
-        ref_label = ref[0] if ref else 'B'
-        pred_label = pred[0] if pred else 'B'
-
-        # A = hallucinated (positive class)
-        # B = not hallucinated (negative class)
-        if ref_label == 'A' and pred_label == 'A':
-            true_positives += 1
-        elif ref_label == 'B' and pred_label == 'A':
-            false_positives += 1
-        elif ref_label == 'A' and pred_label == 'B':
-            false_negatives += 1
-
-    # Calculate F1
-    if true_positives + false_positives == 0:
-        precision = 0
-    else:
-        precision = true_positives / (true_positives + false_positives)
-
-    if true_positives + false_negatives == 0:
-        recall = 0
-    else:
-        recall = true_positives / (true_positives + false_negatives)
-
-    if precision + recall == 0:
-        return 0
-
-    f1 = 2 * (precision * recall) / (precision + recall)
-    return f1
-
-
-def calculate_accuracy(references, predictions):
-    """
-    Calculate accuracy for binary classification.
-    """
-    correct = 0
-    for ref, pred in zip(references, predictions):
-        ref_label = ref[0] if ref else 'B'
-        pred_label = pred[0] if pred else 'B'
-        if ref_label == pred_label:
-            correct += 1
-
-    return correct / len(references) if references else 0
+        return "B"  # Default to not hallucinated
 
 
 def process_results(doc: datasets.Dataset, results):
@@ -140,23 +80,39 @@ def process_results(doc: datasets.Dataset, results):
         results: Model predictions
 
     Returns:
-        dict: Metrics (accuracy and F1)
+        dict: Per-example metrics (accuracy and F1 contribution)
     """
+    print(f"Results: {results}")
     # Get model prediction
     pred_text = results[0]
     pred_labels = process_answer(pred_text)
+    print(f"Predicted labels: {pred_labels}")
+
+    # Extract the predicted label (first one if multiple, or default to "B")
+    pred_label = pred_labels[0] if pred_labels else "B"
 
     # Get ground truth label
     # The label in doc should indicate if the answer is hallucinated
     # Map it to letter format (A = hallucinated, B = not hallucinated)
-    ground_truth_label = doc.get('label', doc.get('is_hallucinated', False))
-    reference = [map_label_to_letter(ground_truth_label)]
+    ground_truth_label = doc.get("label", doc.get("is_hallucinated", True))
+    reference = map_label_to_letter(ground_truth_label)
 
-    # Calculate metrics
-    accuracy = calculate_accuracy([reference], [pred_labels])
-    f1 = calculate_f1([reference], [pred_labels])
+    # Calculate per-example accuracy (1.0 if correct, 0.0 if incorrect)
+    acc = 1.0 if pred_label == reference else 0.0
 
-    return {
-        "acc": accuracy,
-        "f1": f1
-    }
+    # For F1, we need to track TP, FP, FN separately
+    # A = hallucinated (positive class), B = not hallucinated (negative class)
+    if reference == "A" and pred_label == "A":
+        # True Positive
+        f1 = 1.0
+    elif reference == "A" and pred_label == "B":
+        # False Negative
+        f1 = 0.0
+    elif reference == "B" and pred_label == "A":
+        # False Positive
+        f1 = 0.0
+    else:
+        # True Negative
+        f1 = 1.0
+
+    return {"acc": acc, "f1": f1}
