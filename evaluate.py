@@ -734,7 +734,6 @@ def main(config_file: str):
             print(f"\nChecking aggregate metrics for {task.name}...")
             task_output_dir = (
                 Path(eval_config.output_dir)
-                / model.name.replace("/", "_")
                 / task.name
                 / model.name.replace("/", "__")
             )
