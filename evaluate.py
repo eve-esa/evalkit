@@ -653,13 +653,61 @@ def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str, hf_tok
         return 1
 
 
-def evaluate_model(model: ModelConfig, output_dir: str, hf_token: str | None = None) -> dict[str, int]:
+def evaluate_model(
+    model: ModelConfig, output_dir: str, wandb_config: WandbConfig, hf_token: str | None = None
+) -> dict[str, int]:
     """Evaluate a model on all its tasks."""
     results = {}
 
     for task in model.tasks:
         return_code = run_evaluation(model, task, output_dir, hf_token)
         results[task.name] = return_code
+
+        # Log to wandb immediately after each task completes
+        if return_code == 0:  # Only if task succeeded
+            # Check and add aggregate metrics
+            print(f"\nChecking aggregate metrics for {task.name}...")
+            task_output_dir = Path(output_dir) / task.name / model.name.replace("/", "__")
+            results_files = list(task_output_dir.glob("**/*.json"))
+            if results_files:
+                # Use the newest results file
+                results_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
+                results_file = results_files[0]
+                add_aggregate_metrics_to_results(results_file)
+
+            # Log to wandb if enabled
+            if wandb_config.enabled:
+                print(f"\nLoading evaluation results for W&B logging ({task.name})...")
+                task_results = load_eval_results(output_dir, model.name, task.name)
+
+                if task_results:
+                    # Initialize a new wandb run for this model/task combination
+                    wandb_run = init_wandb_for_task(wandb_config, model, task)
+
+                    if wandb_run:
+                        # Flatten and log metrics for this task
+                        task_metrics = flatten_metrics(task_results, task.name)
+                        log_task_metrics_to_wandb(task_metrics, model, task)
+
+                        # Load and log samples
+                        print(f"Loading samples for W&B logging ({task.name})...")
+                        samples = load_samples(output_dir, model.name, task.name)
+
+                        if samples:
+                            samples_table = create_samples_table(samples)
+                            wandb.log({"samples": samples_table})
+                            print(f"✓ Logged {len(samples)} samples to W&B")
+                        else:
+                            print(f"Warning: No samples found for {task.name}")
+
+                        print(f"✓ Logged {len(task_metrics)} metrics to W&B: {wandb_run.url}")
+
+                        # Finish this run
+                        wandb.finish()
+                else:
+                    print(f"Warning: No metrics found for {task.name}")
+        else:
+            print(f"\nSkipping W&B logging for {task.name} (evaluation failed)")
 
     return results
 
@@ -722,66 +770,10 @@ def main(config_file: str):
         print(f"Tasks: {[task.name for task in model.tasks]}")
         print(f"{'=' * 80}")
 
-        model_results = evaluate_model(model, eval_config.output_dir, eval_config.hf_token)
+        model_results = evaluate_model(
+            model, eval_config.output_dir, eval_config.wandb, eval_config.hf_token
+        )
         all_results[model.name] = model_results
-
-        # Add aggregate metrics for group tasks if missing (do this for all tasks)
-        for task in model.tasks:
-            task_return_code = model_results.get(task.name, 1)
-            if task_return_code != 0:
-                continue  # Skip failed tasks
-
-            print(f"\nChecking aggregate metrics for {task.name}...")
-            task_output_dir = (
-                Path(eval_config.output_dir)
-                / task.name
-                / model.name.replace("/", "__")
-            )
-            results_files = list(task_output_dir.glob("**/*.json"))
-            if results_files:
-                # Use the newest results file
-                results_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
-                results_file = results_files[0]
-                add_aggregate_metrics_to_results(results_file)
-
-        # Log each task separately to wandb if enabled
-        if eval_config.wandb.enabled:
-            for task in model.tasks:
-                # Check if the task evaluation succeeded before logging to wandb
-                task_return_code = model_results.get(task.name, 1)
-                if task_return_code != 0:
-                    print(f"\nSkipping W&B logging for {task.name} (evaluation failed)")
-                    continue
-
-                print(f"\nLoading evaluation results for W&B logging ({task.name})...")
-                task_results = load_eval_results(eval_config.output_dir, model.name, task.name)
-
-                if task_results:
-                    # Initialize a new wandb run for this model/task combination
-                    wandb_run = init_wandb_for_task(eval_config.wandb, model, task)
-
-                    if wandb_run:
-                        # Flatten and log metrics for this task
-                        task_metrics = flatten_metrics(task_results, task.name)
-                        log_task_metrics_to_wandb(task_metrics, model, task)
-
-                        # Load and log samples
-                        print(f"Loading samples for W&B logging ({task.name})...")
-                        samples = load_samples(eval_config.output_dir, model.name, task.name)
-
-                        if samples:
-                            samples_table = create_samples_table(samples)
-                            wandb.log({"samples": samples_table})
-                            print(f"✓ Logged {len(samples)} samples to W&B")
-                        else:
-                            print(f"Warning: No samples found for {task.name}")
-
-                        print(f"✓ Logged {len(task_metrics)} metrics to W&B: {wandb_run.url}")
-
-                        # Finish this run
-                        wandb.finish()
-                else:
-                    print(f"Warning: No metrics found for {task.name}")
 
     # Print summary
     print(f"\n{'=' * 80}")
