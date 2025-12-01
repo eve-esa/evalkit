@@ -99,7 +99,7 @@ def get_qa_prompt_template() -> str:
     global _QA_PROMPT_TEMPLATE
 
     if _QA_PROMPT_TEMPLATE is None:
-        prompt_path = Path(__file__).parent.parent / "tasks/prompts/llm_judge_qa.yaml"
+        prompt_path = Path(__file__).parent / "prompts/llm_judge_qa.yaml"
         config = yaml.safe_load(prompt_path.read_text())
         _QA_PROMPT_TEMPLATE = config["prompt"]
 

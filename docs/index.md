@@ -1,10 +1,10 @@
-# eve-evalkit
+# Eve-evalkit
 
-Welcome to the eve-evalkit documentation. This framework provides comprehensive tools for evaluating language models on Earth Observation (EO) specific tasks and benchmarks.
+Welcome to the Wve-evalkit documentation. This framework provides comprehensive tools for evaluating language models on Earth Observation (EO) specific tasks and benchmarks.
 
-## What is eve-evalkit?
+## What is Eve-evalkit?
 
-eve-evalkit is built on top of the [EleutherAI Language Model Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness), providing:
+Eve-evalkit is built on top of the [EleutherAI Language Model Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness), providing:
 
 - **Custom EO Tasks**: Specialized evaluation tasks for Earth Observation domain, including summarization, MCQA, hallucination detection, and more
 - **Full LM-Eval-Harness Support**: Access to all standard benchmarks (MMLU-Pro, GSM8K, HellaSwag, etc.)
@@ -45,38 +45,6 @@ Evaluate models on specialized EO capabilities:
 - **Result Logging**: Comprehensive JSON and JSONL outputs
 - **WandB Integration**: Track experiments and visualize metrics
 
-## Getting Started
-
-1. **Install the framework**:
-   ```bash
-   git clone https://github.com/eve-esa/eve-evaluation.git
-   cd eve-evaluation
-   uv venv
-   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
-   uv sync
-   ```
-
-2. **Create a configuration file** (`evals.yaml`):
-   ```yaml
-   constants:
-     tasks:
-       - name: hallucination_detection
-         num_fewshot: 0
-         max_tokens: 100
-
-   models:
-     - name: your-model
-       base_url: https://api.provider.com/v1/chat/completions
-       api_key: your-api-key
-       tasks: !ref tasks
-
-   output_dir: evals_outputs
-   ```
-
-3. **Run evaluation**:
-   ```bash
-   python evaluate.py evals.yaml
-   ```
 
 ## Example Use Cases
 
@@ -92,11 +60,6 @@ Evaluate models on specialized EO capabilities:
 - Compare general-purpose models vs. domain-specific models
 - Assess trade-offs between performance and cost
 
-### Quality Assurance
-
-- Validate model outputs for factual accuracy
-- Test hallucination detection capabilities
-- Ensure appropriate refusal behavior
 
 ## Documentation Structure
 
@@ -108,7 +71,6 @@ Evaluate models on specialized EO capabilities:
 
 - **GitHub**: [eve-esa/eve-evaluation](https://github.com/eve-esa/eve-evaluation)
 - **Issues**: Report bugs or request features on GitHub
-- **Datasets**: [HuggingFace eve-esa organization](https://huggingface.co/eve-esa)
 
 ## Citation
 
