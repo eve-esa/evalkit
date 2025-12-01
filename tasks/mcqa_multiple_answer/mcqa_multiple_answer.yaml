@@ -23,7 +23,6 @@ metadata:
   version: 2.1
 dataset_kwargs:
   trust_remote_code: true
-num_fewshot: 2
 fewshot_split: 'train'
 fewshot_config:
   sampler: first_n

@@ -26,7 +26,8 @@ class FieldWithMaybeType:
 
 @dataclasses.dataclass
 class TaskConfig:
-    name: str
+    name: str  # User-defined name for this task configuration (used for output folders and wandb)
+    task_name: str | None = None  # Actual lm_eval task name (defaults to name if not provided)
     max_tokens: int = 512
     num_fewshot: int = 0
     temperature: float = 0.0
@@ -34,6 +35,11 @@ class TaskConfig:
     judge_base_url: str = ""
     judge_name: str = ""
     limit: int | None = None  # Limit number of samples to evaluate
+
+    def __post_init__(self):
+        # If task_name is not provided, use name as task_name
+        if self.task_name is None:
+            self.task_name = self.name
 
 
 @dataclasses.dataclass
@@ -50,7 +56,7 @@ class ModelConfig:
 @dataclasses.dataclass
 class WandbConfig:
     enabled: bool = False
-    project: str = "eve-evaluation"
+    project: str = "eve-evalkit"
     entity: str | None = None
     run_name: str | None = None
     tags: list[str] = dataclasses.field(default_factory=list)
@@ -151,6 +157,8 @@ def parse_task_config(task_data) -> TaskConfig:
         # Build kwargs dict only with provided values
         kwargs = {"name": task_data["name"]}
 
+        if "task_name" in task_data:
+            kwargs["task_name"] = task_data["task_name"]
         if "max_tokens" in task_data:
             kwargs["max_tokens"] = task_data["max_tokens"]
         if "num_fewshot" in task_data:
@@ -173,9 +181,7 @@ def parse_task_config(task_data) -> TaskConfig:
 
 def load_samples(output_dir: str, model_name: str, task_name: str) -> list[dict] | None:
     """Load evaluation samples from JSONL files, selecting the newest version of each file."""
-    task_output_dir = (
-        Path(output_dir) / model_name.replace("/", "_") / task_name / model_name.replace("/", "__")
-    )
+    task_output_dir = Path(output_dir) / task_name / model_name.replace("/", "__")
 
     print(f"Loading samples from: {task_output_dir}")
 
@@ -360,9 +366,7 @@ def add_aggregate_metrics_to_results(results_file: Path) -> bool:
 
 def load_eval_results(output_dir: str, model_name: str, task_name: str) -> dict | None:
     """Load evaluation results from lm_eval output directory, selecting the newest file."""
-    task_output_dir = (
-        Path(output_dir) / model_name.replace("/", "_") / task_name / model_name.replace("/", "__")
-    )
+    task_output_dir = Path(output_dir) / task_name / model_name.replace("/", "__")
 
     print(f"Loading results from: {task_output_dir}")
 
@@ -433,7 +437,8 @@ def init_wandb_for_task(wandb_config: WandbConfig, model: ModelConfig, task: Tas
         # Initialize wandb run
         run_config = {
             "model_name": model.name,
-            "task_name": task.name,
+            "task_name": task.name,  # User-defined task configuration name
+            "lm_eval_task": task.task_name,  # Actual lm_eval task name
             "temperature": model.temperature,
             "max_tokens": task.max_tokens,
             "num_fewshot": task.num_fewshot,
@@ -576,11 +581,12 @@ def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str, hf_tok
     ]
     model_args = ",".join(model_args_parts)
 
-    # Create output directory for this specific evaluation
-    task_output_dir = Path(output_dir) / model.name.replace("/", "_") / task.name
+    # Create output directory for this specific evaluation (use user-defined name)
+    task_output_dir = Path(output_dir) / task.name
     task_output_dir.mkdir(parents=True, exist_ok=True)
 
     # Build the command as a list (safer than shell=True)
+    # Use task_name (actual lm_eval task) for the --tasks parameter
     eval_command = [
         "lm_eval",
         "--model",
@@ -590,7 +596,7 @@ def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str, hf_tok
         "--include",
         "tasks",
         "--tasks",
-        task.name,
+        task.task_name,  # Use task_name for the actual lm_eval task
         "--num_fewshot",
         str(task.num_fewshot),
         "--output_path",
@@ -626,7 +632,9 @@ def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str, hf_tok
 
     print(f"\nRunning evaluation:")
     print(f"  Model: {model.name}")
-    print(f"  Task: {task.name}")
+    print(f"  Task Config: {task.name}")
+    if task.name != task.task_name:
+        print(f"  LM-Eval Task: {task.task_name}")
     print(f"  Output: {task_output_dir}")
     print(f"  Command: {' '.join(eval_command)}")
     print("-" * 80)

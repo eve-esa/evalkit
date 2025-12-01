@@ -18,7 +18,6 @@ generation_kwargs:
   max_gen_toks: 40000
 metadata:
   version: 2.1
-num_fewshot: 5
 fewshot_split: 'train'
 fewshot_config:
   sampler: first_n
