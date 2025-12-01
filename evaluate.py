@@ -50,7 +50,7 @@ class ModelConfig:
 @dataclasses.dataclass
 class WandbConfig:
     enabled: bool = False
-    project: str = "eve-evaluation"
+    project: str = "eve-evalkit"
     entity: str | None = None
     run_name: str | None = None
     tags: list[str] = dataclasses.field(default_factory=list)
@@ -173,9 +173,7 @@ def parse_task_config(task_data) -> TaskConfig:
 
 def load_samples(output_dir: str, model_name: str, task_name: str) -> list[dict] | None:
     """Load evaluation samples from JSONL files, selecting the newest version of each file."""
-    task_output_dir = (
-        Path(output_dir) / model_name.replace("/", "_") / task_name / model_name.replace("/", "__")
-    )
+    task_output_dir = Path(output_dir) / task_name / model_name.replace("/", "__")
 
     print(f"Loading samples from: {task_output_dir}")
 
@@ -360,9 +358,7 @@ def add_aggregate_metrics_to_results(results_file: Path) -> bool:
 
 def load_eval_results(output_dir: str, model_name: str, task_name: str) -> dict | None:
     """Load evaluation results from lm_eval output directory, selecting the newest file."""
-    task_output_dir = (
-        Path(output_dir) / model_name.replace("/", "_") / task_name / model_name.replace("/", "__")
-    )
+    task_output_dir = Path(output_dir) / task_name / model_name.replace("/", "__")
 
     print(f"Loading results from: {task_output_dir}")
 
@@ -577,7 +573,7 @@ def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str, hf_tok
     model_args = ",".join(model_args_parts)
 
     # Create output directory for this specific evaluation
-    task_output_dir = Path(output_dir) / model.name.replace("/", "_") / task.name
+    task_output_dir = Path(output_dir) / task.name
     task_output_dir.mkdir(parents=True, exist_ok=True)
 
     # Build the command as a list (safer than shell=True)
