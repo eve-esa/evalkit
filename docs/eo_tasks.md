@@ -4,15 +4,14 @@ This page provides a comprehensive overview of all available Earth Observation (
 
 ## Quick Reference
 
-| Task Name | Type | Dataset | Size    | Primary Metrics |
-|-----------|------|---------|---------|-----------------|
-| [MCQA Multiple Answer](#mcqa-multiple-answer) | Multiple Choice | [eve-esa/eve-is-mcqa](https://huggingface.co/datasets/eve-esa/eve-is-mcqa) | 432     | IoU, Accuracy |
-| [MCQA Single Answer](#mcqa-single-answer) | Multiple Choice | [eve-esa/mcqa-single-answer](https://huggingface.co/datasets/eve-esa/mcqa-single-answer) | 1308    | Accuracy |
-| [Open Ended](#open-ended) | Generation | [eve-esa/open-ended](https://huggingface.co/datasets/eve-esa/open-ended) | 1304    | LLM as Judge |
-| [Open Ended with Context](#open-ended-with-context) | Generation | [eve-esa/open-ended-w-context](https://huggingface.co/datasets/eve-esa/open-ended-w-context) | 606     | LLM Judge |
-| [Refusal](#refusal) | Generation | [eve-esa/refusal](https://huggingface.co/datasets/eve-esa/refusal) | ~2000   | LLM Judge |
-| [Hallucination Detection](#hallucination-detection) | Classification | [eve-esa/hallucination-detection](https://huggingface.co/datasets/eve-esa/hallucination-detection) | 2996    | Accuracy, Precision, Recall, F1 |
-| [Wiley MCQA](#wiley-mcqa) | Multiple Choice | [eve-esa/wiley-mcqa](https://huggingface.co/datasets/eve-esa/wiley-mcqa) |  | Exact Match |
+| Task Name | Type | Dataset | Size | Primary Metrics |
+|-----------|------|---------|------|-----------------|
+| [MCQA Multiple Answer](#mcqa-multiple-answer) | Multiple Choice | [eve-esa/eve-is-mcqa](https://huggingface.co/datasets/eve-esa/eve-is-mcqa) | 432  | IoU, Accuracy |
+| [MCQA Single Answer](#mcqa-single-answer) | Multiple Choice | [eve-esa/mcqa-single-answer](https://huggingface.co/datasets/eve-esa/mcqa-single-answer) | 1308 | Accuracy |
+| [Open Ended](#open-ended) | Generation | [eve-esa/open-ended](https://huggingface.co/datasets/eve-esa/open-ended) | 1304 | LLM as Judge |
+| [Open Ended with Context](#open-ended-with-context) | Generation | [eve-esa/open-ended-w-context](https://huggingface.co/datasets/eve-esa/open-ended-w-context) | 606  | LLM Judge |
+| [Refusal](#refusal) | Generation | [eve-esa/refusal](https://huggingface.co/datasets/eve-esa/refusal) | 946  | LLM Judge |
+| [Hallucination Detection](#hallucination-detection) | Classification | [eve-esa/hallucination-detection](https://huggingface.co/datasets/eve-esa/hallucination-detection) | 2996 | Accuracy, Precision, Recall, F1 |
 
 ---
 
@@ -304,54 +303,6 @@ This task evaluates a model's ability to self-assess and identify unreliable or 
 
 ---
 
-### Wiley MCQA
-
-**Task Name:** `wiley_mcqa`
-
-**Description:**
-
-A group of multiple-choice question tasks sourced from Wiley educational textbooks. Includes subtasks for specific textbooks covering physics, biology, environmental science, and geography. These provide standardized benchmarks across multiple scientific domains relevant to Earth Observation.
-
-**How to Call:**
-
-```yaml
-tasks:
-  - name: wiley_mcqa
-    num_fewshot: 0
-    max_tokens: 1000
-```
-
-Or call specific subtasks:
-
-```yaml
-tasks:
-  - name: Halliday_Physics_12e
-    num_fewshot: 0
-    max_tokens: 1000
-```
-
-**Dataset:**
-
-- **Source:** [eve-esa/wiley-mcqa](https://huggingface.co/datasets/eve-esa/wiley-mcqa)
-- **Split:** train
-- **Structure:** Each example contains question, choices, and answer
-
-**Available Subtasks:**
-
-- `Halliday_Physics_12e` - Physics (Halliday, 12th edition)
-- `Karp_Cell_and_Molecular_Biology_9e` - Cell and Molecular Biology (Karp, 9th edition)
-- `Berg_Visualizing_Environmental_Science_5e` - Environmental Science (Berg, 5th edition)
-- `Nijman_The_World_Today_8e` - Geography (Nijman, 8th edition)
-
-**Evaluation Metrics:**
-
-- **Exact Match**: Percentage of questions with exact correct answer (higher is better)
-
-**Why It's Useful:**
-
-This task suite evaluates understanding of fundamental scientific concepts from established educational materials. It provides standardized benchmarks across multiple scientific domains relevant to Earth Observation, including physics principles underlying remote sensing, environmental processes, and geographical concepts. These textbook-based questions have well-established correct answers and test foundational knowledge.
-
----
 
 ## Running Tasks
 

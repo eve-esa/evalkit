@@ -1,5 +1,5 @@
-task: is_mcqa
-dataset_path: 'eve-esa/eve-is-mcqa'
+task: mcqa_multiple_answer
+dataset_path: 'eve-esa/mcqa-multiple-answer'
 test_split: 'train'
 doc_to_text: !function utils_mcqa.doc_to_text
 doc_to_target: 'output'
