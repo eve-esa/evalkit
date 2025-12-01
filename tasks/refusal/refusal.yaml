@@ -5,9 +5,9 @@ doc_to_text: !function utils_open.doc_to_text
 doc_to_target: "I'm sorry, but the provided context does not contain enough information to answer that question."
 gen_prefix: 'A: '
 description: "Answer these questions using the provided documents:\n"
-process_results: !function utils_open.process_results2
+process_results: !function utils_open.process_results
 metric_list:
-  - metric: llm_judge_future
+  - metric: llm_as_judge
     aggregation: !function utils_open.aggregate_llm_judge
     higher_is_better: true
     alias: llm_judge

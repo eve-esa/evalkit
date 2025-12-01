@@ -7,7 +7,7 @@ gen_prefix: 'A: '
 description: "Answer these questions using the provided documents:\n"
 process_results: !function utils_open.process_results
 metric_list:
-  - metric: llm_judge_future
+  - metric: llm_as_judge
     aggregation: !function utils_open.aggregate_llm_judge
     higher_is_better: true
     alias: llm_judge
