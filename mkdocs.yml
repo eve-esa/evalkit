@@ -37,4 +37,14 @@ copyright: Implemented by <a href="https://picampus-school.com/" target="_blank"
 
 plugins:
   - search
-  - mkdocstrings
+  - mkdocstrings:
+      handlers:
+        python:
+            show_root_heading: true
+            show_root_full_path: false
+            members_order: source
+            show_signature_annotations: true
+            docstring_style: google
+            docstring_options:
+              ignore_init_summary: false
+              trim_doctest_flags: true

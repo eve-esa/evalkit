@@ -1,1 +1,1 @@
-::: metrics handler: python
+::: metrics
