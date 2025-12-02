@@ -16,3 +16,4 @@ eve-evaluation/*
 scripts/evals.yaml
 eve-evaluation/*
 /scripts/fix_sapien_aggregates.py
+/tasks/rag/
