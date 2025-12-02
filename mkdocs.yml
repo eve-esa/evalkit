@@ -1,4 +1,4 @@
-site_name: eve-evalkit
+site_name: Eve-evalkit
 site_url: https://example.com
 theme:
   font:
@@ -15,6 +15,7 @@ extra_css:
 nav:
     - Home: index.md
     - Getting Started: getting_started.md
+    - Examples: examples.md
     - EO Tasks: eo_tasks.md
     - Code Reference:
         - Evalkit: evalkit.md

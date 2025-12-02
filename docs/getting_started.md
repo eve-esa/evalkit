@@ -1,6 +1,6 @@
-# Getting Started with eve-evalkit
+# Getting Started with Eve-evalkit
 
-eve-evalkit is built on top of the [EleutherAI Language Model Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness), which means it supports **all tasks available in the lm-evaluation-harness** in addition to the custom Earth Observation tasks.
+Eve-evalkit is built on top of the [EleutherAI Language Model Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness), which means it supports **all tasks available in the lm-evaluation-harness** in addition to the custom Earth Observation tasks.
 
 ## Quick Start
 
@@ -151,171 +151,15 @@ output_dir: evals_outputs  # Default: eval_results
 
 ## Example Configurations
 
-### Example 1: EVE Earth Observation Tasks
+For comprehensive configuration examples including:
+- EVE Earth Observation tasks
+- LM-Eval-Harness standard benchmarks
+- Mixed evaluations
+- Multiple model comparisons
+- Environment variables usage
+- Testing with limited samples
 
-Evaluate a model on Earth Observation-specific tasks:
-
-```yaml
-constants:
-  judge_api_key: sk-or-v1-xxxxx
-  judge_base_url: https://openrouter.ai/api/v1
-  judge_name: mistralai/mistral-large-2411
-
-  tasks:
-    - name: eo_summarization
-      num_fewshot: 0
-      max_tokens: 20000
-      judge_api_key: !ref judge_api_key
-      judge_base_url: !ref judge_base_url
-      judge_name: !ref judge_name
-
-    - name: is_mcqa
-      num_fewshot: 2
-      max_tokens: 10000
-
-    - name: hallucination_detection
-      num_fewshot: 0
-      max_tokens: 100
-
-    - name: open_ended
-      num_fewshot: 5
-      max_tokens: 40000
-      judge_api_key: !ref judge_api_key
-      judge_base_url: !ref judge_base_url
-      judge_name: !ref judge_name
-
-wandb:
-  enabled: true
-  project: eve-evaluations
-  entity: LLM4EO
-  run_name: eve-model-v1
-
-models:
-  - name: eve-esa/eve_v0.1
-    base_url: https://api.runpod.ai/v2/endpoint-id/openai/v1/chat/completions
-    api_key: your-runpod-api-key
-    temperature: 0.1
-    num_concurrent: 10
-    timeout: 600
-    tasks: !ref tasks
-
-output_dir: evals_outputs
-```
-
-### Example 2: Using LM-Eval-Harness Tasks
-
-EVE-evaluation supports **all tasks from lm-evaluation-harness**. Here's an example using MMLU-Pro:
-
-```yaml
-constants:
-  tasks:
-    - name: mmlu_pro
-      num_fewshot: 5
-      max_tokens: 1000
-
-    - name: gsm8k
-      num_fewshot: 8
-      max_tokens: 512
-
-    - name: hellaswag
-      num_fewshot: 10
-      max_tokens: 100
-
-models:
-  - name: gpt-4
-    base_url: https://api.openai.com/v1/chat/completions
-    api_key: your-openai-api-key
-    temperature: 0.0
-    num_concurrent: 3
-    tasks: !ref tasks
-
-output_dir: evals_outputs
-```
-
-### Example 3: Mixed EVE and Standard Tasks
-
-Combine Earth Observation tasks with standard benchmarks:
-
-```yaml
-constants:
-  judge_api_key: your-judge-api-key
-  judge_base_url: https://openrouter.ai/api/v1
-  judge_name: mistralai/mistral-large-2411
-
-  tasks:
-    # EVE Earth Observation Tasks
-    - name: hallucination_detection
-      num_fewshot: 0
-      max_tokens: 100
-
-    - name: eo_summarization
-      num_fewshot: 0
-      max_tokens: 20000
-      judge_api_key: !ref judge_api_key
-      judge_base_url: !ref judge_base_url
-      judge_name: !ref judge_name
-
-    # Standard Benchmark Tasks
-    - name: mmlu_pro
-      num_fewshot: 5
-      max_tokens: 1000
-
-    - name: arc_challenge
-      num_fewshot: 25
-      max_tokens: 100
-
-wandb:
-  enabled: true
-  project: comprehensive-eval
-  entity: your-org
-
-models:
-  - name: your-model
-    base_url: https://api.provider.com/v1/chat/completions
-    api_key: your-api-key
-    temperature: 0.1
-    num_concurrent: 5
-    tasks: !ref tasks
-
-output_dir: evals_outputs
-```
-
-### Example 4: Multiple Models
-
-Evaluate multiple models on the same tasks:
-
-```yaml
-constants:
-  tasks:
-    - name: hallucination_detection
-      num_fewshot: 0
-      max_tokens: 100
-
-    - name: mcqa_single_answer
-      num_fewshot: 2
-      max_tokens: 1000
-
-wandb:
-  enabled: true
-  project: model-comparison
-
-models:
-  - name: model-a
-    base_url: https://api.provider-a.com/v1/chat/completions
-    api_key: api-key-a
-    temperature: 0.1
-    num_concurrent: 5
-    tasks: !ref tasks
-
-  - name: model-b
-    base_url: https://api.provider-b.com/v1/chat/completions
-    api_key: api-key-b
-    temperature: 0.1
-    num_concurrent: 5
-    tasks: !ref tasks
-
-output_dir: evals_outputs
-```
+Please see the dedicated **[Examples](examples.md)** page.
 
 ---
 
@@ -466,42 +310,11 @@ Run: eve-model-v1-20251201
 
 ### Using Environment Variables
 
-Instead of hardcoding API keys, use environment variables:
-
-```yaml
-constants:
-  judge_api_key: ${JUDGE_API_KEY}
-
-models:
-  - name: my-model
-    api_key: ${MODEL_API_KEY}
-    tasks: !ref tasks
-
-wandb:
-  enabled: true
-  api_key: ${WANDB_API_KEY}
-```
-
-Set them before running:
-
-```bash
-export JUDGE_API_KEY=your-judge-key
-export MODEL_API_KEY=your-model-key
-export WANDB_API_KEY=your-wandb-key
-python evaluate.py evals.yaml
-```
+Instead of hardcoding API keys, use environment variables. See [Examples](examples.md#example-5-using-environment-variables) for detailed configuration.
 
 ### Limiting Samples for Testing
 
-Test your configuration on a small subset:
-
-```yaml
-tasks:
-  - name: hallucination_detection
-    num_fewshot: 0
-    max_tokens: 100
-    limit: 10  # Only evaluate first 10 samples
-```
+Test your configuration on a small subset. See [Examples](examples.md#example-6-testing-with-limited-samples) for detailed configuration.
 
 ### Direct Command Line 
 

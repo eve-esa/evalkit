@@ -15,6 +15,7 @@ Eve-evalkit is built on top of the [EleutherAI Language Model Evaluation Harness
 ## Quick Links
 
 - **[Getting Started](getting_started.md)**: Installation, configuration, and running your first evaluation
+- **[Examples](examples.md)**: Comprehensive configuration examples and use cases
 - **[EO Tasks](eo_tasks.md)**: Detailed information about Earth Observation evaluation tasks
 - **[Code Reference](evalkit.md)**: API documentation and code examples
 
@@ -64,6 +65,7 @@ Evaluate models on specialized EO capabilities:
 ## Documentation Structure
 
 - **Getting Started**: Installation, configuration, and basic usage
+- **Examples**: Comprehensive configuration examples and use cases
 - **EO Tasks**: Detailed task descriptions, metrics, and examples
 - **Code Reference**: API documentation and programmatic usage
 
