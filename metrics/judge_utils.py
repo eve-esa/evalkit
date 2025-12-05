@@ -9,6 +9,7 @@ This module provides reusable components for LLM-based evaluation:
 """
 
 import json
+import logging
 import os
 import time
 from concurrent.futures import Future, ThreadPoolExecutor
@@ -18,6 +19,9 @@ from typing import Dict, List, Optional, Union
 
 import yaml
 from openai import OpenAI
+
+# Disable verbose httpx logging
+logging.getLogger("httpx").setLevel(logging.WARNING)
 
 
 MAX_PARALLEL_REQUESTS = 10
@@ -89,7 +93,6 @@ def get_judge_client(api_key: Optional[str] = None, base_url: Optional[str] = No
             base_url = os.getenv("JUDGE_BASE_URL") or "https://api.mistral.ai/v1"
 
         _JUDGE_CLIENT = OpenAI(api_key=api_key, base_url=base_url)
-        print(f"Initialized LLM Judge client with base URL: {base_url}")
 
     return _JUDGE_CLIENT
 
