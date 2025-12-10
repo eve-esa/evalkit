@@ -190,47 +190,74 @@ export JUDGE_NAME=judge-model-name
 
 ## Earth Observation Tasks
 
-### Imperative Space MCQA
+### MCQA Multiple Answer
 
-Multiple-Choice question answer (432 samples) with arbitrary number of options and arbitrary number of correct options ([link](https://huggingface.co/datasets/eve-esa/eve-is-mcqa)).
-
-**Evaluation metrics:**
-- Intersection Over Union: to evaluate also partially correct answers
-- Accuracy: exact match between the set of correct answer and predicted
-
-**Task name:** `is_mcqa`
-
-### Imperative Space Open-Ended
-
-Open-ended question answer pairs (313) from MOOC exams ([link](https://huggingface.co/datasets/eve-esa/eve-is-open-ended)).
+Multiple-choice questions with arbitrary number of options and arbitrary number of correct answers ([link](https://huggingface.co/datasets/eve-esa/mcqa-multiple-answers)).
 
 **Evaluation metrics:**
-- Cosine similarity between model answer and reference answer, using [Indus](https://huggingface.co/nasa-impact/nasa-smd-ibm-st-v2) encoder
-- LLM-as-judge: GPT4o evaluates if the model answer is correct
-- BERTScore using Indus as encoder model
+- Intersection Over Union (IoU): evaluates partially correct answers
+- Accuracy: exact match between the set of correct answers and predicted answers
 
-**Task name:** `is_open_ended`
+**Task name:** `mcqa_multiple_answer`
 
-### Imperative Space Open-Ended Hard
+### MCQA Single Answer
 
-Subset of manually identified hard questions from the Imperative Space Open-Ended ([link](https://huggingface.co/datasets/eve-esa/hardest-50-qna)).
+Multiple-choice questions with a single correct answer ([link](https://huggingface.co/datasets/eve-esa/mcqa-single-answer)).
 
 **Evaluation metrics:**
-- Cosine similarity using [Indus](https://huggingface.co/nasa-impact/nasa-smd-ibm-st-v2) encoder
-- LLM-as-judge: GPT4o evaluation
-- BERTScore using Indus encoder
-- Preference: GPT4o selects the best answer between generated and Llama-8B baseline
+- Accuracy: exact match of the correct answer
 
-**Task name:** `is_open_ended_hard`
+**Task name:** `mcqa_single_answer`
+
+### Open-Ended Questions
+
+Open-ended question-answer pairs from Earth Observation domain ([link](https://huggingface.co/datasets/eve-esa/open-ended)).
+
+**Evaluation metrics:**
+- LLM-as-judge: evaluates if the model answer is correct
+
+**Task name:** `open_ended`
+
+### Open-Ended Questions with Context
+
+Open-ended questions that require using provided context documents to answer ([link](https://huggingface.co/datasets/eve-esa/open-ended-w-context)).
+
+**Evaluation metrics:**
+- LLM-as-judge: evaluates answer correctness based on provided context
+
+**Task name:** `open_ended_w_context`
+
+### Hallucination Detection
+
+Binary classification task to detect hallucinations (false or unsupported information) in Earth Observation answers ([link](https://huggingface.co/datasets/eve-esa/hallucination-detection)).
+
+**Evaluation metrics:**
+- Accuracy: classification accuracy
+- Precision: hallucination detection precision
+- Recall: hallucination detection recall
+- F1 Score: harmonic mean of precision and recall
+
+**Task name:** `hallucination_detection`
+
+### Refusal
+
+Tests model's ability to refuse answering when the provided context is insufficient ([link](https://huggingface.co/datasets/eve-esa/refusal)).
+
+**Evaluation metrics:**
+- LLM-as-judge: evaluates if model appropriately refuses to answer
+
+**Task name:** `refusal`
 
 ### Earth Observation Summarization
 
-Summarization dataset generated from scientific papers (1k samples) ([link](https://huggingface.co/datasets/eve-esa/summarization_ds_10k_sample_split)).
+Summarization dataset generated from scientific papers ([link](https://huggingface.co/datasets/eve-esa/summarization_ds_10k_sample_split)).
 
 **Evaluation metrics:**
-- Cosine similarity using [Indus](https://huggingface.co/nasa-impact/nasa-smd-ibm-st-v2) encoder
-- LLM-as-judge: GPT4o evaluation
-- BERTScore using Indus encoder
+- LLM-as-judge: overall summarization quality
+- Relevance: how relevant the summary is to the source
+- Coherence: logical flow and readability
+- Factuality: factual accuracy of the summary
+- Conciseness: brevity and information density
 
 **Task name:** `eo_summarization`
 
