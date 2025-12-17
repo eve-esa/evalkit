@@ -284,11 +284,12 @@ To add a new evaluation task:
 
 Custom metrics are implemented in the `metrics/` package. See existing metrics for examples of how to implement new evaluation metrics.
 
-## Support
+## Funding
 
-For issues or questions, please open an issue on the GitHub repository.
+This project is supported by the European Space Agency (ESA) Φ-lab through the Large Language Model for Earth Observation and Earth Science project, as part of the Foresight Element within FutureEO Block 4 programme.
 
 ## Citation
+
 
 If you use this evaluation framework, please cite both EVE-evaluation and the underlying lm-eval harness:
 
@@ -327,3 +328,11 @@ If you use this evaluation framework, please cite both EVE-evaluation and the un
   url          = {https://doi.org/10.5281/zenodo.5371628}
 }
 ```
+
+## License
+
+This project is released under the Apache 2.0 License - see the [LICENSE](LICENSE) file for more details.
+
+
+
+

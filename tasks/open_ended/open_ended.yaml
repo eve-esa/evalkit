@@ -16,6 +16,8 @@ generation_kwargs:
     - "</s>"
     - "<|im_end|>"
   max_gen_toks: 40000
+  add_generation_prompt: false
+  continue_final_message: true
 metadata:
   version: 2.1
 fewshot_split: 'train'
