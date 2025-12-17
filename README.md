@@ -1,8 +1,10 @@
-# EVE-evaluation
+# Evalkit
 
 This repository contains the evaluation tasks and metrics for evaluating models on Earth Observation specific benchmarks.
 
-EVE-evaluation is built on top of the [EleutherAI Language Model Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness), a unified framework for testing generative language models on a large number of different evaluation tasks.
+Evalkit is built on top of the [EleutherAI Language Model Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness), a unified framework for testing generative language models on a large number of different evaluation tasks.
+
+For more information refer to the complete guide of the project: [EVE Guide](eve-esa.github.io/eve-guide/).
 
 ## Installation
 
@@ -25,7 +27,7 @@ Create a virtual environment:
 
 ```bash
 uv venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+source .venv/bin/activate  
 ```
 
 ### 3. Install the package
@@ -41,14 +43,6 @@ This will install:
 - The lm-evaluation-harness framework
 - All required dependencies (PyTorch, transformers, datasets, etc.)
 
-### 4. Run setup script
-
-Execute the setup script to configure the environment:
-
-```bash
-source ./setup.sh
-```
-
 ## Usage
 
 ### Running Evaluations with Configuration File
@@ -62,18 +56,12 @@ The `evals.yaml` file has the following structure:
 ```yaml
 constants:
   judge_api_key: your-judge-api-key
-  judge_base_url: https://openrouter.ai/api/v1
-  judge_name: mistralai/mistral-large-2411
+  judge_base_url: your-judge-base-url
+  judge_name: your-judge-name
   tasks:
-    - name: is_mcqa
+    - name: mcqa_single_answer
       num_fewshot: 0
       max_tokens: 10000
-      judge_api_key: !ref judge_api_key
-      judge_base_url: !ref judge_base_url
-      judge_name: !ref judge_name
-    - name: eo_summarization
-      num_fewshot: 0
-      max_tokens: 20000
       judge_api_key: !ref judge_api_key
       judge_base_url: !ref judge_base_url
       judge_name: !ref judge_name
@@ -146,128 +134,44 @@ The script will:
 4. Optionally log metrics and samples to Weights & Biases
 5. Print a summary of all evaluations
 
-#### Output Structure
 
-Results are saved in the following structure:
+## EO Tasks
 
-```
-{output_dir}/
-  {model_name}/
-    {task_name}/
-      {model_name}/
-        results_{timestamp}.json       # Evaluation metrics
-        samples_{dataset}_{timestamp}.jsonl  # Individual samples
-```
+The EVE-evaluation framework includes the following Earth Observation-specific evaluation tasks:
 
-### Running Individual Tasks (Advanced)
+### Core Tasks
 
-You can also run individual tasks directly using the lm_eval command:
+1. **mcqa_single_answer** - Multiple choice questions with a single correct answer
+   - Dataset: `eve-esa/mcqa-single-answer`
+   - Metrics: Accuracy
+   - Evaluates model's ability to select the correct answer from multiple options
 
-```bash
-lm_eval --model openai-chat-completions \
-        --model_args base_url=https://api.provider.com,model=model-name,num_concurrent=5 \
-        --tasks {task_name} \
-        --include tasks \
-        --num_fewshot 0 \
-        --output_path {output_dir} \
-        --log_samples \
-        --apply_chat_template
-```
+2. **mcqa_multiple_answer** - Multiple choice questions with multiple correct answers
+   - Dataset: `eve-esa/mcqa-multiple-answers`
+   - Metrics: Intersection over Union (IoU), Accuracy
+   - Tests model's ability to identify all correct answers among options
 
-Set the API key as an environment variable:
+3. **open_ended** - Open-ended question answering
+   - Dataset: `eve-esa/open-ended`
+   - Metrics: LLM-as-judge
+   - Tests model's ability to generate comprehensive answers to EO questions
 
-```bash
-export OPENAI_API_KEY=your-api-key
-```
+4. **open_ended_w_context** - Open-ended QA with context documents
+   - Dataset: `eve-esa/open-ended-w-context`
+   - Metrics: LLM-as-judge
+   - Evaluates RAG-style question answering using provided context
 
-For tasks using LLM-as-judge metrics, also set:
+5. **hallucination_detection** - Detection of hallucinations in EO answers
+   - Dataset: `eve-esa/hallucination-detection`
+   - Metrics: Accuracy, Precision, Recall, F1
+   - Tests model's ability to identify false or unsupported information
 
-```bash
-export JUDGE_API_KEY=your-judge-api-key
-export JUDGE_BASE_URL=https://api.provider.com/v1
-export JUDGE_NAME=judge-model-name
-```
+6. **refusal** - Appropriate refusal when context is insufficient
+   - Dataset: `eve-esa/refusal`
+   - Metrics: LLM-as-judge
+   - Evaluates model's ability to refuse answering when information is unavailable
 
-## Earth Observation Tasks
-
-### MCQA Multiple Answer
-
-Multiple-choice questions with arbitrary number of options and arbitrary number of correct answers ([link](https://huggingface.co/datasets/eve-esa/mcqa-multiple-answers)).
-
-**Evaluation metrics:**
-- Intersection Over Union (IoU): evaluates partially correct answers
-- Accuracy: exact match between the set of correct answers and predicted answers
-
-**Task name:** `mcqa_multiple_answer`
-
-### MCQA Single Answer
-
-Multiple-choice questions with a single correct answer ([link](https://huggingface.co/datasets/eve-esa/mcqa-single-answer)).
-
-**Evaluation metrics:**
-- Accuracy: exact match of the correct answer
-
-**Task name:** `mcqa_single_answer`
-
-### Open-Ended Questions
-
-Open-ended question-answer pairs from Earth Observation domain ([link](https://huggingface.co/datasets/eve-esa/open-ended)).
-
-**Evaluation metrics:**
-- LLM-as-judge: evaluates if the model answer is correct
-
-**Task name:** `open_ended`
-
-### Open-Ended Questions with Context
-
-Open-ended questions that require using provided context documents to answer ([link](https://huggingface.co/datasets/eve-esa/open-ended-w-context)).
-
-**Evaluation metrics:**
-- LLM-as-judge: evaluates answer correctness based on provided context
-
-**Task name:** `open_ended_w_context`
-
-### Hallucination Detection
-
-Binary classification task to detect hallucinations (false or unsupported information) in Earth Observation answers ([link](https://huggingface.co/datasets/eve-esa/hallucination-detection)).
-
-**Evaluation metrics:**
-- Accuracy: classification accuracy
-- Precision: hallucination detection precision
-- Recall: hallucination detection recall
-- F1 Score: harmonic mean of precision and recall
-
-**Task name:** `hallucination_detection`
-
-### Refusal
-
-Tests model's ability to refuse answering when the provided context is insufficient ([link](https://huggingface.co/datasets/eve-esa/refusal)).
-
-**Evaluation metrics:**
-- LLM-as-judge: evaluates if model appropriately refuses to answer
-
-**Task name:** `refusal`
-
-### Earth Observation Summarization
-
-Summarization dataset generated from scientific papers ([link](https://huggingface.co/datasets/eve-esa/summarization_ds_10k_sample_split)).
-
-**Evaluation metrics:**
-- LLM-as-judge: overall summarization quality
-- Relevance: how relevant the summary is to the source
-- Coherence: logical flow and readability
-- Factuality: factual accuracy of the summary
-- Conciseness: brevity and information density
-
-**Task name:** `eo_summarization`
-
-## Available Benchmarks
-
-All available benchmarks and tasks can be found in the `tasks/` directory. Each task includes:
-- Dataset loading configuration
-- Prompt templates
-- Evaluation metrics
-- Task-specific parameters
+All tasks support few-shot evaluation and can be configured with custom parameters in the `evals.yaml` configuration file.
 
 ## Development
 
