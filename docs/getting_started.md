@@ -199,13 +199,13 @@ evals_outputs/
 │   └── gpt-4/
 │       ├── results_2025-12-01T11-25-30.789012.json
 │       └── samples_mcqa_single_answer_2025-12-01T11-25-30.789012.jsonl
-└── eo_summarization/
+└── open_ended/
     ├── eve-esa__eve_v0.1/
     │   ├── results_2025-12-01T12-34-56.789012.json
-    │   └── samples_eo_summarization_2025-12-01T12-34-56.789012.jsonl
+    │   └── samples_open_ended_2025-12-01T12-34-56.789012.jsonl
     └── gpt-4/
         ├── results_2025-12-01T12-40-10.456789.json
-        └── samples_eo_summarization_2025-12-01T12-40-10.456789.jsonl
+        └── samples_open_ended_2025-12-01T12-40-10.456789.jsonl
 ```
 
 This structure makes it easy to compare multiple models on the same task.
@@ -293,7 +293,7 @@ Run: eve-model-v1-20251201
 │   ├── hallucination_detection/f1: 0.841
 │   ├── hallucination_detection/precision: 0.869
 │   ├── mcqa_single_answer/acc: 0.756
-│   └── eo_summarization/llm_judge: 0.834
+│   └── open_ended/llm_judge: 0.834
 ├── Config
 │   ├── model: eve-esa/eve_v0.1
 │   ├── temperature: 0.1
@@ -301,7 +301,7 @@ Run: eve-model-v1-20251201
 └── Samples
     ├── hallucination_detection_samples.csv
     ├── mcqa_single_answer_samples.csv
-    └── eo_summarization_samples.csv
+    └── open_ended.csv
 ```
 
 ---
@@ -338,7 +338,6 @@ lm_eval --model openai-chat-completions \
 ### EVE Earth Observation Tasks
 
 See the [EO Tasks](eo_tasks.md) page for detailed information about:
-- `eo_summarization`
 - `mcqa_multiple_answer`
 - `mcqa_single_answer`
 - `open_ended`
