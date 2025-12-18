@@ -356,6 +356,7 @@ See the [EO Tasks](eo_tasks.md) page for detailed information about:
 All tasks from the [lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness) are supported, including:
 
 **Popular Benchmarks:**
+
 - `mmlu_pro` - MMLU-Pro (challenging multiple-choice)
 - `gsm8k` - Grade School Math
 - `hellaswag` - Commonsense reasoning
