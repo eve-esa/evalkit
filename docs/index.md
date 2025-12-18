@@ -71,7 +71,7 @@ Evaluate models on specialized EO capabilities:
 
 ## Support & Contributing
 
-- **GitHub**: [eve-esa/eve-evaluation](https://github.com/eve-esa/eve-evaluation)
+- **GitHub**: [eve-esa/eve-evaluation](https://github.com/eve-esa/evalkit)
 - **Issues**: Report bugs or request features on GitHub
 
 ## Citation
