@@ -374,24 +374,27 @@ export JUDGE_NAME=judge-model-name
 Choose tasks based on your evaluation goals:
 
 **Factual Knowledge:**
-- `mcqa_single_answer` - Single correct answer questions
-- `is_mcqa` - Multiple correct answers with partial credit
-- `wiley_mcqa` - Standardized textbook questions
+
+  - `mcqa_single_answer` - Single correct answer questions
+  - `is_mcqa` - Multiple correct answers with partial credit
+  - `wiley_mcqa` - Standardized textbook questions
 
 **Generation Quality:**
-- `eo_summarization` - Abstractive summarization of technical content
-- `open_ended` - Free-form explanatory answers
+
+  - `eo_summarization` - Abstractive summarization of technical content
+  - `open_ended` - Free-form explanatory answers
 
 **Grounded Generation (RAG):**
-- `open_ended_w_context` - Answer questions using provided documents
-- `refusal` - Recognize when context is insufficient
+
+  - `open_ended_w_context` - Answer questions using provided documents
+  - `refusal` - Recognize when context is insufficient
 
 **Reliability & Safety:**
-- `hallucination_detection` - Identify fabricated information
-- `refusal` - Avoid answering without sufficient information
+  - `hallucination_detection` - Identify fabricated information
+  - `refusal` - Avoid answering without sufficient information
 
 **Comprehensive Evaluation:**
-- Run all tasks for a complete assessment across different capabilities
+  - Run all tasks for a complete assessment across different capabilities
 
 ---
 

@@ -133,11 +133,12 @@ wandb:
 ```
 
 When enabled, the evaluation will log:
-- Evaluation metrics (accuracy, F1, IoU, etc.)
-- Individual sample predictions
-- Task configurations
-- Model metadata
-- Evaluation duration and timestamps
+
+  - Evaluation metrics (accuracy, F1, IoU, etc.)
+  - Individual sample predictions
+  - Task configurations
+  - Model metadata
+  - Evaluation duration and timestamps
 
 ### Output Directory
 
@@ -152,12 +153,13 @@ output_dir: evals_outputs  # Default: eval_results
 ## Example Configurations
 
 For comprehensive configuration examples including:
-- EVE Earth Observation tasks
-- LM-Eval-Harness standard benchmarks
-- Mixed evaluations
-- Multiple model comparisons
-- Environment variables usage
-- Testing with limited samples
+
+  - EVE Earth Observation tasks
+  - LM-Eval-Harness standard benchmarks
+  - Mixed evaluations
+  - Multiple model comparisons
+  - Environment variables usage
+  - Testing with limited samples
 
 Please see the dedicated **[Examples](examples.md)** page.
 
@@ -255,11 +257,12 @@ The `samples_{task_name}_{timestamp}.jsonl` file contains individual predictions
 ```
 
 Each line contains:
-- `doc`: The input document/question
-- `target`: Expected answer
-- `resps`: Raw model response
-- `filtered_resps`: Processed model response
-- Metadata for reproducibility
+
+  - `doc`: The input document/question
+  - `target`: Expected answer
+  - `resps`: Raw model response
+  - `filtered_resps`: Processed model response
+  - Metadata for reproducibility
 
 ---
 
@@ -338,13 +341,14 @@ lm_eval --model openai-chat-completions \
 ### EVE Earth Observation Tasks
 
 See the [EO Tasks](eo_tasks.md) page for detailed information about:
-- `eo_summarization`
-- `mcqa_multiple_answer`
-- `mcqa_single_answer`
-- `open_ended`
-- `open_ended_w_context`
-- `refusal`
-- `hallucination_detection`
+
+  - `eo_summarization`
+  - `mcqa_multiple_answer`
+  - `mcqa_single_answer`
+  - `open_ended`
+  - `open_ended_w_context`
+  - `refusal`
+  - `hallucination_detection`
 
 
 ### LM-Evaluation-Harness Tasks
@@ -422,6 +426,7 @@ wandb login your-api-key
 ## Support
 
 For issues or questions:
-- GitHub Issues: [eve-esa/eve-evaluation](https://github.com/eve-esa/eve-evaluation/issues)
-- Documentation: [https://docs.eve-evaluation.org](https://docs.eve-evaluation.org)
-- LM-Eval-Harness: [EleutherAI Documentation](https://github.com/EleutherAI/lm-evaluation-harness)
+
+  - GitHub Issues: [eve-esa/eve-evaluation](https://github.com/eve-esa/eve-evaluation/issues)
+  - Documentation: [https://docs.eve-evaluation.org](https://docs.eve-evaluation.org)
+  - LM-Eval-Harness: [EleutherAI Documentation](https://github.com/EleutherAI/lm-evaluation-harness)
