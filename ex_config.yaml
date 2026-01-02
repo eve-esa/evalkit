@@ -1,0 +1,16 @@
+constants:
+  tasks:
+    - name: mcqa_multiple_answer
+      num_fewshot: 5
+      max_tokens: 2
+
+models:
+  - name:  MODEL_NAME / (or path if you don't specify)
+    base_url: URL:8000/v1/completions
+    tokenizer: ./shipmodel1230_hf (folder of the hf model)
+    temperature: 0.0
+    num_concurrent: 64
+    tasks: !ref tasks
+    custom_task_dir: Path of the custom task dir
+
+output_dir: evals_outputs

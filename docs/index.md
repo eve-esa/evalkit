@@ -6,7 +6,7 @@ Welcome to the Wve-evalkit documentation. This framework provides comprehensive 
 
 Eve-evalkit is built on top of the [EleutherAI Language Model Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness), providing:
 
-- **Custom EO Tasks**: Specialized evaluation tasks for Earth Observation domain, including summarization, MCQA, hallucination detection, and more
+- **Custom EO Tasks**: Specialized evaluation tasks for Earth Observation domain, including MCQA, hallucination detection, and more
 - **Full LM-Eval-Harness Support**: Access to all standard benchmarks (MMLU-Pro, GSM8K, HellaSwag, etc.)
 - **WandB Integration**: Automatic experiment tracking and metric logging
 - **Flexible Configuration**: YAML-based configuration for easy experiment management
@@ -25,7 +25,6 @@ Eve-evalkit is built on top of the [EleutherAI Language Model Evaluation Harness
 
 Evaluate models on specialized EO capabilities:
 
-- **Summarization**: Generate concise summaries of scientific EO documents
 - **Multiple-Choice QA**: Single and multiple-answer questions from EO curricula
 - **Open-Ended QA**: Free-form question answering with and without context
 - **Hallucination Detection**: Identify fabricated or unsupported information
@@ -36,7 +35,7 @@ Evaluate models on specialized EO capabilities:
 - **LLM-as-Judge**: Sophisticated evaluation using judge models
 - **Traditional Metrics**: Accuracy, F1, Precision, Recall, IoU
 - **Semantic Metrics**: BERTScore, Cosine Similarity
-- **Generation Metrics**: BLEU, ROUGE for summarization tasks
+- **Generation Metrics**: BLEU, ROUGE
 
 ### Production Features
 

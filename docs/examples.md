@@ -32,14 +32,8 @@ constants:
   judge_name: mistralai/mistral-large-2411
 
   tasks:
-    - name: eo_summarization
-      num_fewshot: 0
-      max_tokens: 20000
-      judge_api_key: !ref judge_api_key
-      judge_base_url: !ref judge_base_url
-      judge_name: !ref judge_name
 
-    - name: is_mcqa
+    - name: mcqa_single_answer
       num_fewshot: 2
       max_tokens: 10000
 
@@ -122,13 +116,6 @@ constants:
       num_fewshot: 0
       max_tokens: 100
 
-    - name: eo_summarization
-      num_fewshot: 0
-      max_tokens: 20000
-      judge_api_key: !ref judge_api_key
-      judge_base_url: !ref judge_base_url
-      judge_name: !ref judge_name
-
     # Standard Benchmark Tasks
     - name: mmlu_pro
       num_fewshot: 5
@@ -204,7 +191,7 @@ constants:
   judge_api_key: ${JUDGE_API_KEY}
 
   tasks:
-    - name: eo_summarization
+    - name: mcqa_single_answer
       num_fewshot: 0
       max_tokens: 20000
       judge_api_key: !ref judge_api_key

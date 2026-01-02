@@ -30,14 +30,14 @@ EVE-mcqa-multiple-answers consists of multiple-choice questions from Imperative 
 
 ```yaml
 tasks:
-  - name: is_mcqa
+  - name: mcqa_multiple_answers
     num_fewshot: 2
     max_tokens: 10000
 ```
 
 **Dataset:**
 
-- **Source:** [eve-esa/eve-is-mcqa](https://huggingface.co/datasets/eve-esa/eve-is-mcqa)
+- **Source:** [eve-esa/mcqa-multiple-answers](https://huggingface.co/datasets/eve-esa/mcqa-multiple-answers)
 - **Split:** train
 - **Size:** 432 samples
 - **Structure:** Each example contains a `Question`, `Answers` (list of correct labels), and `Choices` (list with labels and text)
@@ -316,13 +316,7 @@ constants:
   judge_base_url: https://openrouter.ai/api/v1
   judge_name: mistralai/mistral-large-2411
   tasks:
-    - name: eo_summarization
-      num_fewshot: 0
-      max_tokens: 20000
-      judge_api_key: !ref judge_api_key
-      judge_base_url: !ref judge_base_url
-      judge_name: !ref judge_name
-    - name: is_mcqa
+    - name: mcqa_multiple_answers
       num_fewshot: 2
       max_tokens: 10000
     - name: hallucination_detection
@@ -375,11 +369,9 @@ Choose tasks based on your evaluation goals:
 
 **Factual Knowledge:**
 - `mcqa_single_answer` - Single correct answer questions
-- `is_mcqa` - Multiple correct answers with partial credit
-- `wiley_mcqa` - Standardized textbook questions
+- `mcqa_multiple_answers` - Multiple correct answers with partial credit
 
 **Generation Quality:**
-- `eo_summarization` - Abstractive summarization of technical content
 - `open_ended` - Free-form explanatory answers
 
 **Grounded Generation (RAG):**
@@ -398,7 +390,7 @@ Choose tasks based on your evaluation goals:
 ## Evaluation Best Practices
 
 1. **Use Few-Shot Examples**: Most tasks benefit from few-shot examples (typically 2-5) to demonstrate the expected format
-2. **Set Appropriate Timeouts**: Some tasks require longer generation (e.g., summarization), so adjust timeouts accordingly
+2. **Set Appropriate Timeouts**: Some tasks require longer generation, so adjust timeouts accordingly
 3. **Configure Judge Model**: For LLM-as-judge tasks, choose a capable judge model (e.g., GPT-4, Claude 3.5 Sonnet, Mistral Large)
 4. **Log Samples**: Always use `--log_samples` to inspect individual predictions and understand model behavior
 5. **Monitor Costs**: LLM-as-judge evaluation can be expensive; consider using smaller subsets for initial testing
