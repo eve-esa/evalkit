@@ -12,7 +12,6 @@ import yaml
 import wandb
 
 
-
 @dataclasses.dataclass
 class FieldReference:
     reference_name: str
@@ -55,6 +54,7 @@ class ModelConfig:
     temperature: float = 0.0
     num_concurrent: int = 3  # Number of concurrent API requests
     timeout: int = 300  # Timeout in seconds (default: 300s / 5 minutes)
+    tokenizer: str | None = None  # HuggingFace tokenizer name for chat template (optional)
 
 
 @dataclasses.dataclass
@@ -585,6 +585,7 @@ def run_evaluation(
     """
     from lm_eval.evaluator import simple_evaluate
     from lm_eval.tasks import TaskManager
+
     # Create output directory for this specific evaluation (use user-defined name)
     task_output_dir = Path(output_dir) / task.name
     task_output_dir.mkdir(parents=True, exist_ok=True)
@@ -649,6 +650,10 @@ def run_evaluation(
             f"temperature={task.temperature if task.temperature > 0 else model.temperature},"
             f"timeout={model.timeout}"
         )
+
+        # Add tokenizer if provided
+        if model.tokenizer:
+            model_args += f",tokenizer={model.tokenizer}"
 
         # Create TaskManager to include custom tasks directory
         # This is equivalent to the CLI's --include tasks option
@@ -811,6 +816,7 @@ def main(config_file: str):
                 temperature=model.get("temperature", 0.0),
                 num_concurrent=model.get("num_concurrent", 3),
                 timeout=model.get("timeout", 300),
+                tokenizer=model.get("tokenizer"),
                 tasks=[parse_task_config(task) for task in model["tasks"]],
             )
             for model in config_dict["models"]
