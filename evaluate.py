@@ -37,6 +37,7 @@ class TaskConfig:
     judge_api_key: str = ""
     judge_base_url: str = ""
     judge_name: str = ""
+    batch_size: int = 1
     limit: int | None = None  # Limit number of samples to evaluate
 
     def __post_init__(self):
@@ -648,7 +649,8 @@ def run_evaluation(
             f"num_concurrent={model.num_concurrent},"
             f"max_tokens={task.max_tokens},"
             f"temperature={task.temperature if task.temperature > 0 else model.temperature},"
-            f"timeout={model.timeout}"
+            f"timeout={model.timeout},"
+            f"batch_size={task.batch_size}"
         )
 
         # Add tokenizer if provided
