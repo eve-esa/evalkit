@@ -10,12 +10,10 @@ metric_list:
   - metric: llm_as_judge
     aggregation: !function utils_open.aggregate_llm_judge
     higher_is_better: true
-    alias: llm_as_judge
 generation_kwargs:
   until:
     - "</s>"
     - "<|im_end|>"
-  max_gen_toks: 40000
   add_generation_prompt: false
   continue_final_message: true
 metadata:

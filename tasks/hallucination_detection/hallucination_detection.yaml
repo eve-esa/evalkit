@@ -23,7 +23,6 @@ generation_kwargs:
   until:
     - "</s>"
     - "<|im_end|>"
-  max_gen_toks: 100
 metadata:
   version: 1.0
 dataset_kwargs:

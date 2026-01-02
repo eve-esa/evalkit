@@ -4,13 +4,14 @@ import json
 import math
 import os
 import re
-import subprocess
 from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
 import yaml
 import wandb
+from lm_eval import simple_evaluate
+from lm_eval.tasks import TaskManager
 
 
 @dataclasses.dataclass
@@ -28,9 +29,13 @@ class FieldWithMaybeType:
 class TaskConfig:
     name: str  # User-defined name for this task configuration (used for output folders and wandb)
     task_name: str | None = None  # Actual lm_eval task name (defaults to name if not provided)
+    model_type: str = (
+        "openai-chat-completions"  # Model API type (e.g., "openai-chat-completions", "local-completions", etc.)
+    )
     max_tokens: int = 512
     num_fewshot: int = 0
     temperature: float = 0.0
+    apply_chat_template: bool = True  # Whether to apply chat template to prompts
     judge_api_key: str = ""
     judge_base_url: str = ""
     judge_name: str = ""
@@ -159,12 +164,16 @@ def parse_task_config(task_data) -> TaskConfig:
 
         if "task_name" in task_data:
             kwargs["task_name"] = task_data["task_name"]
+        if "model_type" in task_data:
+            kwargs["model_type"] = task_data["model_type"]
         if "max_tokens" in task_data:
             kwargs["max_tokens"] = task_data["max_tokens"]
         if "num_fewshot" in task_data:
             kwargs["num_fewshot"] = task_data["num_fewshot"]
         if "temperature" in task_data:
             kwargs["temperature"] = task_data["temperature"]
+        if "apply_chat_template" in task_data:
+            kwargs["apply_chat_template"] = task_data["apply_chat_template"]
         if "judge_api_key" in task_data:
             kwargs["judge_api_key"] = task_data["judge_api_key"]
         if "judge_base_url" in task_data:
@@ -567,90 +576,114 @@ def log_task_metrics_to_wandb(task_metrics: dict, model: ModelConfig, task: Task
     wandb.log({"metrics_summary": summary_table})
 
 
-def run_evaluation(model: ModelConfig, task: TaskConfig, output_dir: str, hf_token: str | None = None) -> int:
-    """Run lm_eval for a specific model and task."""
-
-    # Construct model_args
-    model_args_parts = [
-        f"base_url={model.base_url}",
-        f"model={model.name}",
-        f"num_concurrent={model.num_concurrent}",
-        f"max_tokens={task.max_tokens}",
-        f"temperature={task.temperature if task.temperature > 0 else model.temperature}",
-        f"timeout={model.timeout}",
-    ]
-    model_args = ",".join(model_args_parts)
+def run_evaluation(
+    model: ModelConfig, task: TaskConfig, output_dir: str, hf_token: str | None = None
+) -> int:
+    """Run lm_eval for a specific model and task using simple_evaluate."""
 
     # Create output directory for this specific evaluation (use user-defined name)
     task_output_dir = Path(output_dir) / task.name
     task_output_dir.mkdir(parents=True, exist_ok=True)
 
-    # Build the command as a list (safer than shell=True)
-    # Use task_name (actual lm_eval task) for the --tasks parameter
-    eval_command = [
-        "lm_eval",
-        "--model",
-        "openai-chat-completions",
-        "--model_args",
-        model_args,
-        "--include",
-        "tasks",
-        "--tasks",
-        task.task_name,  # Use task_name for the actual lm_eval task
-        "--num_fewshot",
-        str(task.num_fewshot),
-        "--output_path",
-        str(task_output_dir),
-        "--log_samples",
-        "--apply_chat_template",
-    ]
-    # Add limit if specified
-    if task.limit is not None and task.limit > 0:
-        eval_command.extend(["--limit", str(task.limit)])
+    # Set environment variables before initializing the model
+    env_backup = {}
 
     # Set API key as environment variable (more secure than command line)
-    env = os.environ.copy()
-    env["OPENAI_API_KEY"] = model.api_key
+    env_backup["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY")
+    os.environ["OPENAI_API_KEY"] = model.api_key
 
     # Set HuggingFace token if provided in config, otherwise use environment variable
     if hf_token:
-        env["HF_TOKEN"] = hf_token
-        env["HUGGING_FACE_HUB_TOKEN"] = hf_token
+        env_backup["HF_TOKEN"] = os.environ.get("HF_TOKEN")
+        env_backup["HUGGING_FACE_HUB_TOKEN"] = os.environ.get("HUGGING_FACE_HUB_TOKEN")
+        os.environ["HF_TOKEN"] = hf_token
+        os.environ["HUGGING_FACE_HUB_TOKEN"] = hf_token
     # If not in config, check if it exists in environment and preserve it
-    elif "HF_TOKEN" not in env and "HUGGING_FACE_HUB_TOKEN" in os.environ:
-        env["HF_TOKEN"] = os.environ["HUGGING_FACE_HUB_TOKEN"]
-    elif "HUGGING_FACE_HUB_TOKEN" not in env and "HF_TOKEN" in os.environ:
-        env["HUGGING_FACE_HUB_TOKEN"] = os.environ["HF_TOKEN"]
+    elif "HUGGING_FACE_HUB_TOKEN" in os.environ and "HF_TOKEN" not in os.environ:
+        os.environ["HF_TOKEN"] = os.environ["HUGGING_FACE_HUB_TOKEN"]
+    elif "HF_TOKEN" in os.environ and "HUGGING_FACE_HUB_TOKEN" not in os.environ:
+        os.environ["HUGGING_FACE_HUB_TOKEN"] = os.environ["HF_TOKEN"]
 
     # Set judge environment variables if provided
     if task.judge_api_key:
-        env["JUDGE_API_KEY"] = task.judge_api_key
+        env_backup["JUDGE_API_KEY"] = os.environ.get("JUDGE_API_KEY")
+        os.environ["JUDGE_API_KEY"] = task.judge_api_key
     if task.judge_base_url:
-        env["JUDGE_BASE_URL"] = task.judge_base_url
+        env_backup["JUDGE_BASE_URL"] = os.environ.get("JUDGE_BASE_URL")
+        os.environ["JUDGE_BASE_URL"] = task.judge_base_url
     if task.judge_name:
-        env["JUDGE_NAME"] = task.judge_name
+        env_backup["JUDGE_NAME"] = os.environ.get("JUDGE_NAME")
+        os.environ["JUDGE_NAME"] = task.judge_name
 
     print(f"\nRunning evaluation:")
     print(f"  Model: {model.name}")
+    print(f"  Model Type: {task.model_type}")
     print(f"  Task Config: {task.name}")
     if task.name != task.task_name:
         print(f"  LM-Eval Task: {task.task_name}")
     print(f"  Output: {task_output_dir}")
-    print(f"  Command: {' '.join(eval_command)}")
     print("-" * 80)
 
     try:
-        result = subprocess.run(eval_command, env=env, check=True, capture_output=False)
+        # Construct full API URL based on model type
+        # Base URL should be just the base (e.g., https://api.openai.com/v1/)
+        # We append either 'completions' or 'chat/completions' based on model type
+        base_url = model.base_url.rstrip("/")  # Remove trailing slashes
+
+        # Check if "chat" is in the model type to determine the endpoint
+        if "chat" in task.model_type.lower():
+            full_url = f"{base_url}/chat/completions"
+        else:
+            full_url = f"{base_url}/completions"
+
+        # Construct model arguments as a string (lm_eval expects comma-separated key=value pairs)
+        model_args = (
+            f"base_url={full_url},"
+            f"model={model.name},"
+            f"num_concurrent={model.num_concurrent},"
+            f"max_tokens={task.max_tokens},"
+            f"temperature={task.temperature if task.temperature > 0 else model.temperature},"
+            f"timeout={model.timeout}"
+        )
+
+        # Create TaskManager to include custom tasks directory
+        # This is equivalent to the CLI's --include tasks option
+        task_manager = TaskManager(include_path="tasks")
+
+        # Run evaluation using simple_evaluate
+        # Pass model type as string and let simple_evaluate handle model initialization
+        results = simple_evaluate(
+            model=task.model_type,
+            model_args=model_args,
+            tasks=[task.task_name],
+            num_fewshot=task.num_fewshot,
+            limit=task.limit if task.limit and task.limit > 0 else None,
+            output_path=str(task_output_dir),
+            log_samples=True,
+            apply_chat_template=task.apply_chat_template,
+            task_manager=task_manager,
+        )
+
         print(f"✓ Completed: {model.name} on {task.name}")
-        return result.returncode
-    except subprocess.CalledProcessError as e:
+        return_code = 0
+
+    except Exception as e:
         print(f"✗ Failed: {model.name} on {task.name}")
         print(f"  Error: {e}")
-        return e.returncode
-    except FileNotFoundError:
-        print("Error: lm_eval command not found.")
-        print("Install with: pip install lm-eval")
-        return 1
+        import traceback
+
+        traceback.print_exc()
+        return_code = 1
+
+    finally:
+        # Restore environment variables
+        for key, value in env_backup.items():
+            if value is None:
+                os.environ.pop(key, None)
+            else:
+                os.environ[key] = value
+
+    return return_code
 
 
 def evaluate_model(
