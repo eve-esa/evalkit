@@ -10,8 +10,7 @@ from pathlib import Path
 
 import yaml
 import wandb
-from lm_eval import simple_evaluate
-from lm_eval.tasks import TaskManager
+
 
 
 @dataclasses.dataclass
@@ -578,9 +577,14 @@ def log_task_metrics_to_wandb(task_metrics: dict, model: ModelConfig, task: Task
 
 def run_evaluation(
     model: ModelConfig, task: TaskConfig, output_dir: str, hf_token: str | None = None
-) -> int:
-    """Run lm_eval for a specific model and task using simple_evaluate."""
+) -> tuple[int, dict | None]:
+    """Run lm_eval for a specific model and task using simple_evaluate.
 
+    Returns:
+        tuple: (return_code, results_dict) where results_dict is None if evaluation failed
+    """
+    from lm_eval.evaluator import simple_evaluate
+    from lm_eval.tasks import TaskManager
     # Create output directory for this specific evaluation (use user-defined name)
     task_output_dir = Path(output_dir) / task.name
     task_output_dir.mkdir(parents=True, exist_ok=True)
@@ -658,14 +662,43 @@ def run_evaluation(
             tasks=[task.task_name],
             num_fewshot=task.num_fewshot,
             limit=task.limit if task.limit and task.limit > 0 else None,
-            output_path=str(task_output_dir),
             log_samples=True,
             apply_chat_template=task.apply_chat_template,
             task_manager=task_manager,
         )
 
+        if results is None:
+            raise RuntimeError("simple_evaluate returned None")
+
+        timestamp = datetime.now().strftime("%Y-%m-%dT%H-%M-%S.%f")
+
+        def default_serializer(obj):
+            if isinstance(obj, set):
+                return list(obj)
+            return str(obj)
+
+        # Save samples as JSONL files
+        if "samples" in results:
+            for subtask_name, samples_list in results["samples"].items():
+                samples_path = task_output_dir / f"samples_{subtask_name}_{timestamp}.jsonl"
+                print(f"  Saving samples to: {samples_path}")
+                with open(samples_path, "w") as f:
+                    for sample in samples_list:
+                        f.write(json.dumps(sample, default=default_serializer) + "\n")
+
+        # Save results without samples (samples are in JSONL files)
+        results_to_save = results.copy()
+        if "samples" in results_to_save:
+            del results_to_save["samples"]
+
+        results_path = task_output_dir / f"results_{timestamp}.json"
+        print(f"  Saving results to: {results_path}")
+        with open(results_path, "w") as f:
+            json.dump(results_to_save, f, indent=2, default=default_serializer)
+
         print(f"✓ Completed: {model.name} on {task.name}")
         return_code = 0
+        eval_results = results
 
     except Exception as e:
         print(f"✗ Failed: {model.name} on {task.name}")
@@ -674,6 +707,7 @@ def run_evaluation(
 
         traceback.print_exc()
         return_code = 1
+        eval_results = None
 
     finally:
         # Restore environment variables
@@ -683,7 +717,7 @@ def run_evaluation(
             else:
                 os.environ[key] = value
 
-    return return_code
+    return return_code, eval_results
 
 
 def evaluate_model(
@@ -693,25 +727,17 @@ def evaluate_model(
     results = {}
 
     for task in model.tasks:
-        return_code = run_evaluation(model, task, output_dir, hf_token)
+        return_code, eval_results = run_evaluation(model, task, output_dir, hf_token)
         results[task.name] = return_code
 
         # Log to wandb immediately after each task completes
-        if return_code == 0:  # Only if task succeeded
-            # Check and add aggregate metrics
-            print(f"\nChecking aggregate metrics for {task.name}...")
-            task_output_dir = Path(output_dir) / task.name / model.name.replace("/", "__")
-            results_files = list(task_output_dir.glob("**/*.json"))
-            if results_files:
-                # Use the newest results file
-                results_files.sort(key=lambda f: f.stat().st_mtime, reverse=True)
-                results_file = results_files[0]
-                add_aggregate_metrics_to_results(results_file)
-
+        if return_code == 0 and eval_results:  # Only if task succeeded and we have results
             # Log to wandb if enabled
             if wandb_config.enabled:
-                print(f"\nLoading evaluation results for W&B logging ({task.name})...")
-                task_results = load_eval_results(output_dir, model.name, task.name)
+                print(f"\nPreparing W&B logging for {task.name}...")
+
+                # Extract metrics from results dict
+                task_results = eval_results.get("results", {})
 
                 if task_results:
                     # Initialize a new wandb run for this model/task combination
@@ -722,14 +748,18 @@ def evaluate_model(
                         task_metrics = flatten_metrics(task_results, task.name)
                         log_task_metrics_to_wandb(task_metrics, model, task)
 
-                        # Load and log samples
-                        print(f"Loading samples for W&B logging ({task.name})...")
-                        samples = load_samples(output_dir, model.name, task.name)
+                        # Log samples if available
+                        if "samples" in eval_results and eval_results["samples"]:
+                            print(f"Logging samples for W&B ({task.name})...")
+                            # samples is a dict with subtask_name -> list of samples
+                            all_samples = []
+                            for subtask_samples in eval_results["samples"].values():
+                                all_samples.extend(subtask_samples)
 
-                        if samples:
-                            samples_table = create_samples_table(samples)
-                            wandb.log({"samples": samples_table})
-                            print(f"✓ Logged {len(samples)} samples to W&B")
+                            if all_samples:
+                                samples_table = create_samples_table(all_samples)
+                                wandb.log({"samples": samples_table})
+                                print(f"✓ Logged {len(all_samples)} samples to W&B")
                         else:
                             print(f"Warning: No samples found for {task.name}")
 
