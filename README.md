@@ -55,31 +55,65 @@ The `evals.yaml` file has the following structure:
 
 ```yaml
 constants:
+  hf_token: your-huggingface-token
   judge_api_key: your-judge-api-key
-  judge_base_url: your-judge-base-url
-  judge_name: your-judge-name
+  judge_base_url: https://api.mistral.ai/v1  # Base URL only
+  judge_name: mistral-medium-latest
+
+  # Define tasks with different model types
   tasks:
-    - name: mcqa_single_answer
+    # MCQA tasks using local-completions (non-chat API)
+    - name: mcqa_single_answer_0_shot
+      task_name: mcqa_single_answer
+      model_type: local-completions  # Uses /completions endpoint
+      apply_chat_template: false
+      num_fewshot: 0
+      max_tokens: 5
+      batch_size: 8
+
+    - name: mcqa_multiple_answer_2_shot
+      task_name: mcqa_multiple_answer
+      model_type: local-completions  # Uses /completions endpoint
+      apply_chat_template: false
+      num_fewshot: 2
+      max_tokens: 10
+      batch_size: 8
+
+    # Open-ended tasks using openai-chat-completions (chat API)
+    - name: open_ended_0_shot
+      task_name: open_ended
+      model_type: openai-chat-completions  # Uses /chat/completions endpoint
+      apply_chat_template: false  # API handles templates
       num_fewshot: 0
       max_tokens: 10000
+      batch_size: 1
       judge_api_key: !ref judge_api_key
       judge_base_url: !ref judge_base_url
       judge_name: !ref judge_name
 
+    - name: hallucination_detection_5_shot
+      task_name: hallucination_detection
+      model_type: openai-chat-completions  # Uses /chat/completions endpoint
+      apply_chat_template: false
+      num_fewshot: 5
+      max_tokens: 100
+      batch_size: 4
+
 wandb:
   enabled: true
-  project: evaluations
+  project: eve-evaluations
   entity: your-wandb-entity
   run_name: my-evaluation-run
   api_key: your-wandb-api-key
 
 models:
-  - name: eve-esa/eve_v0.1
-    base_url: https://api.provider.com/v1/chat/completions
-    api_key: your-api-key
+  - name: mistralai/mistral-small-3.2-24b-instruct
+    base_url: https://openrouter.ai/api/v1  # Base URL only (no /chat/completions)
+    api_key: sk-or-v1-...
     temperature: 0.1
-    num_concurrent: 5
+    num_concurrent: 15
     timeout: 180
+    tokenizer: mistralai/Mistral-7B-Instruct-v0.2  # Optional tokenizer
     tasks: !ref tasks
 
 output_dir: evals_outputs
@@ -92,9 +126,20 @@ output_dir: evals_outputs
 - Common constants: API keys, base URLs, model names, task lists
 
 **Tasks Configuration:**
-- `name`: Task name (must match a task in the `tasks/` directory)
+- `name`: User-defined task configuration name (used for output folders and logging)
+- `task_name`: Actual lm-eval task name (defaults to `name` if not provided)
+- `model_type`: Model API type - determines which API interface to use (default: `"openai-chat-completions"`)
+  - `openai-chat-completions`: OpenAI-compatible chat API (uses `/chat/completions` endpoint)
+  - `local-completions`: Local completions API (uses `/completions` endpoint)
+  - `anthropic`: Anthropic API
+  - `vllm`: vLLM API
+  - Any other lm-eval supported model type
+- `apply_chat_template`: Whether to apply chat template locally (default: `true`)
+  - Set to `false` for API models that handle chat templates internally
+  - Set to `true` to apply chat templates locally using the tokenizer
 - `num_fewshot`: Number of few-shot examples (default: 0)
-- `max_tokens`: Maximum tokens for model generation
+- `max_tokens`: Maximum tokens for model generation (default: 512)
+- `temperature`: Sampling temperature for this task (default: 0.0, uses model temperature if > 0)
 - `limit`: Optional limit on number of samples to evaluate
 - `judge_api_key`: API key for LLM-as-judge evaluation (if applicable)
 - `judge_base_url`: Base URL for judge model API
@@ -102,9 +147,13 @@ output_dir: evals_outputs
 
 **Models Configuration:**
 - `name`: Model name/identifier
-- `base_url`: API endpoint for the model
+- `base_url`: **Base API URL only** (e.g., `https://api.provider.com/v1`)
+  - System automatically appends `/chat/completions` or `/completions` based on `model_type`
+  - Do not include the endpoint path in the URL
 - `api_key`: Authentication key for the model API
-- `temperature`: Sampling temperature (default: 0.0)
+- `tokenizer`: Optional HuggingFace tokenizer name/path 
+  - Can be a HuggingFace model ID (e.g., `mistralai/Mistral-7B-Instruct-v0.2`) or local path
+- `temperature`: Default sampling temperature (default: 0.0)
 - `num_concurrent`: Number of concurrent API requests (default: 3)
 - `timeout`: Request timeout in seconds (default: 300)
 - `tasks`: List of tasks to run on this model (can reference `!ref tasks`)
@@ -124,15 +173,27 @@ output_dir: evals_outputs
 To run evaluations using the configuration file:
 
 ```bash
-python scripts/evaluate.py scripts/config/evals.yaml
+python evaluate.py evals.yaml
 ```
 
 The script will:
-1. Parse the configuration file
-2. Run each task for each model sequentially
-3. Save results to the specified output directory
+1. Parse the configuration file and resolve all `!ref` references
+2. Initialize the evaluation framework using Python API (no CLI subprocess calls)
+3. For each model and task combination:
+   - Automatically construct the correct API endpoint based on `model_type`
+   - Apply chat templates if configured (`apply_chat_template: true`)
+   - Run evaluation using `simple_evaluate()` from lm-eval
+   - Save results to `{output_dir}/{task_name}/results_{timestamp}.json`
+   - Save samples to `{output_dir}/{task_name}/samples_{task}_{timestamp}.jsonl`
 4. Optionally log metrics and samples to Weights & Biases
 5. Print a summary of all evaluations
+
+**Key Features:**
+- **Pure Python API**: All evaluations run through the Python API, no CLI subprocess calls
+- **Per-task configuration**: Each task can use a different model API type
+- **Automatic URL construction**: Base URL + model type → full endpoint URL
+- **Flexible chat templates**: Control whether to apply templates locally or let the API handle them
+- **Custom tokenizers**: Optionally specify a tokenizer for chat template application
 
 
 ## EO Tasks

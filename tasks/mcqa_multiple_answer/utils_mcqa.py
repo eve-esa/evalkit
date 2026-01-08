@@ -30,7 +30,7 @@ def jaccard_index(references, predictions):
 
 
 def map_to_answers(row):
-    return {"output": ", ".join(row["Answer"])}
+    return {"output": ", ".join(row["Answers"])}
 
 
 def doc_to_text(doc):
@@ -64,7 +64,7 @@ def process_dataset(dataset: datasets.Dataset):
 
 def process_results(doc: datasets.Dataset, results):
     preds = results[0]
-    references = doc["Answer"]
+    references = doc["Answers"]
     preds = process_answer(preds)
     subset_acc = subset_accuracy(references, preds)
     jaccard = jaccard_index(references, preds)

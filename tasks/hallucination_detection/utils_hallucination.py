@@ -82,11 +82,9 @@ def process_results(doc: datasets.Dataset, results):
     Returns:
         dict: Per-example metrics (accuracy, TP, FP, FN, TN, and prediction tuple)
     """
-    print(f"Results: {results}")
     # Get model prediction
     pred_text = results[0]
     pred_labels = process_answer(pred_text)
-    print(f"Predicted labels: {pred_labels}")
 
     # Extract the predicted label (first one if multiple, or default to "B")
     pred_label = pred_labels[0] if pred_labels else "B"
