@@ -6,6 +6,14 @@ Evalkit is built on top of the [EleutherAI Language Model Evaluation Harness](ht
 
 For more information refer to the complete guide of the project: [EVE Guide](eve-esa.github.io/eve-guide/).
 
+## Earth Virtual Expert (EVE)
+
+**Earth Virtual Expert (EVE)** aims to advance the use of Large Language Models (LLMs) within the Earth Observation (EO) and Earth Science (ES) community.
+
+- Website: https://eve.philab.esa.int/  
+- HuggingFace: https://huggingface.co/eve-esa
+- Other repositories: https://github.com/eve-esa
+  
 ## Installation
 
 ### 1. Clone the repository
