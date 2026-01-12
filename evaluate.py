@@ -425,7 +425,50 @@ def flatten_metrics(results: dict, original_task_name: str) -> dict:
     return flattened
 
 
-def init_wandb_for_task(wandb_config: WandbConfig, model: ModelConfig, task: TaskConfig):
+def sanitize_config_for_wandb(config: dict) -> dict:
+    """
+    Sanitize configuration by removing sensitive information like API keys and tokens.
+    Returns a deep copy with sensitive fields redacted.
+    """
+    import copy
+
+    # Create a deep copy to avoid modifying the original
+    sanitized = copy.deepcopy(config)
+
+    # List of sensitive field names to redact
+    sensitive_fields = [
+        "api_key",
+        "judge_api_key",
+        "hf_token",
+        "token",
+        "password",
+        "secret",
+        "credential",
+    ]
+
+    def redact_sensitive(obj, path=""):
+        """Recursively redact sensitive fields."""
+        if isinstance(obj, dict):
+            for key, value in obj.items():
+                key_lower = key.lower()
+                # Check if this key contains any sensitive field name
+                if any(sensitive in key_lower for sensitive in sensitive_fields):
+                    # Redact the value
+                    if value and isinstance(value, str) and len(value) > 0:
+                        obj[key] = "***REDACTED***"
+                elif isinstance(value, (dict, list)):
+                    # Recursively process nested structures
+                    redact_sensitive(value, f"{path}.{key}" if path else key)
+        elif isinstance(obj, list):
+            for i, item in enumerate(obj):
+                if isinstance(item, (dict, list)):
+                    redact_sensitive(item, f"{path}[{i}]")
+
+    redact_sensitive(sanitized)
+    return sanitized
+
+
+def init_wandb_for_task(wandb_config: WandbConfig, model: ModelConfig, task: TaskConfig, full_config: dict | None = None):
     """Initialize wandb run for a specific model and task."""
     if not wandb_config.enabled:
         return None
@@ -443,15 +486,41 @@ def init_wandb_for_task(wandb_config: WandbConfig, model: ModelConfig, task: Tas
         run_name_parts.extend([model_short_name, task.name])
         run_name = "_".join(run_name_parts)
 
-        # Initialize wandb run
+        # Initialize wandb run with comprehensive configuration
         run_config = {
-            "model_name": model.name,
-            "task_name": task.name,  # User-defined task configuration name
-            "lm_eval_task": task.task_name,  # Actual lm_eval task name
-            "temperature": model.temperature,
-            "max_tokens": task.max_tokens,
-            "num_fewshot": task.num_fewshot,
+            "model": {
+                "name": model.name,
+                "base_url": model.base_url,
+                "temperature": model.temperature,
+                "num_concurrent": model.num_concurrent,
+                "timeout": model.timeout,
+                "tokenizer": model.tokenizer,
+            },
+            "task": {
+                "name": task.name,  # User-defined task configuration name
+                "task_name": task.task_name,  # Actual lm_eval task name
+                "model_type": task.model_type,
+                "max_tokens": task.max_tokens,
+                "num_fewshot": task.num_fewshot,
+                "temperature": task.temperature,
+                "apply_chat_template": task.apply_chat_template,
+                "batch_size": task.batch_size,
+                "limit": task.limit,
+            },
         }
+
+        # Add judge configuration if present
+        if task.judge_name:
+            run_config["task"]["judge"] = {
+                "judge_name": task.judge_name,
+                "judge_base_url": task.judge_base_url,
+            }
+
+        # Add full YAML configuration if provided (sanitized)
+        if full_config:
+            # Create a sanitized copy of the config
+            sanitized_config = sanitize_config_for_wandb(full_config)
+            run_config["yaml_config"] = sanitized_config
 
         wandb_init_kwargs = {
             "project": wandb_config.project,
@@ -728,7 +797,7 @@ def run_evaluation(
 
 
 def evaluate_model(
-    model: ModelConfig, output_dir: str, wandb_config: WandbConfig, hf_token: str | None = None
+    model: ModelConfig, output_dir: str, wandb_config: WandbConfig, hf_token: str | None = None, full_config: dict | None = None
 ) -> dict[str, int]:
     """Evaluate a model on all its tasks."""
     results = {}
@@ -748,7 +817,7 @@ def evaluate_model(
 
                 if task_results:
                     # Initialize a new wandb run for this model/task combination
-                    wandb_run = init_wandb_for_task(wandb_config, model, task)
+                    wandb_run = init_wandb_for_task(wandb_config, model, task, full_config)
 
                     if wandb_run:
                         # Flatten and log metrics for this task
@@ -842,7 +911,7 @@ def main(config_file: str):
         print(f"{'=' * 80}")
 
         model_results = evaluate_model(
-            model, eval_config.output_dir, eval_config.wandb, eval_config.hf_token
+            model, eval_config.output_dir, eval_config.wandb, eval_config.hf_token, config_dict
         )
         all_results[model.name] = model_results
 

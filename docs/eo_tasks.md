@@ -9,7 +9,7 @@ This page provides a comprehensive overview of all available Earth Observation (
 | [MCQA Multiple Answer](#mcqa-multiple-answer) | Multiple Choice | [eve-esa/eve-is-mcqa](https://huggingface.co/datasets/eve-esa/eve-is-mcqa) | 432  | IoU, Accuracy |
 | [MCQA Single Answer](#mcqa-single-answer) | Multiple Choice | [eve-esa/mcqa-single-answer](https://huggingface.co/datasets/eve-esa/mcqa-single-answer) | 1308 | Accuracy |
 | [Open Ended](#open-ended) | Generation | [eve-esa/open-ended](https://huggingface.co/datasets/eve-esa/open-ended) | 1304 | LLM as Judge |
-| [Open Ended with Context](#open-ended-with-context) | Generation | [eve-esa/open-ended-w-context](https://huggingface.co/datasets/eve-esa/open-ended-w-context) | 606  | LLM Judge |
+| [Open Ended with Context](#open-ended-with-context) | Generation | [eve-esa/open-ended-w-context](https://huggingface.co/datasets/eve-esa/open-ended-w-context) | 436  | LLM Judge |
 | [Refusal](#refusal) | Generation | [eve-esa/refusal](https://huggingface.co/datasets/eve-esa/refusal) | 946  | LLM Judge |
 | [Hallucination Detection](#hallucination-detection) | Classification | [eve-esa/hallucination-detection](https://huggingface.co/datasets/eve-esa/hallucination-detection) | 2996 | Accuracy, Precision, Recall, F1 |
 
