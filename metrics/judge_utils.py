@@ -114,7 +114,7 @@ def judge_qa_with_llm(
     model_name: Optional[str] = None,
     api_key: Optional[str] = None,
     base_url: Optional[str] = None,
-) -> int:
+) -> Dict:
     """
     Calls the LLM judge for QA evaluation with binary (0/1) scoring.
 
@@ -125,7 +125,7 @@ def judge_qa_with_llm(
         base_url: Base URL for the API. If None, uses environment variables.
 
     Returns:
-        Integer score: 1 for correct, 0 for incorrect.
+        Dictionary with "score" (int) and "raw_output" (str) keys.
     """
     if model_name is None:
         model_name = os.getenv("JUDGE_NAME") or os.getenv("JUDGE_MODEL") or "mistral-large-latest"
@@ -207,18 +207,19 @@ def judge_qa_with_llm(
         score = data.get("score")
 
         if score in [0, 1]:
-            return int(score)
+            return {"score": int(score), "raw_output": response_content}
         else:
             print(f"Warning: Judge returned invalid score: {score}. Defaulting to 0.")
             print(f"Full response: {response_content}")
             print(f"Question: {sample['question'][:100]}...")
             print(f"Output: {sample['output'][:100]}...")
-            return 0
+            return {"score": 0, "raw_output": response_content}
 
     except Exception as e:
         print(f"Error during LLM judge call: {e}. Defaulting to score 0.")
         print(f"Question: {sample['question'][:100]}...")
-        return 0
+        error_msg = f"Error: {str(e)}"
+        return {"score": 0, "raw_output": error_msg}
 
 
 def process_qa_results(
@@ -260,7 +261,7 @@ def aggregate_llm_judge(items: Union[List[LoggableFuture], List[Future]]) -> flo
     Aggregate LLM judge results by waiting for futures and calculating mean.
 
     Args:
-        items: List of LoggableFuture or Future objects containing scores.
+        items: List of LoggableFuture or Future objects containing score dictionaries.
 
     Returns:
         Mean score across all items, or 0.0 if items is empty.
@@ -271,9 +272,12 @@ def aggregate_llm_judge(items: Union[List[LoggableFuture], List[Future]]) -> flo
     # Handle both LoggableFuture and regular Future objects
     scores = []
     for item in items:
-        if isinstance(item, LoggableFuture):
-            scores.append(item.result())
+        result = item.result() if isinstance(item, (LoggableFuture, Future)) else item
+
+        # Handle both dict format (new) and int format (backward compatibility)
+        if isinstance(result, dict):
+            scores.append(result["score"])
         else:
-            scores.append(item.result())
+            scores.append(result)
 
     return mean(scores) if scores else 0.0
