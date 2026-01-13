@@ -122,7 +122,7 @@ class OpenEndedWContextTask(ConfigurableTask):
         if judges and len(judges) > 0:
             # Multi-judge mode: create aggregations for each judge
             result = {
-                "llm_as_judge_multi": aggregate_llm_judge,
+                "llm_as_judge_avg": aggregate_llm_judge,
                 "judge_agreement": calculate_judge_agreement,
                 "judge_voting": aggregate_llm_judge,
             }
@@ -148,7 +148,7 @@ class OpenEndedWContextTask(ConfigurableTask):
         if judges and len(judges) > 0:
             # Multi-judge mode
             result = {
-                "llm_as_judge_multi": True,
+                "llm_as_judge_avg": True,
                 "judge_agreement": True,
                 "judge_voting": True,
             }

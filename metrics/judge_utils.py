@@ -98,7 +98,9 @@ class LoggableFutureAgreement:
         """Calculate agreement score (1 if all agree, 0 otherwise) from multi-judge result."""
         multi_result = self._future.result(timeout=timeout)
         if isinstance(multi_result, dict):
-            scores = [v["score"] for v in multi_result.values() if isinstance(v, dict) and "score" in v]
+            scores = [
+                v["score"] for v in multi_result.values() if isinstance(v, dict) and "score" in v
+            ]
             if scores:
                 return 1 if len(set(scores)) == 1 else 0
         return 0
@@ -127,10 +129,13 @@ class LoggableFutureVoting:
         """Calculate majority vote (returns majority score if >= half+1 judges agree, 0 otherwise)."""
         multi_result = self._future.result(timeout=timeout)
         if isinstance(multi_result, dict):
-            scores = [v["score"] for v in multi_result.values() if isinstance(v, dict) and "score" in v]
+            scores = [
+                v["score"] for v in multi_result.values() if isinstance(v, dict) and "score" in v
+            ]
             if scores:
                 # Count votes for each score
                 from collections import Counter
+
                 vote_counts = Counter(scores)
 
                 # Calculate majority threshold (half + 1)
@@ -204,7 +209,7 @@ def get_judge_client(api_key: Optional[str] = None, base_url: Optional[str] = No
             api_key=api_key,
             base_url=base_url,
             timeout=60.0,  # 60 second timeout to prevent hanging
-            max_retries=2
+            max_retries=2,
         )
 
     return _JUDGE_CLIENTS[cache_key]
@@ -294,6 +299,7 @@ def judge_qa_with_llm(
 
     try:
         # Try structured outputs first (OpenAI-compatible APIs)
+        response = None
         try:
             response = client.chat.completions.create(
                 model=model_name,
@@ -302,35 +308,81 @@ def judge_qa_with_llm(
                 temperature=0.0,
                 max_tokens=100,
             )
-        except Exception:
+        except Exception as e_structured:
             # Fall back to basic JSON mode if structured outputs not supported
-            response = client.chat.completions.create(
-                model=model_name,
-                messages=[{"role": "user", "content": final_prompt}],
-                response_format={"type": "json_object"},
-                temperature=0.0,
-                max_tokens=100,
+            print(
+                f"[DEBUG] Structured output failed for {model_name}, trying basic JSON mode: {str(e_structured)[:100]}"
             )
+            try:
+                response = client.chat.completions.create(
+                    model=model_name,
+                    messages=[{"role": "user", "content": final_prompt}],
+                    response_format={"type": "json_object"},
+                    temperature=0.0,
+                    max_tokens=100,
+                )
+            except Exception as e_json:
+                # Fall back to no JSON mode (for models that don't support it)
+                print(
+                    f"[DEBUG] JSON mode failed for {model_name}, using plain text: {str(e_json)[:100]}"
+                )
+                response = client.chat.completions.create(
+                    model=model_name,
+                    messages=[{"role": "user", "content": final_prompt}],
+                    temperature=0.0,
+                    max_tokens=100,
+                    extra_body={},  # OpenRouter compatibility
+                )
 
         response_content = response.choices[0].message.content
-        if response_content is None:
-            raise ValueError("LLM response content is None")
 
-        data = json.loads(response_content)
+        # Debug: Print raw response
+        # print(
+        #     f"[DEBUG] Judge {model_name} raw response: {response_content[:200] if response_content else 'None'}"
+        # )
+
+        if response_content is None or response_content.strip() == "":
+            raise ValueError("LLM response content is None or empty")
+
+        # Try to parse JSON
+        try:
+            data = json.loads(response_content)
+        except json.JSONDecodeError as e:
+            print(f"[ERROR] JSON parse error for {model_name}: {e}")
+            print(f"[ERROR] Raw response content: {repr(response_content)}")
+            print(f"[ERROR] Response length: {len(response_content) if response_content else 0}")
+            raise ValueError(f"Failed to parse JSON response: {str(e)}")
+
         score = data.get("score")
 
         if score in [0, 1]:
             return {"score": int(score), "raw_output": response_content}
         else:
-            print(f"Warning: Judge returned invalid score: {score}. Defaulting to 0.")
-            print(f"Full response: {response_content}")
-            print(f"Question: {sample['question'][:100]}...")
-            print(f"Output: {sample['output'][:100]}...")
+            print(f"[WARNING] Judge {model_name} returned invalid score: {score}. Defaulting to 0.")
+            print(f"[WARNING] Full response: {response_content}")
+            print(f"[WARNING] Question: {sample['question'][:100]}...")
+            print(f"[WARNING] Output: {sample['output'][:100]}...")
             return {"score": 0, "raw_output": response_content}
 
     except Exception as e:
-        print(f"Error during LLM judge call: {e}. Defaulting to score 0.")
-        print(f"Question: {sample['question'][:100]}...")
+        print(f"[ERROR] Error during LLM judge call with {model_name}: {e}")
+        print(f"[ERROR] Error type: {type(e).__name__}")
+        print(f"[ERROR] Question: {sample['question'][:100]}...")
+        print(f"[ERROR] Model output: {sample['output'][:100]}...")
+
+        # Try to get more details about the response
+        try:
+            if response:
+                print(f"[ERROR] Response object exists: {type(response)}")
+                if hasattr(response, "choices") and response.choices:
+                    print(f"[ERROR] Response has {len(response.choices)} choices")
+                    if response.choices[0].message:
+                        print(
+                            f"[ERROR] Message content: {repr(response.choices[0].message.content)}"
+                        )
+        except Exception as debug_e:
+            print(f"[ERROR] Could not get response details: {debug_e}")
+
         error_msg = f"Error: {str(e)}"
         return {"score": 0, "raw_output": error_msg}
 
@@ -371,7 +423,9 @@ def judge_qa_with_multiple_llms(
                 api_key=api_key,
                 base_url=base_url,
             )
-            print(f"[DEBUG multi-judge] Judge {judge_name} completed: score={result.get('score', 'N/A')}")
+            print(
+                f"[DEBUG multi-judge] Judge {judge_name} completed: score={result.get('score', 'N/A')}"
+            )
             results[judge_name] = result
         except Exception as e:
             print(f"[ERROR multi-judge] Judge {judge_name} failed: {e}")
@@ -405,7 +459,7 @@ def process_qa_results(
         Dictionary with judge results. If multiple judges, creates separate keys:
             {
                 "llm_as_judge_<name>": LoggableFuture for each judge,
-                "llm_as_judge_multi": LoggableFuture with all results,
+                "llm_as_judge_avg": LoggableFuture with all results,
                 "judge_agreement": LoggableFuture with agreement data (1 if all agree, 0 otherwise),
                 "judge_voting": LoggableFuture with majority vote result (returns majority score if >= half+1 judges agree)
             }
@@ -429,7 +483,7 @@ def process_qa_results(
         result_dict = {}
 
         # Store the complete multi-judge result
-        result_dict["llm_as_judge_multi"] = LoggableFuture(future)
+        result_dict["llm_as_judge_avg"] = LoggableFuture(future)
 
         # Create individual judge metrics
         for judge_config in judges:
@@ -454,7 +508,15 @@ def process_qa_results(
         return {"llm_as_judge": LoggableFuture(future)}
 
 
-def aggregate_llm_judge(items: Union[List[LoggableFuture], List[Future], List[LoggableFutureExtractor], List[LoggableFutureAgreement], List[LoggableFutureVoting]]) -> float:
+def aggregate_llm_judge(
+    items: Union[
+        List[LoggableFuture],
+        List[Future],
+        List[LoggableFutureExtractor],
+        List[LoggableFutureAgreement],
+        List[LoggableFutureVoting],
+    ],
+) -> float:
     """
     Aggregate LLM judge results by waiting for futures and calculating mean.
 
@@ -471,7 +533,7 @@ def aggregate_llm_judge(items: Union[List[LoggableFuture], List[Future], List[Lo
     scores = []
     for item in items:
         # Get result from any future-like object
-        if hasattr(item, 'result'):
+        if hasattr(item, "result"):
             result = item.result()
         else:
             result = item
@@ -502,6 +564,7 @@ def create_judge_aggregator(judge_name: str):
     Returns:
         Aggregation function for that specific judge.
     """
+
     def aggregate_specific_judge(items: Union[List[LoggableFuture], List[Future]]) -> float:
         if not items:
             return 0.0
@@ -523,9 +586,7 @@ def create_judge_aggregator(judge_name: str):
     return aggregate_specific_judge
 
 
-def calculate_judge_agreement(
-    items: Union[List[LoggableFuture], List[Future]]
-) -> float:
+def calculate_judge_agreement(items: Union[List[LoggableFuture], List[Future]]) -> float:
     """
     Calculate agreement rate between multiple judges.
 
