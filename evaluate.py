@@ -37,6 +37,7 @@ class TaskConfig:
     judge_api_key: str = ""
     judge_base_url: str = ""
     judge_name: str = ""
+    judges: list[dict] | None = None  # Multiple judges for multi-judge evaluation
     batch_size: int = 1
     limit: int | None = None  # Limit number of samples to evaluate
 
@@ -180,6 +181,8 @@ def parse_task_config(task_data) -> TaskConfig:
             kwargs["judge_base_url"] = task_data["judge_base_url"]
         if "judge_name" in task_data:
             kwargs["judge_name"] = task_data["judge_name"]
+        if "judges" in task_data:
+            kwargs["judges"] = task_data["judges"]
         if "limit" in task_data:
             kwargs["limit"] = task_data["limit"]
 
@@ -680,7 +683,13 @@ def run_evaluation(
         os.environ["HUGGING_FACE_HUB_TOKEN"] = os.environ["HF_TOKEN"]
 
     # Set judge environment variables if provided
-    if task.judge_api_key:
+    if task.judges:
+        # Multi-judge mode: serialize judges list as JSON
+        env_backup["TASK_JUDGES"] = os.environ.get("TASK_JUDGES")
+        os.environ["TASK_JUDGES"] = json.dumps(task.judges)
+        print(f"  [INFO] Multi-judge mode enabled with {len(task.judges)} judges")
+    elif task.judge_api_key:
+        # Single judge mode (backward compatibility)
         env_backup["JUDGE_API_KEY"] = os.environ.get("JUDGE_API_KEY")
         os.environ["JUDGE_API_KEY"] = task.judge_api_key
     if task.judge_base_url:
