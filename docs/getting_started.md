@@ -99,10 +99,52 @@ tasks:
     max_tokens: 1000             # Maximum tokens for generation (default: 512)
     temperature: 0.0             # Sampling temperature (default: 0.0)
     limit: 100                   # Optional: Limit number of samples to evaluate
-    judge_api_key: api-key       # Required for LLM-as-judge tasks
-    judge_base_url: base-url     # Required for LLM-as-judge tasks
-    judge_name: model-name       # Required for LLM-as-judge tasks
+    judge_api_key: api-key       # Required for single-judge LLM-as-judge tasks
+    judge_base_url: base-url     # Required for single-judge LLM-as-judge tasks
+    judge_name: model-name       # Required for single-judge LLM-as-judge tasks
+    judges: []                   # Optional: List of multiple judges for multi-judge evaluation
 ```
+
+#### Multi-Judge Evaluation
+
+For more robust evaluation, you can use multiple judges to evaluate each answer. This is particularly useful for open-ended tasks where a single judge might introduce bias.
+
+```yaml
+constants:
+  judges:
+    - name: qwen3
+      model: qwen/qwen3-235b-a22b-2507
+      api_key: your_openrouter_api_key
+      base_url: https://openrouter.ai/api/v1/
+    - name: mistral_large
+      model: mistralai/mistral-large-2411
+      api_key: your_openrouter_api_key
+      base_url: https://openrouter.ai/api/v1/
+    - name: claude_sonnet
+      model: anthropic/claude-3.5-sonnet
+      api_key: your_openrouter_api_key
+      base_url: https://openrouter.ai/api/v1/
+
+  tasks:
+    - name: open_ended_multi_judge
+      task_name: open_ended
+      num_fewshot: 0
+      max_tokens: 10000
+      judges: !ref judges  # Use multiple judges
+      batch_size: 15
+```
+
+**Multi-Judge Metrics:**
+- `llm_as_judge_{judge_name}`: Individual score from each judge
+- `judge_voting`: Majority vote result (recommended primary metric)
+- `llm_as_judge_avg`: Average score across all judges
+- `judge_agreement`: Percentage of samples where all judges agree
+
+**Recommendations:**
+- Use **3 judges** for a good balance between cost and reliability
+- Use **5 judges** for high-stakes evaluations
+- Avoid **2 judges** (risk of ties)
+- Mix different model architectures and providers for diversity
 
 ### Models Configuration
 

@@ -140,6 +140,7 @@ tasks:
 **Evaluation Metrics:**
 
 - **LLM as Judge**: A judge model evaluates the quality, accuracy, and completeness of generated answers using strict fact-checking rules (0 = FAIL, 1 = PASS)
+- **Multi-Judge Support**: Use multiple judges for more robust evaluation (see Multi-Judge Evaluation section below)
 - Alternative metrics: BLEU, ROUGE, Cosine Similarity, BERTScore
 
 **LLM Judge Evaluation Rules:**
@@ -184,6 +185,7 @@ tasks:
 **Evaluation Metrics:**
 
 - **LLM Judge**: Evaluates whether answers are grounded in the provided context and correctly answer the question (higher is better)
+- **Multi-Judge Support**: Use multiple judges for more robust evaluation (see Multi-Judge Evaluation section below)
 - Uses the same strict fact-checking evaluation rules as open-ended tasks
 
 **Why It's Useful:**
@@ -303,6 +305,133 @@ This task evaluates a model's ability to self-assess and identify unreliable or 
 
 ---
 
+## Multi-Judge Evaluation
+
+For open-ended tasks (`open_ended`, `open_ended_w_context`, `open_ended_w_context_full`), you can use **multi-judge evaluation** where multiple LLM judges independently evaluate each answer. This approach provides more robust and reliable evaluation through consensus-based scoring.
+
+### Benefits
+
+- **Reduced Bias**: Individual judge biases are averaged out across multiple judges
+- **Voting Metric**: Majority vote provides a robust, democratic final score
+- **Agreement Tracking**: Monitor consensus to identify ambiguous or controversial samples
+- **Judge Analysis**: Compare individual judges to identify systematic differences or biases
+
+### Configuration
+
+Define multiple judges in your `evals.yaml` configuration:
+
+```yaml
+constants:
+  judges:
+    - name: qwen3
+      model: qwen/qwen3-235b-a22b-2507
+      api_key: your_openrouter_api_key
+      base_url: https://openrouter.ai/api/v1/
+    - name: mistral_large
+      model: mistralai/mistral-large-2411
+      api_key: your_openrouter_api_key
+      base_url: https://openrouter.ai/api/v1/
+    - name: claude_sonnet
+      model: anthropic/claude-3.5-sonnet
+      api_key: your_openrouter_api_key
+      base_url: https://openrouter.ai/api/v1/
+
+  tasks:
+    - name: open_ended_multi_judge
+      task_name: open_ended
+      model_type: local-chat-completions
+      num_fewshot: 0
+      max_tokens: 10000
+      judges: !ref judges  # Use all judges defined above
+      batch_size: 15
+```
+
+### Metrics Produced
+
+When using multi-judge evaluation, the following metrics are automatically generated:
+
+#### 1. Individual Judge Scores
+- `llm_as_judge_{judge_name}`: Score from each individual judge (e.g., `llm_as_judge_qwen3`, `llm_as_judge_mistral_large`)
+- Values: 0 or 1
+- Use to identify systematic differences between judges
+
+#### 2. Voting Metric (Recommended)
+- `judge_voting`: **Majority vote result**
+- Returns the score that has majority support (>= half+1 judges)
+- For ties (even number of judges with equal votes), defaults to 0
+- Values: 0 or 1
+- **This is the recommended primary metric**
+
+#### 3. Average Score
+- `llm_as_judge_avg`: Average score across all judges
+- Values: 0.0 to 1.0
+- Provides granular scores useful for ranking models
+
+#### 4. Agreement Metric
+- `judge_agreement`: Percentage of samples where all judges agree
+- Values: 0.0 to 1.0
+- High agreement (>0.8) indicates judges are consistent
+- Low agreement (<0.5) suggests ambiguous questions or edge cases
+
+### Voting Examples
+
+**With 2 judges:**
+- Both vote 1 → voting = 1
+- Both vote 0 → voting = 0
+- 1 votes 1, 1 votes 0 → voting = 0 (tie, no majority)
+
+**With 3 judges:**
+- 2 vote 1, 1 votes 0 → voting = 1 (majority)
+- 1 votes 1, 2 vote 0 → voting = 0 (majority)
+- All vote 1 → voting = 1 (unanimous)
+
+**With 5 judges:**
+- 3 vote 1, 2 vote 0 → voting = 1 (majority)
+- 2 vote 1, 3 vote 0 → voting = 0 (majority)
+
+### Recommendations
+
+**Number of Judges:**
+- **3 judges**: Good balance between cost and reliability (recommended)
+- **5 judges**: Better for high-stakes evaluations
+- **2 judges**: Avoid if possible (risk of ties with no clear majority)
+
+**Judge Selection:**
+- Use diverse models (different architectures/providers)
+- Mix model sizes (small + large models)
+- Include both specialized and general-purpose models
+- Example: Claude, GPT-4, Mistral Large, Qwen
+
+**Cost Optimization:**
+1. Start with 3 judges on a small sample (limit: 10-50)
+2. Analyze the agreement rate
+3. If agreement is high (>0.8), consider using single judge or voting metric
+4. If agreement is low (<0.5), investigate question quality or add more judges
+
+### Example Output
+
+```json
+{
+  "results": {
+    "open_ended": {
+      "llm_as_judge_qwen3": 0.75,
+      "llm_as_judge_mistral_large": 0.80,
+      "llm_as_judge_claude_sonnet": 0.78,
+      "llm_as_judge_avg": 0.777,
+      "judge_agreement": 0.65,
+      "judge_voting": 0.80
+    }
+  }
+}
+```
+
+In this example:
+- Individual judges scored 75%, 80%, and 78%
+- Overall average is 77.7%
+- Judges fully agreed on 65% of samples
+- **Majority vote gave 80% (recommended metric to report)**
+
+---
 
 ## Running Tasks
 

@@ -152,6 +152,9 @@ output_dir: evals_outputs
 - `judge_api_key`: API key for LLM-as-judge evaluation (if applicable)
 - `judge_base_url`: Base URL for judge model API
 - `judge_name`: Name/ID of judge model
+- `judges`: List of multiple judge models for multi-judge evaluation (optional)
+  - Each judge has: `name`, `model`, `api_key`, `base_url`
+  - Enables voting-based evaluation and judge agreement metrics
 
 **Models Configuration:**
 - `name`: Model name/identifier
@@ -203,6 +206,56 @@ The script will:
 - **Flexible chat templates**: Control whether to apply templates locally or let the API handle them
 - **Custom tokenizers**: Optionally specify a tokenizer for chat template application
 
+### Multi-Judge Evaluation
+
+EVE-evaluation supports **multi-judge evaluation** for open-ended tasks, where multiple LLM judges evaluate each answer independently. This approach provides more robust and reliable evaluation through consensus-based scoring.
+
+**Key Benefits:**
+- **Reduced bias**: Multiple judges reduce impact of individual judge biases
+- **Voting metric**: Majority vote provides robust final scores
+- **Agreement tracking**: Monitor judge consensus to identify ambiguous samples
+- **Individual judge analysis**: Compare judges to identify systematic differences
+
+**Supported Tasks:**
+- `open_ended` - Open-ended question answering
+- `open_ended_w_context` - Open-ended QA with context documents
+- `open_ended_w_context_full` - Open-ended QA with full context
+
+**Configuration Example:**
+
+```yaml
+constants:
+  judges:
+    - name: qwen3
+      model: qwen/qwen3-235b-a22b-2507
+      api_key: your_openrouter_api_key
+      base_url: https://openrouter.ai/api/v1/
+    - name: mistral_large
+      model: mistralai/mistral-large-2411
+      api_key: your_openrouter_api_key
+      base_url: https://openrouter.ai/api/v1/
+    - name: claude_sonnet
+      model: anthropic/claude-3.5-sonnet
+      api_key: your_openrouter_api_key
+      base_url: https://openrouter.ai/api/v1/
+
+  tasks:
+    - name: open_ended_0_shot_multi_judge
+      task_name: open_ended
+      model_type: local-chat-completions
+      num_fewshot: 0
+      max_tokens: 10000
+      judges: !ref judges  # Use all judges defined above
+      batch_size: 15
+```
+
+**Metrics Produced:**
+- `llm_as_judge_{judge_name}`: Individual score from each judge (0 or 1)
+- `judge_voting`: **Majority vote result** (recommended primary metric)
+- `llm_as_judge_avg`: Average score across all judges (0.0 to 1.0)
+- `judge_agreement`: Percentage of samples with unanimous agreement (0.0 to 1.0)
+
+See the [Multi-Judge Setup Guide](MULTI_JUDGE_SETUP.md) for detailed configuration examples and recommendations.
 
 ## EO Tasks
 
