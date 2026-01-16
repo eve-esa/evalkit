@@ -36,7 +36,7 @@ def map_to_answers(row):
 def doc_to_text(doc):
     string = f"{doc['Question']}\n"
 
-    for label, txt in zip(doc["choices"]["label"], doc["choices"]["text"]):
+    for label, txt in zip(doc["Choices"]["label"], doc["Choices"]["text"]):
         string += f"{label}. {txt}\n"
 
     return string

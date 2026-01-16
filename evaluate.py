@@ -57,6 +57,12 @@ class ModelConfig:
     num_concurrent: int = 3  # Number of concurrent API requests
     timeout: int = 300  # Timeout in seconds (default: 300s / 5 minutes)
     tokenizer: str | None = None  # HuggingFace tokenizer name for chat template (optional)
+    # Eve API specific parameters
+    email: str | None = None
+    password: str | None = None
+    public_collections: list[str] | None = None
+    k: int | None = None
+    threshold: float | None = None
 
 
 @dataclasses.dataclass
@@ -471,7 +477,9 @@ def sanitize_config_for_wandb(config: dict) -> dict:
     return sanitized
 
 
-def init_wandb_for_task(wandb_config: WandbConfig, model: ModelConfig, task: TaskConfig, full_config: dict | None = None):
+def init_wandb_for_task(
+    wandb_config: WandbConfig, model: ModelConfig, task: TaskConfig, full_config: dict | None = None
+):
     """Initialize wandb run for a specific model and task."""
     if not wandb_config.enabled:
         return None
@@ -709,31 +717,55 @@ def run_evaluation(
     print("-" * 80)
 
     try:
-        # Construct full API URL based on model type
-        # Base URL should be just the base (e.g., https://api.openai.com/v1/)
-        # We append either 'completions' or 'chat/completions' based on model type
-        base_url = model.base_url.rstrip("/")  # Remove trailing slashes
+        # Construct model arguments based on model type
+        if task.model_type == "eve-api":
+            # Eve API specific arguments
+            base_url = model.base_url.rstrip("/")  # Remove trailing slashes
+            model_args = (
+                f"email={model.email},"
+                f"password={model.password},"
+                f"base_url={base_url},"
+                f"num_concurrent={model.num_concurrent},"
+                f"timeout={model.timeout},"
+                f"batch_size={task.batch_size}"
+            )
 
-        # Check if "chat" is in the model type to determine the endpoint
-        if "chat" in task.model_type.lower():
-            full_url = f"{base_url}/chat/completions"
+            # Add Eve-specific RAG parameters
+            if model.public_collections:
+                # Convert list to JSON string that can be properly parsed
+                collections_json = json.dumps(model.public_collections)
+                model_args += f",public_collections={collections_json}"
+            if model.k is not None:
+                model_args += f",k={model.k}"
+            if model.threshold is not None:
+                model_args += f",threshold={model.threshold}"
         else:
-            full_url = f"{base_url}/completions"
+            # Standard OpenAI-compatible API arguments
+            # Construct full API URL based on model type
+            # Base URL should be just the base (e.g., https://api.openai.com/v1/)
+            # We append either 'completions' or 'chat/completions' based on model type
+            base_url = model.base_url.rstrip("/")  # Remove trailing slashes
 
-        # Construct model arguments as a string (lm_eval expects comma-separated key=value pairs)
-        model_args = (
-            f"base_url={full_url},"
-            f"model={model.name},"
-            f"num_concurrent={model.num_concurrent},"
-            f"max_tokens={task.max_tokens},"
-            f"temperature={task.temperature if task.temperature > 0 else model.temperature},"
-            f"timeout={model.timeout},"
-            f"batch_size={task.batch_size}"
-        )
+            # Check if "chat" is in the model type to determine the endpoint
+            if "chat" in task.model_type.lower():
+                full_url = f"{base_url}/chat/completions"
+            else:
+                full_url = f"{base_url}/completions"
 
-        # Add tokenizer if provided
-        if model.tokenizer:
-            model_args += f",tokenizer={model.tokenizer}"
+            # Construct model arguments as a string (lm_eval expects comma-separated key=value pairs)
+            model_args = (
+                f"base_url={full_url},"
+                f"model={model.name},"
+                f"num_concurrent={model.num_concurrent},"
+                f"max_gen_toks={task.max_tokens},"
+                f"temperature={task.temperature if task.temperature > 0 else model.temperature},"
+                f"timeout={model.timeout},"
+                f"batch_size={task.batch_size}"
+            )
+
+            # Add tokenizer if provided
+            if model.tokenizer:
+                model_args += f",tokenizer={model.tokenizer}"
 
         # Create TaskManager to include custom tasks directory
         # This is equivalent to the CLI's --include tasks option
@@ -806,7 +838,11 @@ def run_evaluation(
 
 
 def evaluate_model(
-    model: ModelConfig, output_dir: str, wandb_config: WandbConfig, hf_token: str | None = None, full_config: dict | None = None
+    model: ModelConfig,
+    output_dir: str,
+    wandb_config: WandbConfig,
+    hf_token: str | None = None,
+    full_config: dict | None = None,
 ) -> dict[str, int]:
     """Evaluate a model on all its tasks."""
     results = {}
@@ -897,6 +933,11 @@ def main(config_file: str):
                 num_concurrent=model.get("num_concurrent", 3),
                 timeout=model.get("timeout", 300),
                 tokenizer=model.get("tokenizer"),
+                email=model.get("email"),
+                password=model.get("password"),
+                public_collections=model.get("public_collections"),
+                k=model.get("k"),
+                threshold=model.get("threshold"),
                 tasks=[parse_task_config(task) for task in model["tasks"]],
             )
             for model in config_dict["models"]

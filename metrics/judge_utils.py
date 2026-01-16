@@ -232,6 +232,7 @@ def judge_qa_with_llm(
     model_name: Optional[str] = None,
     api_key: Optional[str] = None,
     base_url: Optional[str] = None,
+    max_tokens: int = 100,
 ) -> Dict:
     """
     Calls the LLM judge for QA evaluation with binary (0/1) scoring.
@@ -241,6 +242,7 @@ def judge_qa_with_llm(
         model_name: Name of the judge model. If None, reads from JUDGE_NAME env var.
         api_key: API key for the judge. If None, uses environment variables.
         base_url: Base URL for the API. If None, uses environment variables.
+        max_tokens: Maximum tokens for judge response. Default is 100.
 
     Returns:
         Dictionary with "score" (int) and "raw_output" (str) keys.
@@ -306,7 +308,7 @@ def judge_qa_with_llm(
                 messages=[{"role": "user", "content": final_prompt}],
                 response_format=json_schema,
                 temperature=0.0,
-                max_tokens=100,
+                max_tokens=max_tokens,
             )
         except Exception as e_structured:
             # Fall back to basic JSON mode if structured outputs not supported
@@ -319,7 +321,7 @@ def judge_qa_with_llm(
                     messages=[{"role": "user", "content": final_prompt}],
                     response_format={"type": "json_object"},
                     temperature=0.0,
-                    max_tokens=100,
+                    max_tokens=max_tokens,
                 )
             except Exception as e_json:
                 # Fall back to no JSON mode (for models that don't support it)
@@ -330,7 +332,7 @@ def judge_qa_with_llm(
                     model=model_name,
                     messages=[{"role": "user", "content": final_prompt}],
                     temperature=0.0,
-                    max_tokens=100,
+                    max_tokens=max_tokens,
                     extra_body={},  # OpenRouter compatibility
                 )
 
@@ -401,6 +403,7 @@ def judge_qa_with_multiple_llms(
             - model: Model name to use
             - api_key: API key for the judge
             - base_url: Base URL for the API
+            - max_tokens: Maximum tokens for judge response (default: 100)
 
     Returns:
         Dictionary mapping judge names to their result dicts (score + raw_output).
@@ -414,14 +417,16 @@ def judge_qa_with_multiple_llms(
         model_name = judge_config.get("model")
         api_key = judge_config.get("api_key")
         base_url = judge_config.get("base_url")
+        max_tokens = judge_config.get("max_tokens", 10000)  # Default to 100 if not specified
 
-        print(f"[DEBUG multi-judge] Judge {i}/{len(judges)}: {judge_name} (model: {model_name})")
+        print(f"[DEBUG multi-judge] Judge {i}/{len(judges)}: {judge_name} (model: {model_name}, max_tokens: {max_tokens})")
         try:
             result = judge_qa_with_llm(
                 sample=sample,
                 model_name=model_name,
                 api_key=api_key,
                 base_url=base_url,
+                max_tokens=max_tokens,
             )
             print(
                 f"[DEBUG multi-judge] Judge {judge_name} completed: score={result.get('score', 'N/A')}"
