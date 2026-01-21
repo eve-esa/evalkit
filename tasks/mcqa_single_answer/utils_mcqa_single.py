@@ -3,6 +3,7 @@ import sys
 from pathlib import Path
 
 import datasets
+from lm_eval.api.filter import Filter
 
 # Add parent directory to path to import common MCQA utilities
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -69,20 +70,75 @@ def process_answer(answer):
     return labels[0] if labels else ""
 
 
+class filter_answer(Filter):
+    """
+    Filter class for lm-eval harness filter_list.
+
+    Extracts the letter choice and returns it as a string
+    for display in filtered_resps.
+    """
+
+    def apply(self, resps: list[list[str]], docs: list[dict]) -> list[list[str]]:
+        """
+        Apply the filter to extract answer label.
+
+        Args:
+            resps: List of lists of model responses
+            docs: List of document dictionaries (not used here)
+
+        Returns:
+            List of lists of filtered responses (single letter)
+        """
+        def filter_set(inst):
+            filtered = []
+            for resp in inst:
+                if not isinstance(resp, str):
+                    resp = ""
+                labels = extract_labels(resp)
+                # For single answer, take first label only
+                filtered_resp = labels[0] if labels else ""
+                filtered.append(filtered_resp)
+            return filtered
+
+        filtered_resps = [filter_set(resp) for resp in resps]
+        return filtered_resps
+
+
 def process_results(doc: datasets.Dataset, results):
     """
     Process results for single-answer MCQA task.
 
     Args:
         doc: Document containing ground truth answer
-        results: Model predictions
+        results: Model predictions (list of responses or filtered responses)
 
     Returns:
         dict: Metrics (accuracy)
     """
     # Get model prediction
-    pred_text = results[0]
-    pred_label = process_answer(pred_text)
+    pred = results[0]
+
+    # Handle different result formats
+    if isinstance(pred, list):
+        # If it's a list, take the first element (filtered response)
+        pred_text = pred[0] if pred else ""
+    else:
+        # It's already a string
+        pred_text = pred
+
+    # Check if already filtered (single letter string) or needs processing (raw response)
+    if isinstance(pred_text, str) and len(pred_text) <= 5 and pred_text.strip():
+        # Check if it looks like a filtered answer (just letters, maybe with spaces/commas)
+        cleaned = pred_text.strip().replace(" ", "").replace(",", "")
+        if cleaned.isalpha() and len(cleaned) <= 3:
+            # Already filtered to letter(s), take first letter for single answer
+            pred_label = cleaned[0]
+        else:
+            # Raw response, needs processing
+            pred_label = process_answer(pred_text)
+    else:
+        # Raw response, needs processing
+        pred_label = process_answer(pred_text) if pred_text else ""
 
     # Get ground truth answer
     reference = doc.get("Answer", "")

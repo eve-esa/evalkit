@@ -6,6 +6,10 @@ doc_to_target: '{{Answer}}'
 process_results: !function utils_mcqa_single.process_results
 gen_prefix: 'Answer: '
 description: 'The following are multiple choice questions (with answers) about EO.\n Answer the question by choosing one of the provided options. Start your answer with the letter corresponding to your choice, without any additional text.\n'
+filter_list:
+  - name: "extract_label"
+    filter:
+      - function: !function utils_mcqa_single.filter_answer
 metric_list:
   - metric: "acc"
     aggregation: mean

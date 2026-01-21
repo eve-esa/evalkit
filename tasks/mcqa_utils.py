@@ -25,6 +25,7 @@ def extract_label(answer: str) -> str:
     - Italic markdown: "*B*", "*(A)*"
     - Parentheses: "(B)", "(A)"
     - With reasoning: "...long reasoning... the answer is **(B)**."
+    - Numbered list format with dash: "2. **Question?**\n   - B"
 
     Args:
         answer: The model's answer string
@@ -46,8 +47,22 @@ def extract_label(answer: str) -> str:
         'C'
         >>> extract_label("...reasoning... the answer is **(B)**.")
         'B'
+        >>> extract_label("2. **Question?**\\n   - B")
+        'B'
     """
-    # First, try to find "answer is" pattern anywhere in the text
+    # First, try to find numbered list format with dash-prefixed answer
+    # Pattern: optional numbering/bullets followed by question, then dash with letter
+    # E.g., "2. **Question?**\n   - B"
+    # Use findall to get all matches, then take the last one (most likely the actual question)
+    dash_answer_matches = re.findall(
+        r"(?:^|\n)\s*\d*\.?\s*\*{0,2}[^*\n]*\*{0,2}\s*\n\s*-\s*([A-Z])",
+        answer,
+        flags=re.MULTILINE
+    )
+    if dash_answer_matches:
+        return dash_answer_matches[-1]  # Return the last match
+
+    # Second, try to find "answer is" pattern anywhere in the text
     # This handles: "the answer is (B)", "answer is **B**", etc.
     answer_is_match = re.search(
         r"(?:the\s+)?answer\s+is\s+[*_()]*([A-Z])[*_().\s]*", answer, flags=re.IGNORECASE
@@ -90,6 +105,7 @@ def extract_labels(answer: str) -> list[str]:
     - Bold markdown: "**B**", "**A**, **C**", "**A. 4.65**", "**(A), (C)**"
     - Italic markdown: "*A*, *B*", "*(D)*"
     - With reasoning: "...reasoning... the answers are **(A)** and **(C)**."
+    - Numbered list format with dash: "1. **Question?**\n   - A, C"
 
     Args:
         answer: The model's answer string
@@ -111,8 +127,25 @@ def extract_labels(answer: str) -> list[str]:
         ['A', 'C']
         >>> extract_labels("...reasoning... the answers are **(A)** and **(C)**.")
         ['A', 'C']
+        >>> extract_labels("1. **Question?**\\n   - A, C")
+        ['A', 'C']
     """
-    # First, try to find "answer is/are" pattern and extract from that portion
+    # First, try to find numbered list format with dash-prefixed answers
+    # Pattern: optional numbering/bullets followed by question, then dash with letters
+    # E.g., "1. **Question?**\n   - A, C" or "2. **Question**\n   - B"
+    # Use findall to get all matches, then take the last one (most likely the actual question)
+    dash_answer_matches = re.findall(
+        r"(?:^|\n)\s*\d*\.?\s*\*{0,2}[^*\n]*\*{0,2}\s*\n\s*-\s*([A-Z](?:\s*,\s*[A-Z])*)",
+        answer,
+        flags=re.MULTILINE
+    )
+    if dash_answer_matches:
+        # Extract letters from the last dash-prefixed answer
+        letters_text = dash_answer_matches[-1]
+        labels_list = [letter.strip() for letter in letters_text.split(",")]
+        return labels_list
+
+    # Second, try to find "answer is/are" pattern and extract from that portion
     answer_is_match = re.search(
         r"(?:the\s+)?answers?\s+(?:is|are)\s+(.+?)(?:\.|$)", answer, flags=re.IGNORECASE | re.DOTALL
     )
