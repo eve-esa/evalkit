@@ -1,26 +1,41 @@
-# Import centralized LLM judge utilities
-from metrics.judge_utils import LoggableFuture, process_qa_results, aggregate_llm_judge
+"""
+Default utils for open-ended task.
+"""
+
+from metrics.judge_utils import (
+    LoggableFuture,
+    aggregate_llm_judge_default,
+    get_executor,
+    judge_qa_with_llm_default,
+)
 
 
 def process_results(doc: dict, results: list[str]) -> dict:
     """
-    Process results for open-ended questions.
     Auto-detects field names (question/answer vs Question/Answer).
+    Returns dict with key 'llm_as_judge' to match task YAML metric name.
     """
     # Auto-detect field names
     if "Question" in doc:
         question_key = "Question"
         answer_key = "Answer"
-    elif "question" in doc:
+    else:
         question_key = "question"
         answer_key = "answer"
-    else:
-        # Fallback: try to find any key containing 'question'
-        question_keys = [k for k in doc.keys() if "question" in k.lower()]
-        answer_keys = [k for k in doc.keys() if "answer" in k.lower()]
-        question_key = question_keys[0] if question_keys else "question"
-        answer_key = answer_keys[0] if answer_keys else "answer"
 
-    return process_qa_results(
-        doc=doc, results=results, question_key=question_key, answer_key=answer_key, sleep_time=0.0
-    )
+    sample = {
+        "question": doc[question_key],
+        "output": results[0],
+        "reference": doc[answer_key],
+    }
+
+    executor = get_executor()
+    future = executor.submit(judge_qa_with_llm_default, sample)
+
+    # Return with key 'llm_as_judge' to match task YAML metric name
+    return {"llm_as_judge": LoggableFuture(future)}
+
+
+def aggregate_llm_judge(results, **kwargs):
+    """Aggregate LLM judge scores."""
+    return aggregate_llm_judge_default(results, **kwargs)

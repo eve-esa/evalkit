@@ -1,10 +1,10 @@
-task: mcqa_multiple_answer
+task: mcqa_multiple_old
 dataset_path: 'eve-esa/mcqa-multiple-answers'
 test_split: 'train'
-doc_to_text: !function utils_mcqa.doc_to_text
+doc_to_text: !function utils_mcqa_old.doc_to_text
 doc_to_target: 'output'
-process_docs: !function utils_mcqa.process_dataset
-process_results: !function utils_mcqa.process_results
+process_docs: !function utils_mcqa_old.process_dataset
+process_results: !function utils_mcqa_old.process_results
 gen_prefix: 'Answer: '
 description: 'The following are multiple choice questions (with answers) about EO.\n Answer the questions by choosing one or more of the provided options. Start your answer with the letter(s) corresponding to your choice(s). If there are multiple correct answers, list all correct options, separated by a comma, without any additional text.\n'
 metric_list:

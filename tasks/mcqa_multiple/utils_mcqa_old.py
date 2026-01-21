@@ -1,4 +1,3 @@
-import re
 import sys
 from pathlib import Path
 
@@ -34,9 +33,21 @@ def map_to_answers(row):
 
 
 def doc_to_text(doc):
+    """
+    Format document into MCQA prompt.
+
+    Expected doc format:
+    - 'Question': The question text
+    - 'Choices': Dict with 'label' and 'text' lists
+    """
     string = f"{doc['Question']}\n"
 
-    for label, txt in zip(doc["choices"]["label"], doc["choices"]["text"]):
+    # Choices is a dict with 'label' and 'text' lists
+    choices = doc.get("Choices", {"label": [], "text": []})
+    labels = choices.get("label", [])
+    texts = choices.get("text", [])
+
+    for label, txt in zip(labels, texts):
         string += f"{label}. {txt}\n"
 
     return string

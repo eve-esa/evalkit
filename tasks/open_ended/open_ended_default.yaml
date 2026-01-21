@@ -1,0 +1,30 @@
+task: open_ended_default
+dataset_path: 'eve-esa/open-ended'
+test_split: 'train'
+output_type: generate_until
+doc_to_text: "Q: {{Question}}\n"
+doc_to_target: '{{Answer}}'
+gen_prefix: 'A: '
+description: |
+  Provide a comprehensive, well-structured response:
+  1. Begin with a direct answer to the question
+  2. Support with relevant technical details and context
+  3. Include specific examples, data, or references where applicable
+
+  Use clear formatting (bullet points, numbered lists) to organize complex information.
+  Ensure all key aspects of the question are thoroughly addressed.
+
+generation_kwargs:
+  do_sample: false
+  until:
+    - "\nQ:"
+    - "</s>"
+    - "<|eot_id|>"
+    - "<|end|>"
+process_results: !function utils_open_default.process_results
+metric_list:
+  - metric: llm_as_judge_default
+    aggregation: !function utils_open_default.aggregate_llm_judge
+    higher_is_better: true
+metadata:
+  version: 1.0

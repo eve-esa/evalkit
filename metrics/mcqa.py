@@ -1,9 +1,10 @@
 import json
-from datasets import load_dataset
-import pandas as pd
-import click
-from model import VllmModel
 import re
+
+import click
+import pandas as pd
+from datasets import load_dataset
+from model import VllmModel
 
 
 def get_answers(answer):

@@ -9,7 +9,6 @@ from datetime import datetime
 from pathlib import Path
 
 import yaml
-import wandb
 
 
 @dataclasses.dataclass
@@ -25,11 +24,9 @@ class FieldWithMaybeType:
 
 @dataclasses.dataclass
 class TaskConfig:
-    name: str  # User-defined name for this task configuration (used for output folders and wandb)
+    name: str  # User-defined name for this task configuration (used for output folders)
     task_name: str | None = None  # Actual lm_eval task name (defaults to name if not provided)
-    model_type: str = (
-        "openai-chat-completions"  # Model API type (e.g., "openai-chat-completions", "local-completions", etc.)
-    )
+    model_type: str = "local-chat-completions"
     max_tokens: int = 512
     num_fewshot: int = 0
     temperature: float = 0.0
@@ -59,20 +56,9 @@ class ModelConfig:
 
 
 @dataclasses.dataclass
-class WandbConfig:
-    enabled: bool = False
-    project: str = "eve-evalkit"
-    entity: str | None = None
-    run_name: str | None = None
-    tags: list[str] = dataclasses.field(default_factory=list)
-    api_key: str | None = None
-
-
-@dataclasses.dataclass
 class EvaluationConfig:
     models: list[ModelConfig]
     output_dir: str = "eval_results"
-    wandb: WandbConfig = dataclasses.field(default_factory=WandbConfig)
     hf_token: str | None = None
 
 
@@ -398,253 +384,6 @@ def load_eval_results(output_dir: str, model_name: str, task_name: str) -> dict 
     return data.get("results", {})
 
 
-def flatten_metrics(results: dict, original_task_name: str) -> dict:
-    """Flatten nested metrics dictionary for wandb logging."""
-    flattened = {}
-
-    for task_name, metrics in results.items():
-        # Skip 'alias' and 'group' keys
-        for key, value in metrics.items():
-            if key in ["alias", "group"]:
-                continue
-
-            # Create hierarchical metric name: original_task/subtask/metric
-            # Remove any commas from metric names (lm_eval uses commas for variants)
-            clean_key = key.split(",")[0] if "," in key else key
-
-            # If task_name is different from original_task_name, it's a subtask
-            if task_name != original_task_name:
-                metric_name = f"{original_task_name}/{task_name}/{clean_key}"
-            else:
-                metric_name = f"{original_task_name}/{clean_key}"
-
-            # Only log numeric values
-            if isinstance(value, (int, float)):
-                flattened[metric_name] = value
-
-    return flattened
-
-
-def sanitize_config_for_wandb(config: dict) -> dict:
-    """
-    Sanitize configuration by removing sensitive information like API keys and tokens.
-    Returns a deep copy with sensitive fields redacted.
-    """
-    import copy
-
-    # Create a deep copy to avoid modifying the original
-    sanitized = copy.deepcopy(config)
-
-    # List of sensitive field names to redact
-    sensitive_fields = [
-        "api_key",
-        "judge_api_key",
-        "hf_token",
-        "token",
-        "password",
-        "secret",
-        "credential",
-    ]
-
-    def redact_sensitive(obj, path=""):
-        """Recursively redact sensitive fields."""
-        if isinstance(obj, dict):
-            for key, value in obj.items():
-                key_lower = key.lower()
-                # Check if this key contains any sensitive field name
-                if any(sensitive in key_lower for sensitive in sensitive_fields):
-                    # Redact the value
-                    if value and isinstance(value, str) and len(value) > 0:
-                        obj[key] = "***REDACTED***"
-                elif isinstance(value, (dict, list)):
-                    # Recursively process nested structures
-                    redact_sensitive(value, f"{path}.{key}" if path else key)
-        elif isinstance(obj, list):
-            for i, item in enumerate(obj):
-                if isinstance(item, (dict, list)):
-                    redact_sensitive(item, f"{path}[{i}]")
-
-    redact_sensitive(sanitized)
-    return sanitized
-
-
-def init_wandb_for_task(wandb_config: WandbConfig, model: ModelConfig, task: TaskConfig, full_config: dict | None = None):
-    """Initialize wandb run for a specific model and task."""
-    if not wandb_config.enabled:
-        return None
-
-    try:
-        # Login to wandb with API key if provided (only once)
-        if wandb_config.api_key and not wandb.run:
-            wandb.login(key=wandb_config.api_key)
-
-        # Create run name: prefix_model_task
-        model_short_name = model.name.split("/")[-1]
-        run_name_parts = []
-        if wandb_config.run_name:
-            run_name_parts.append(wandb_config.run_name)
-        run_name_parts.extend([model_short_name, task.name])
-        run_name = "_".join(run_name_parts)
-
-        # Initialize wandb run with comprehensive configuration
-        run_config = {
-            "model": {
-                "name": model.name,
-                "base_url": model.base_url,
-                "temperature": model.temperature,
-                "num_concurrent": model.num_concurrent,
-                "timeout": model.timeout,
-                "tokenizer": model.tokenizer,
-            },
-            "task": {
-                "name": task.name,  # User-defined task configuration name
-                "task_name": task.task_name,  # Actual lm_eval task name
-                "model_type": task.model_type,
-                "max_tokens": task.max_tokens,
-                "num_fewshot": task.num_fewshot,
-                "temperature": task.temperature,
-                "apply_chat_template": task.apply_chat_template,
-                "batch_size": task.batch_size,
-                "limit": task.limit,
-            },
-        }
-
-        # Add judge configuration if present
-        if task.judge_name:
-            run_config["task"]["judge"] = {
-                "judge_name": task.judge_name,
-                "judge_base_url": task.judge_base_url,
-            }
-
-        # Add full YAML configuration if provided (sanitized)
-        if full_config:
-            # Create a sanitized copy of the config
-            sanitized_config = sanitize_config_for_wandb(full_config)
-            run_config["yaml_config"] = sanitized_config
-
-        wandb_init_kwargs = {
-            "project": wandb_config.project,
-            "name": run_name,
-            "config": run_config,
-        }
-
-        if wandb_config.entity:
-            wandb_init_kwargs["entity"] = wandb_config.entity
-
-        if wandb_config.tags:
-            wandb_init_kwargs["tags"] = wandb_config.tags
-
-        run = wandb.init(**wandb_init_kwargs)
-        return run
-
-    except Exception as e:
-        print(f"\n✗ Failed to initialize W&B: {e}")
-        print("Continuing without W&B logging...")
-        return None
-
-
-def create_samples_table(samples: list[dict]) -> wandb.Table:
-    """Create a wandb table from evaluation samples, dynamically handling all fields."""
-    if not samples:
-        return wandb.Table(columns=["empty"], data=[])
-
-    # First pass: collect all unique column names across all samples
-    all_columns = set()
-
-    for sample in samples:
-        # Add top-level fields
-        all_columns.update(sample.keys())
-
-        # Add doc fields with 'doc.' prefix
-        doc = sample.get("doc", {})
-        if isinstance(doc, dict):
-            for key in doc.keys():
-                all_columns.add(f"doc.{key}")
-
-    # Sort columns for consistent ordering, with important fields first
-    priority_fields = ["doc_id", "doc.Topic", "doc.Question", "target", "filtered_resps"]
-    columns = []
-
-    # Add priority fields first if they exist
-    for field in priority_fields:
-        if field in all_columns:
-            columns.append(field)
-            all_columns.remove(field)
-
-    # Add remaining fields sorted alphabetically
-    columns.extend(sorted(all_columns))
-
-    # Create table
-    table = wandb.Table(columns=columns)
-
-    # Populate table
-    for sample in samples:
-        row = []
-        doc = sample.get("doc", {})
-
-        for col in columns:
-            if col.startswith("doc."):
-                # Handle doc fields
-                field_name = col[4:]  # Remove 'doc.' prefix
-                value = doc.get(field_name, "")
-            else:
-                # Handle top-level fields
-                value = sample.get(col, "")
-
-            # Convert value to string representation for table
-            if value is None:
-                row.append("")
-            elif isinstance(value, list):
-                # For lists, join elements or show first element
-                if col == "filtered_resps" and value:
-                    # For model responses, take first one
-                    row.append(str(value[0]))
-                else:
-                    # For other lists, show as JSON
-                    row.append(json.dumps(value))
-            elif isinstance(value, dict):
-                # For dicts, show as JSON
-                row.append(json.dumps(value))
-            else:
-                row.append(str(value))
-
-        table.add_data(*row)
-
-    return table
-
-
-def log_task_metrics_to_wandb(task_metrics: dict, model: ModelConfig, task: TaskConfig):
-    """Log metrics for a task to the active wandb run."""
-    # Create flat metrics dict (without model name prefix since each run is per model/task)
-    flat_metrics = {}
-    summary_table = wandb.Table(columns=["model_name", "task", "subtask", "metric", "value"])
-
-    for metric_name, value in sorted(task_metrics.items()):
-        # Split metric_name (format: task/metric or task/subtask/metric)
-        parts = metric_name.split("/")
-
-        if len(parts) == 2:
-            # Format: task/metric - just use the metric name
-            _, metric = parts
-            flat_metrics[metric] = value
-            summary_table.add_data(model.name, task.name, "", metric, value)
-        elif len(parts) == 3:
-            # Format: task/subtask/metric - use subtask/metric
-            _, subtask, metric = parts
-            metric_key = f"{subtask}/{metric}"
-            flat_metrics[metric_key] = value
-            # Add subtask in separate column
-            summary_table.add_data(model.name, task.name, subtask, metric, value)
-        else:
-            # Fallback for unexpected format
-            flat_metrics[metric_name] = value
-            summary_table.add_data(model.name, task.name, "", metric_name, value)
-
-    # Log metrics
-    wandb.log(flat_metrics)
-    wandb.log({"metrics_summary": summary_table})
-
-
 def run_evaluation(
     model: ModelConfig, task: TaskConfig, output_dir: str, hf_token: str | None = None
 ) -> tuple[int, dict | None]:
@@ -655,6 +394,14 @@ def run_evaluation(
     """
     from lm_eval.evaluator import simple_evaluate
     from lm_eval.tasks import TaskManager
+
+    # Reset judge state to pick up new environment variables for this task
+    try:
+        from metrics.judge_utils import reset_judge_state
+
+        reset_judge_state()
+    except ImportError:
+        pass  # judge_utils not available, skip reset
 
     # Create output directory for this specific evaluation (use user-defined name)
     task_output_dir = Path(output_dir) / task.name
@@ -690,7 +437,7 @@ def run_evaluation(
         env_backup["JUDGE_NAME"] = os.environ.get("JUDGE_NAME")
         os.environ["JUDGE_NAME"] = task.judge_name
 
-    print(f"\nRunning evaluation:")
+    print("\nRunning evaluation:")
     print(f"  Model: {model.name}")
     print(f"  Model Type: {task.model_type}")
     print(f"  Task Config: {task.name}")
@@ -725,6 +472,10 @@ def run_evaluation(
         # Add tokenizer if provided
         if model.tokenizer:
             model_args += f",tokenizer={model.tokenizer}"
+
+        # Force huggingface tokenizer backend and send prompts as strings
+        # to avoid vLLM MistralTokenizer batch_decode issues
+        model_args += ",tokenizer_backend=huggingface,tokenized_requests=False"
 
         # Create TaskManager to include custom tasks directory
         # This is equivalent to the CLI's --include tasks option
@@ -797,7 +548,7 @@ def run_evaluation(
 
 
 def evaluate_model(
-    model: ModelConfig, output_dir: str, wandb_config: WandbConfig, hf_token: str | None = None, full_config: dict | None = None
+    model: ModelConfig, output_dir: str, hf_token: str | None = None
 ) -> dict[str, int]:
     """Evaluate a model on all its tasks."""
     results = {}
@@ -805,48 +556,6 @@ def evaluate_model(
     for task in model.tasks:
         return_code, eval_results = run_evaluation(model, task, output_dir, hf_token)
         results[task.name] = return_code
-
-        # Log to wandb immediately after each task completes
-        if return_code == 0 and eval_results:  # Only if task succeeded and we have results
-            # Log to wandb if enabled
-            if wandb_config.enabled:
-                print(f"\nPreparing W&B logging for {task.name}...")
-
-                # Extract metrics from results dict
-                task_results = eval_results.get("results", {})
-
-                if task_results:
-                    # Initialize a new wandb run for this model/task combination
-                    wandb_run = init_wandb_for_task(wandb_config, model, task, full_config)
-
-                    if wandb_run:
-                        # Flatten and log metrics for this task
-                        task_metrics = flatten_metrics(task_results, task.name)
-                        log_task_metrics_to_wandb(task_metrics, model, task)
-
-                        # Log samples if available
-                        if "samples" in eval_results and eval_results["samples"]:
-                            print(f"Logging samples for W&B ({task.name})...")
-                            # samples is a dict with subtask_name -> list of samples
-                            all_samples = []
-                            for subtask_samples in eval_results["samples"].values():
-                                all_samples.extend(subtask_samples)
-
-                            if all_samples:
-                                samples_table = create_samples_table(all_samples)
-                                wandb.log({"samples": samples_table})
-                                print(f"✓ Logged {len(all_samples)} samples to W&B")
-                        else:
-                            print(f"Warning: No samples found for {task.name}")
-
-                        print(f"✓ Logged {len(task_metrics)} metrics to W&B: {wandb_run.url}")
-
-                        # Finish this run
-                        wandb.finish()
-                else:
-                    print(f"Warning: No metrics found for {task.name}")
-        else:
-            print(f"\nSkipping W&B logging for {task.name} (evaluation failed)")
 
     return results
 
@@ -864,19 +573,6 @@ def main(config_file: str):
     # Resolve !ref references
     config_dict = resolve_refs(config_dict)
 
-    # Parse wandb config if present
-    wandb_config = WandbConfig()
-    if "wandb" in config_dict:
-        wandb_data = config_dict["wandb"]
-        wandb_config = WandbConfig(
-            enabled=wandb_data.get("enabled", False),
-            project=wandb_data.get("project", "eve-evaluation"),
-            entity=wandb_data.get("entity"),
-            run_name=wandb_data.get("run_name"),
-            tags=wandb_data.get("tags", []),
-            api_key=wandb_data.get("api_key"),
-        )
-
     # Parse into dataclass structure
     eval_config = EvaluationConfig(
         models=[
@@ -893,7 +589,6 @@ def main(config_file: str):
             for model in config_dict["models"]
         ],
         output_dir=config_dict.get("output_dir", "eval_results"),
-        wandb=wandb_config,
         hf_token=config_dict.get("constants", {}).get("hf_token"),
     )
 
@@ -910,9 +605,7 @@ def main(config_file: str):
         print(f"Tasks: {[task.name for task in model.tasks]}")
         print(f"{'=' * 80}")
 
-        model_results = evaluate_model(
-            model, eval_config.output_dir, eval_config.wandb, eval_config.hf_token, config_dict
-        )
+        model_results = evaluate_model(model, eval_config.output_dir, eval_config.hf_token)
         all_results[model.name] = model_results
 
     # Print summary

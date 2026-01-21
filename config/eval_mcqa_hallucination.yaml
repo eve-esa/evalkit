@@ -1,0 +1,60 @@
+# Tasks:
+#   - mcqa_single_default: 0-shot and 5-shot
+#   - mcqa_multiple_default: 0-shot and 5-shot
+#   - hallucination_default: 0-shot only (few-shot causes performance degradation)
+#
+
+constants:
+    hf_token: EMPTY
+    tasks:
+    # MCQA Single - 0-shot
+    - name: mcqa_single_default_0shot
+      task_name: mcqa_single_default
+      num_fewshot: 0
+      max_tokens: 50
+      model_type: local-chat-completions
+      apply_chat_template: true
+
+    # MCQA Single - 5-shot
+    - name: mcqa_single_default_5shot
+      task_name: mcqa_single_default
+      num_fewshot: 5
+      max_tokens: 50
+      model_type: local-chat-completions
+      apply_chat_template: true
+
+    # MCQA Multiple - 0-shot
+    - name: mcqa_multiple_default_0shot
+      task_name: mcqa_multiple_default
+      num_fewshot: 0
+      max_tokens: 50
+      model_type: local-chat-completions
+      apply_chat_template: true
+
+    # MCQA Multiple - 5-shot
+    - name: mcqa_multiple_default_5shot
+      task_name: mcqa_multiple_default
+      num_fewshot: 5
+      max_tokens: 50
+      model_type: local-chat-completions
+      apply_chat_template: true
+
+    # Hallucination - 0-shot only
+    - name: hallucination_default_0shot
+      task_name: hallucination_default
+      num_fewshot: 0
+      max_tokens: 50
+      model_type: local-chat-completions
+      apply_chat_template: true
+
+models:
+  - name: MODEL_NAME
+    base_url: URL
+    api_key: EMPTY
+    temperature: 0.0
+    num_concurrent: 32
+    timeout: 600
+    tokenizer: mistralai/Mistral-Small-3.1-24B-Instruct-2503
+    tasks: !ref tasks
+
+output_dir: evals_outputs
