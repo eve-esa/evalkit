@@ -38,6 +38,7 @@ class TaskConfig:
     judge_base_url: str = ""
     judge_name: str = ""
     judges: list[dict] | None = None  # Multiple judges for multi-judge evaluation
+    # Each judge dict can have: name, model, api_key, base_url, max_tokens, prompt
     batch_size: int = 1
     limit: int | None = None  # Limit number of samples to evaluate
 

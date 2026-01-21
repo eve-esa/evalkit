@@ -88,82 +88,6 @@ class LoggableFutureExtractor:
         return self.__repr__()
 
 
-class LoggableFutureAgreement:
-    """Wrapper that calculates agreement from multi-judge future."""
-
-    def __init__(self, future: Future):
-        self._future = future
-
-    def result(self, timeout=None):
-        """Calculate agreement score (1 if all agree, 0 otherwise) from multi-judge result."""
-        multi_result = self._future.result(timeout=timeout)
-        if isinstance(multi_result, dict):
-            scores = [
-                v["score"] for v in multi_result.values() if isinstance(v, dict) and "score" in v
-            ]
-            if scores:
-                return 1 if len(set(scores)) == 1 else 0
-        return 0
-
-    def __repr__(self):
-        """Return a nicer representation for logging."""
-        if self._future.done():
-            try:
-                return str(self.result())
-            except Exception as e:
-                return f"<Failed: {type(e).__name__}>"
-        else:
-            return "<Pending agreement calculation>"
-
-    def __str__(self):
-        return self.__repr__()
-
-
-class LoggableFutureVoting:
-    """Wrapper that calculates majority voting result from multi-judge future."""
-
-    def __init__(self, future: Future):
-        self._future = future
-
-    def result(self, timeout=None):
-        """Calculate majority vote (returns majority score if >= half+1 judges agree, 0 otherwise)."""
-        multi_result = self._future.result(timeout=timeout)
-        if isinstance(multi_result, dict):
-            scores = [
-                v["score"] for v in multi_result.values() if isinstance(v, dict) and "score" in v
-            ]
-            if scores:
-                # Count votes for each score
-                from collections import Counter
-
-                vote_counts = Counter(scores)
-
-                # Calculate majority threshold (half + 1)
-                majority_threshold = (len(scores) // 2) + 1
-
-                # Get the most common score and its count
-                most_common_score, count = vote_counts.most_common(1)[0]
-
-                # Return the most common score if it meets the majority threshold
-                if count >= majority_threshold:
-                    return most_common_score
-
-                # No majority reached, return 0
-                return 0
-        return 0
-
-    def __repr__(self):
-        """Return a nicer representation for logging."""
-        if self._future.done():
-            try:
-                return str(self.result())
-            except Exception as e:
-                return f"<Failed: {type(e).__name__}>"
-        else:
-            return "<Pending voting calculation>"
-
-    def __str__(self):
-        return self.__repr__()
 
 
 def get_judge_client(api_key: Optional[str] = None, base_url: Optional[str] = None) -> OpenAI:
@@ -233,6 +157,7 @@ def judge_qa_with_llm(
     api_key: Optional[str] = None,
     base_url: Optional[str] = None,
     max_tokens: int = 100,
+    prompt_template: Optional[str] = None,
 ) -> Dict:
     """
     Calls the LLM judge for QA evaluation with binary (0/1) scoring.
@@ -243,6 +168,7 @@ def judge_qa_with_llm(
         api_key: API key for the judge. If None, uses environment variables.
         base_url: Base URL for the API. If None, uses environment variables.
         max_tokens: Maximum tokens for judge response. Default is 100.
+        prompt_template: Custom prompt template to use. If None, uses default template.
 
     Returns:
         Dictionary with "score" (int) and "raw_output" (str) keys.
@@ -251,7 +177,10 @@ def judge_qa_with_llm(
         model_name = os.getenv("JUDGE_NAME") or os.getenv("JUDGE_MODEL") or "mistral-large-latest"
 
     client = get_judge_client(api_key=api_key, base_url=base_url)
-    prompt_template = get_qa_prompt_template()
+
+    # Use custom prompt template if provided, otherwise use default
+    if prompt_template is None:
+        prompt_template = get_qa_prompt_template()
 
     # JSON schema for structured output (OpenAI-style)
     json_schema = {
@@ -264,8 +193,8 @@ def judge_qa_with_llm(
                 "properties": {
                     "score": {
                         "type": "integer",
-                        "enum": [0, 1],
-                        "description": "1 if correct, 0 if incorrect",
+                        "enum": [0, 1, 2, 3, 4, 5],
+                        "description": "Score from 0 (fail) to 5 (excellent)",
                     }
                 },
                 "required": ["score"],
@@ -280,8 +209,8 @@ def judge_qa_with_llm(
         "properties": {
             "score": {
                 "type": "integer",
-                "enum": [0, 1],
-                "description": "1 if correct, 0 if incorrect.",
+                "enum": [0, 1, 2, 3, 4, 5],
+                "description": "Score from 0 (fail) to 5 (excellent).",
             }
         },
         "required": ["score"],
@@ -357,7 +286,7 @@ def judge_qa_with_llm(
 
         score = data.get("score")
 
-        if score in [0, 1]:
+        if score in [0, 1, 2, 3, 4, 5]:
             return {"score": int(score), "raw_output": response_content}
         else:
             print(f"[WARNING] Judge {model_name} returned invalid score: {score}. Defaulting to 0.")
@@ -404,6 +333,7 @@ def judge_qa_with_multiple_llms(
             - api_key: API key for the judge
             - base_url: Base URL for the API
             - max_tokens: Maximum tokens for judge response (default: 100)
+            - prompt: Custom prompt template to use (default: uses standard template)
 
     Returns:
         Dictionary mapping judge names to their result dicts (score + raw_output).
@@ -417,9 +347,12 @@ def judge_qa_with_multiple_llms(
         model_name = judge_config.get("model")
         api_key = judge_config.get("api_key")
         base_url = judge_config.get("base_url")
-        max_tokens = judge_config.get("max_tokens", 10000)  # Default to 100 if not specified
+        max_tokens = judge_config.get("max_tokens", 10000)  # Default to 10000 if not specified
+        prompt_template = judge_config.get("prompt")  # Custom prompt template (optional)
 
-        print(f"[DEBUG multi-judge] Judge {i}/{len(judges)}: {judge_name} (model: {model_name}, max_tokens: {max_tokens})")
+        print(
+            f"[DEBUG multi-judge] Judge {i}/{len(judges)}: {judge_name} (model: {model_name}, max_tokens: {max_tokens}, custom_prompt: {bool(prompt_template)})"
+        )
         try:
             result = judge_qa_with_llm(
                 sample=sample,
@@ -427,6 +360,7 @@ def judge_qa_with_multiple_llms(
                 api_key=api_key,
                 base_url=base_url,
                 max_tokens=max_tokens,
+                prompt_template=prompt_template,
             )
             print(
                 f"[DEBUG multi-judge] Judge {judge_name} completed: score={result.get('score', 'N/A')}"
@@ -464,9 +398,7 @@ def process_qa_results(
         Dictionary with judge results. If multiple judges, creates separate keys:
             {
                 "llm_as_judge_<name>": LoggableFuture for each judge,
-                "llm_as_judge_avg": LoggableFuture with all results,
-                "judge_agreement": LoggableFuture with agreement data (1 if all agree, 0 otherwise),
-                "judge_voting": LoggableFuture with majority vote result (returns majority score if >= half+1 judges agree)
+                "llm_as_judge_avg": LoggableFuture with all results
             }
         If single judge:
             {"llm_as_judge": LoggableFuture}
@@ -496,12 +428,6 @@ def process_qa_results(
             # Create a future wrapper that extracts this specific judge's result
             result_dict[f"llm_as_judge_{judge_name}"] = LoggableFutureExtractor(future, judge_name)
 
-        # Add agreement metric (all judges must agree)
-        result_dict["judge_agreement"] = LoggableFutureAgreement(future)
-
-        # Add voting metric (majority vote)
-        result_dict["judge_voting"] = LoggableFutureVoting(future)
-
         return result_dict
     else:
         # Single judge mode (backward compatibility)
@@ -518,8 +444,6 @@ def aggregate_llm_judge(
         List[LoggableFuture],
         List[Future],
         List[LoggableFutureExtractor],
-        List[LoggableFutureAgreement],
-        List[LoggableFutureVoting],
     ],
 ) -> float:
     """
@@ -556,7 +480,7 @@ def aggregate_llm_judge(
         elif isinstance(result, (int, float)):
             scores.append(result)
 
-    return mean(scores) if scores else 0.0
+    return mean(scores) if scores else 0.0  # TODO - update this
 
 
 def create_judge_aggregator(judge_name: str):
@@ -589,34 +513,3 @@ def create_judge_aggregator(judge_name: str):
         return mean(scores) if scores else 0.0
 
     return aggregate_specific_judge
-
-
-def calculate_judge_agreement(items: Union[List[LoggableFuture], List[Future]]) -> float:
-    """
-    Calculate agreement rate between multiple judges.
-
-    Args:
-        items: List of LoggableFuture or Future objects containing multi-judge results.
-
-    Returns:
-        Agreement rate (0.0 to 1.0), or 0.0 if not applicable.
-    """
-    if not items:
-        return 0.0
-
-    agreement_count = 0
-    total_count = 0
-
-    for item in items:
-        result = item.result() if isinstance(item, (LoggableFuture, Future)) else item
-
-        if isinstance(result, dict):
-            # Check if multi-judge format
-            if all(isinstance(v, dict) and "score" in v for v in result.values()):
-                scores = [v["score"] for v in result.values()]
-                # All judges agree if all scores are the same
-                if len(set(scores)) == 1:
-                    agreement_count += 1
-                total_count += 1
-
-    return agreement_count / total_count if total_count > 0 else 0.0

@@ -8,7 +8,6 @@ from lm_eval.api.task import ConfigurableTask
 from metrics.judge_utils import (
     process_qa_results,
     aggregate_llm_judge,
-    calculate_judge_agreement,
 )
 
 
@@ -123,8 +122,6 @@ class OpenEndedWContextTask(ConfigurableTask):
             # Multi-judge mode: create aggregations for each judge
             result = {
                 "llm_as_judge_avg": aggregate_llm_judge,
-                "judge_agreement": calculate_judge_agreement,
-                "judge_voting": aggregate_llm_judge,
             }
 
             # Add aggregation for each individual judge
@@ -149,8 +146,6 @@ class OpenEndedWContextTask(ConfigurableTask):
             # Multi-judge mode
             result = {
                 "llm_as_judge_avg": True,
-                "judge_agreement": True,
-                "judge_voting": True,
             }
 
             # Add for each individual judge

@@ -5,7 +5,7 @@ doc_to_text: !function utils_hallucination.doc_to_text
 doc_to_target: 'A'
 process_results: !function utils_hallucination.process_results
 gen_prefix: 'Answer: '
-description: 'You are an expert in detecting hallucinations in Earth Observation answers. Your task is to determine if the given answer contains hallucinations (false or unsupported information). Answer with a single letter corresponding to your choice.\n'
+description: 'Detect hallucinations in Earth Observation answers. Determine if the answer contains false or unsupported information. Response format: letter only (A or B)'
 metric_list:
   - metric: "acc"
     aggregation: mean

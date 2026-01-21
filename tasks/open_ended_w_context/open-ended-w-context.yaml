@@ -5,7 +5,16 @@ dataset_path: 'eve-esa/open-ended-w-context'
 test_split: 'train'
 doc_to_target: '{{Answer}}'
 gen_prefix: 'A: '
-description: "Answer these questions using the provided documents:\n"
+description: |
+  Answer the question using ONLY information from the provided documents.
+
+  Grouding Requirements (critical):
+  - Base your answer ONLY on information from the provided documents
+  - Do NOT add external knowledge or facts not mentioned in the documents
+  - If the documents don't contain enough information, say so rather than making up details
+  - When citing specific facts, numbers, or technical details, ensure they come from the documents
+
+  You may structure your response however you prefer (paragraphs, bullet points, etc.).
 generation_kwargs:
   until:
     - "</s>"

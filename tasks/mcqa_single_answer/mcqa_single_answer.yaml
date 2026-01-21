@@ -5,7 +5,7 @@ doc_to_text: !function utils_mcqa_single.doc_to_text
 doc_to_target: '{{Answer}}'
 process_results: !function utils_mcqa_single.process_results
 gen_prefix: 'Answer: '
-description: 'The following are multiple choice questions (with answers) about EO.\n Answer the question by choosing one of the provided options. Start your answer with the letter corresponding to your choice, without any additional text.\n'
+description: 'Multiple choice questions about Earth Observation. Select the correct answer. Response format: letter only (e.g., "B").'
 filter_list:
   - name: "extract_label"
     filter:
