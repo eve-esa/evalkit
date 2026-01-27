@@ -10,6 +10,11 @@ from pathlib import Path
 
 import yaml
 import wandb
+import logging
+from lm_eval.utils import setup_logging
+
+# Set up logging to INFO level
+setup_logging(verbosity=logging.INFO)
 
 
 @dataclasses.dataclass
@@ -733,13 +738,20 @@ def run_evaluation(
 
             # Add Eve-specific RAG parameters
             if model.public_collections:
-                # Convert list to JSON string that can be properly parsed
-                collections_json = json.dumps(model.public_collections)
-                model_args += f",public_collections={collections_json}"
+                # Join collections with pipe separator to avoid comma conflicts with lm_eval's parser
+                # Will be split back into a list in eve_api.py
+                collections_str = "|".join(model.public_collections)
+                model_args += f",public_collections={collections_str}"
+                print(f"[DEBUG] public_collections value: {model.public_collections}")
+                print(f"[DEBUG] Joined with pipe: {collections_str}")
+                print(f"[DEBUG] model_args after adding collections: {model_args}")
             if model.k is not None:
                 model_args += f",k={model.k}"
             if model.threshold is not None:
                 model_args += f",threshold={model.threshold}"
+
+            print(f"\n[DEBUG] Final model_args for eve-api:")
+            print(f"  {model_args}\n")
         else:
             # Standard OpenAI-compatible API arguments
             # Construct full API URL based on model type
