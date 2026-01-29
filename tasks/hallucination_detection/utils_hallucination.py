@@ -71,6 +71,20 @@ def map_label_to_letter(is_hallucinated):
         return "B"  # Default to not hallucinated
 
 
+def doc_to_target(doc):
+    """
+    Extract and format the ground truth target from the document.
+
+    Args:
+        doc: Document containing ground truth label
+
+    Returns:
+        str: Target letter ('A' for hallucinated, 'B' for not hallucinated)
+    """
+    ground_truth_label = doc.get("label", doc.get("is_hallucinated", True))
+    return map_label_to_letter(ground_truth_label)
+
+
 def process_results(doc: datasets.Dataset, results):
     """
     Process results for hallucination detection task.

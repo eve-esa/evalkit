@@ -45,7 +45,7 @@ def doc_to_text(doc):
     string = f"{question}\n"
 
     labels = ["A", "B", "C", "D", "E"]
-    for i, choice in enumerate(choices[:5]):  # Limit to 4 choices
+    for i, choice in enumerate(choices[:5]):  # Limit to 5 choices (A-E)
         string += f"{labels[i]}. {choice}\n"
 
     return string
