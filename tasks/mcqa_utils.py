@@ -204,7 +204,8 @@ def extract_labels(answer: str) -> list[str]:
 
     # Second, try to find bold markdown labels: **A**, **B**, **(A)**, **A. 4.65**, etc.
     # Pattern handles optional parentheses and other characters between ** markers
-    bold_matches = re.findall(r"\*\*[^A-Z]*([A-Z])[^*]*\*\*", answer)
+    # Use negative lookahead (?![a-z]) to ensure we don't match section headers like **Explanation:**
+    bold_matches = re.findall(r"\*\*\s*\(?\s*([A-Z])(?![a-z])[^*]*\*\*", answer)
     if bold_matches:
         # Remove duplicates while preserving order
         seen = set()
