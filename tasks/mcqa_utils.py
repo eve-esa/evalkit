@@ -54,8 +54,9 @@ def extract_label(answer: str) -> str:
     # Pattern: optional numbering/bullets followed by question, then dash with letter
     # E.g., "2. **Question?**\n   - B"
     # Use findall to get all matches, then take the last one (most likely the actual question)
+    # Use negative lookahead to avoid matching "- Option A" (letter followed by lowercase)
     dash_answer_matches = re.findall(
-        r"(?:^|\n)\s*\d*\.?\s*\*{0,2}[^*\n]*\*{0,2}\s*\n\s*-\s*([A-Z])",
+        r"(?:^|\n)\s*\d*\.?\s*\*{0,2}[^*\n]*\*{0,2}\s*\n\s*-\s*([A-Z])(?![a-z])",
         answer,
         flags=re.MULTILINE
     )
@@ -148,8 +149,9 @@ def extract_labels(answer: str) -> list[str]:
     # Pattern: optional numbering/bullets followed by question, then dash with letters
     # E.g., "1. **Question?**\n   - A, C" or "2. **Question**\n   - B"
     # Use findall to get all matches, then take the last one (most likely the actual question)
+    # Use negative lookahead to avoid matching "- Option A" (letter followed by lowercase)
     dash_answer_matches = re.findall(
-        r"(?:^|\n)\s*\d*\.?\s*\*{0,2}[^*\n]*\*{0,2}\s*\n\s*-\s*([A-Z](?:\s*,\s*[A-Z])*)",
+        r"(?:^|\n)\s*\d*\.?\s*\*{0,2}[^*\n]*\*{0,2}\s*\n\s*-\s*([A-Z](?![a-z])(?:\s*,\s*[A-Z](?![a-z]))*)",
         answer,
         flags=re.MULTILINE
     )
