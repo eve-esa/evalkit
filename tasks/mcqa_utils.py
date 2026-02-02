@@ -141,6 +141,8 @@ def extract_labels(answer: str) -> list[str]:
         ['A', 'C']
         >>> extract_labels("1. **Question?**\\n   - A, C")
         ['A', 'C']
+        >>> extract_labels("B. No\\n\\n**Reasoning:**\\n\\nThe answer accurately describes...")
+        ['B']
     """
     # First, try to find numbered list format with dash-prefixed answers
     # Pattern: optional numbering/bullets followed by question, then dash with letters
@@ -170,7 +172,26 @@ def extract_labels(answer: str) -> list[str]:
         r"^(?:Answer|answer|The answer is|the answer is):\s*", "", answer, flags=re.IGNORECASE
     )
 
-    # First, try to find bold markdown labels: **A**, **B**, **(A)**, **A. 4.65**, etc.
+    # First, check for simple letter pattern at the start of the answer
+    # This pattern matches: "A", "A.", "B. No", etc. at the beginning
+    # This should be checked before bold patterns to avoid matching section headers like "**Reasoning:**"
+    start_letter_pattern = r"^\s*([A-Z])\.?"
+    start_match = re.search(start_letter_pattern, answer)
+    if start_match:
+        # Found a letter at the start, now find all similar letters
+        letter_pattern = r"\b([A-Z])\.?(?:\s|,|and|&|$)"
+        matches = re.findall(letter_pattern, answer)
+        if matches:
+            # Remove duplicates while preserving order
+            seen = set()
+            labels_list = []
+            for letter in matches:
+                if letter not in seen:
+                    seen.add(letter)
+                    labels_list.append(letter)
+            return labels_list
+
+    # Second, try to find bold markdown labels: **A**, **B**, **(A)**, **A. 4.65**, etc.
     # Pattern handles optional parentheses and other characters between ** markers
     bold_matches = re.findall(r"\*\*[^A-Z]*([A-Z])[^*]*\*\*", answer)
     if bold_matches:
