@@ -160,12 +160,18 @@ def extract_labels(answer: str) -> list[str]:
         return labels_list
 
     # Second, try to find "answer is/are" pattern and extract from that portion
+    # Only apply this if the pattern appears before any bold section headers (Reasoning, Explanation, etc.)
+    # to avoid matching descriptive text like "the answer is accurate" within explanations
+    answer_before_headers = re.split(r'\*\*(?:Reasoning|Explanation|Rationale|Analysis):', answer)[0]
     answer_is_match = re.search(
-        r"(?:the\s+)?answers?\s+(?:is|are)\s+(.+?)(?:\.|$)", answer, flags=re.IGNORECASE | re.DOTALL
+        r"(?:the\s+)?answers?\s+(?:is|are)\s+(.+?)(?:\.|$)", answer_before_headers, flags=re.IGNORECASE | re.DOTALL
     )
     if answer_is_match:
         # Extract from the "answer is/are" portion only
-        answer = answer_is_match.group(1)
+        # But only if it contains letter labels (A-Z), not descriptive text
+        extracted = answer_is_match.group(1)
+        if re.search(r'[A-Z]', extracted):
+            answer = extracted
 
     # Strip common prefixes at the beginning like "Answer: ", "answer: ", etc.
     answer = re.sub(
@@ -178,9 +184,14 @@ def extract_labels(answer: str) -> list[str]:
     start_letter_pattern = r"^\s*([A-Z])\.?"
     start_match = re.search(start_letter_pattern, answer)
     if start_match:
-        # Found a letter at the start, now find all similar letters
+        # Found a letter at the start
+        # Extract the first line or portion before bold section headers to avoid extracting letters from headers
+        # Split on double newline or bold section headers (like **Reasoning:**, **Explanation:**, **Rationale:**)
+        answer_before_header = re.split(r'\n\n|\*\*(?:Reasoning|Explanation|Rationale|Analysis):', answer)[0]
+
+        # Now find all similar letters only in this portion
         letter_pattern = r"\b([A-Z])\.?(?:\s|,|and|&|$)"
-        matches = re.findall(letter_pattern, answer)
+        matches = re.findall(letter_pattern, answer_before_header)
         if matches:
             # Remove duplicates while preserving order
             seen = set()
