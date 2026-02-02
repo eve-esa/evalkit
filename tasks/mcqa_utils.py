@@ -75,6 +75,18 @@ def extract_label(answer: str) -> str:
         r"^(?:Answer|answer|The answer is|the answer is):\s*", "", answer, flags=re.IGNORECASE
     )
 
+    # First, explicitly check for bold markdown at the start: **A**, **(A)**, etc.
+    # This handles cases like "**A**\n\n**Reasoning:**..."
+    bold_match = re.search(r"^\s*\*\*\s*\(?\s*([A-Z])\s*\)?\s*\*\*", answer)
+    if bold_match:
+        return bold_match.group(1)
+
+    # Check for letter with period at the start, possibly followed by reasoning
+    # This handles cases like "B.\n\n**Reasoning:**..."
+    letter_period_match = re.search(r"^\s*([A-Z])\.", answer)
+    if letter_period_match:
+        return letter_period_match.group(1)
+
     # Try to match markdown/formatted patterns: **(A)**, **B**, *(C)*, (D), etc.
     # This regex strips common markdown and finds the letter inside
     formatted_match = re.search(r"^\s*[*_]*\(?\s*([A-Z])\s*\)?[*_]*(?:\.|[^A-Z]|$)", answer)

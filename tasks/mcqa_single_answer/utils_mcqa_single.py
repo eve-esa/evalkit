@@ -44,8 +44,8 @@ def doc_to_text(doc):
     # Build the question with choices
     string = f"{question}\n"
 
-    labels = ["A", "B", "C", "D", "E"]
-    for i, choice in enumerate(choices[:5]):  # Limit to 5 choices (A-E)
+    labels = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J"]
+    for i, choice in enumerate(choices[:10]):  # Limit to 5 choices (A-E)
         string += f"{labels[i]}. {choice}\n"
 
     return string
@@ -89,6 +89,7 @@ class filter_answer(Filter):
         Returns:
             List of lists of filtered responses (single letter)
         """
+
         def filter_set(inst):
             filtered = []
             for resp in inst:
