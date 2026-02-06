@@ -315,45 +315,7 @@ Custom metrics are implemented in the `metrics/` package. See existing metrics f
 This project is supported by the European Space Agency (ESA) Φ-lab through the Large Language Model for Earth Observation and Earth Science project, as part of the Foresight Element within FutureEO Block 4 programme.
 
 ## Citation
-
-
-If you use this evaluation framework, please cite both EVE-evaluation and the underlying lm-eval harness:
-
-```bibtex
-@software{eval-harness,
-  author       = {Gao, Leo and
-                  Tow, Jonathan and
-                  Abbasi, Baber and
-                  Biderman, Stella and
-                  Black, Sid and
-                  DiPofi, Anthony and
-                  Foster, Charles and
-                  Golding, Laurence and
-                  Hsu, Jeffrey and
-                  Le Noac'h, Alain and
-                  Li, Haonan and
-                  McDonell, Kyle and
-                  Muennighoff, Niklas and
-                  Ociepa, Chris and
-                  Phang, Jason and
-                  Reynolds, Laria and
-                  Schoelkopf, Hailey and
-                  Skowron, Aviya and
-                  Sutawika, Lintang and
-                  Tang, Eric and
-                  Thite, Anish and
-                  Wang, Ben and
-                  Wang, Kevin and
-                  Zou, Andy},
-  title        = {A framework for few-shot language model evaluation},
-  month        = sep,
-  year         = 2021,
-  publisher    = {Zenodo},
-  version      = {v0.0.1},
-  doi          = {10.5281/zenodo.5371628},
-  url          = {https://doi.org/10.5281/zenodo.5371628}
-}
-```
+If you use this project in academic or research settings, please cite:
 
 ## License
 
