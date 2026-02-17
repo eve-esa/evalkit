@@ -21,11 +21,14 @@ def extract_label(answer: str) -> str:
     - Letter with period: "A.", "D."
     - Letter with text: "A. Some text here"
     - With prefix: "Answer: C"
+    - Quoted format: "\"B\"", "'A'"
+    - Parentheses format: "(C)", "(A)"
     - Bold markdown: "**B**", "**A**\n\nExplanation...", "**A. 4.65**", "**(B)**"
     - Italic markdown: "*B*", "*(A)*"
-    - Parentheses: "(B)", "(A)"
     - With reasoning: "...long reasoning... the answer is **(B)**."
     - Numbered list format with dash: "2. **Question?**\n   - B"
+    - Answer-first CoT format: "B\n...long reasoning..."
+    - Explain-then-answer CoT format: "...long reasoning...\nA"
 
     Args:
         answer: The model's answer string
@@ -45,12 +48,32 @@ def extract_label(answer: str) -> str:
         'B'
         >>> extract_label("**C**\\n\\nHere's why...")
         'C'
+        >>> extract_label("(C)")
+        'C'
+        >>> extract_label("\"B\"")
+        'B'
         >>> extract_label("...reasoning... the answer is **(B)**.")
         'B'
         >>> extract_label("2. **Question?**\\n   - B")
         'B'
     """
-    # First, try to find numbered list format with dash-prefixed answer
+    # First, check for a bare letter on its own line at the very END of the text.
+    # CoT models often reason at length and then output the answer alone on the last line.
+    # E.g., "...long reasoning...\nA"
+    # A letter is considered "bare" only if it is the sole non-whitespace content on that last line
+    # (i.e., preceded by a newline or start-of-string, with only optional whitespace around it).
+    bare_letter_end = re.search(r"(?:^|\n)\s*([A-Z])\s*$", answer)
+    if bare_letter_end:
+        return bare_letter_end.group(1)
+
+    # Second, check for a bare letter on the very first line (answer-first CoT models).
+    # E.g., "B\nThe question is... [long reasoning]"
+    # This must run before dash_answer_matches which can be confused by bullet-point reasoning text.
+    bare_letter_start = re.search(r"^\s*([A-Z])\s*\n", answer)
+    if bare_letter_start:
+        return bare_letter_start.group(1)
+
+    # Third, try to find numbered list format with dash-prefixed answer
     # Pattern: optional numbering/bullets followed by question, then dash with letter
     # E.g., "2. **Question?**\n   - B"
     # Use findall to get all matches, then take the last one (most likely the actual question)
@@ -82,6 +105,18 @@ def extract_label(answer: str) -> str:
     if bold_match:
         return bold_match.group(1)
 
+    # Check for quoted format: "C", "A", etc.
+    # This handles cases like "\"B\"" or "\"A\"\n\nExplanation..."
+    quote_match = re.search(r'^\s*["\']?\s*([A-Z])\s*["\']?(?:\s|$)', answer)
+    if quote_match and (answer.strip().startswith('"') or answer.strip().startswith("'")):
+        return quote_match.group(1)
+
+    # Check for parentheses format: (C), (A), etc.
+    # This handles cases like "(C)" or "(A)\n\nExplanation..."
+    paren_match = re.search(r"^\s*\(\s*([A-Z])\s*\)", answer)
+    if paren_match:
+        return paren_match.group(1)
+
     # Check for letter with period at the start, possibly followed by reasoning
     # This handles cases like "B.\n\n**Reasoning:**..."
     letter_period_match = re.search(r"^\s*([A-Z])\.", answer)
@@ -112,9 +147,13 @@ def extract_labels(answer: str) -> list[str]:
 
     Handles multiple formats:
     - Simple letters: "A", "B, C", "A,B,C"
+    - Consecutive letters: "ABCD", "AB\n..."
     - Letters with periods: "A. B.", "D."
     - Letters with text: "A. text, B. more text"
     - With prefix: "Answer: A, C"
+    - Bold comma-separated with prefix: "Answer: **A, C**"
+    - Quoted format: "\"A\", \"C\"", "'B' and 'D'"
+    - Parentheses format: "(A), (C)", "(B) and (D)"
     - Bold markdown: "**B**", "**A**, **C**", "**A. 4.65**", "**(A), (C)**"
     - Italic markdown: "*A*, *B*", "*(D)*"
     - With reasoning: "...reasoning... the answers are **(A)** and **(C)**."
@@ -138,14 +177,84 @@ def extract_labels(answer: str) -> list[str]:
         ['B']
         >>> extract_labels("**A**, **C**")
         ['A', 'C']
+        >>> extract_labels("(A), (C)")
+        ['A', 'C']
+        >>> extract_labels("\"A\", \"C\"")
+        ['A', 'C']
         >>> extract_labels("...reasoning... the answers are **(A)** and **(C)**.")
         ['A', 'C']
         >>> extract_labels("1. **Question?**\\n   - A, C")
         ['A', 'C']
+        >>> extract_labels("Answer: **A, C**")
+        ['A', 'C']
         >>> extract_labels("B. No\\n\\n**Reasoning:**\\n\\nThe answer accurately describes...")
         ['B']
+        >>> extract_labels("ABCD")
+        ['A', 'B', 'C', 'D']
+        >>> extract_labels("AB\\nInstead of 'satellites', the instruments deployed...")
+        ['A', 'B']
+        >>> extract_labels("...long CoT reasoning...\\nA, B")
+        ['A', 'B']
     """
-    # First, try to find numbered list format with dash-prefixed answers
+    # First, check for bare letter(s) on the very last line (explain-then-answer CoT pattern).
+    # E.g., "...long reasoning...\nA, B" or "...long reasoning...\nA"
+    # Letters may be separated by commas, "and", "&", or "/".
+    # This must run first to avoid the rest of the logic being confused by uppercase letters
+    # scattered throughout the reasoning text.
+    bare_labels_end = re.search(
+        r"(?:^|\n)\s*([A-Z](?:\s*(?:,|and|&|/)\s*[A-Z])*)\s*$", answer
+    )
+    if bare_labels_end:
+        letters = re.findall(r"[A-Z]", bare_labels_end.group(1))
+        seen = set()
+        labels_list = []
+        for letter in letters:
+            if letter not in seen:
+                seen.add(letter)
+                labels_list.append(letter)
+        return labels_list
+
+    # Check for comma-separated letters at the very START of the text (answer-first artifact).
+    # Handles cases like " A, B, C, DOkay..." where letters are prepended before reasoning prose.
+    # Requires at least two letters to avoid false positives on normal answer-first single letters.
+    leading_csv_match = re.match(
+        r"^\s*([A-Z](?:\s*,\s*[A-Z])+)(?:[A-Z][a-z]|\s)", answer
+    )
+    if leading_csv_match:
+        letters = re.findall(r"[A-Z]", leading_csv_match.group(1))
+        seen = set()
+        labels_list = []
+        for letter in letters:
+            if letter not in seen:
+                seen.add(letter)
+                labels_list.append(letter)
+        return labels_list
+
+    # Check for "Answer..." at the end of the text in various formats:
+    # - Bold with colon:  "**Answer: A, B**"
+    # - Plain with colon: "Answer: A, B"
+    # - No colon/space:   "AnswerA, B"  (model artifact)
+    # E.g., bullet-point analysis followed by one of these on the last line.
+    bold_answer_end = re.search(
+        r"(?:^|\n)\s*\*{0,2}\s*[Aa]nswer:?\s*\*{0,2}\s*([A-Z](?:\s*(?:,|and|&|/)\s*[A-Z])*)\s*\*{0,2}\s*$", answer
+    )
+    if not bold_answer_end:
+        # Also match inline bold letters at end of last line after any prose:
+        # E.g., "...the correct options are **A, B, C**."
+        bold_answer_end = re.search(
+            r"\*\*\s*([A-Z](?:\s*,\s*[A-Z])+)\s*\*\*[.\s]*$", answer
+        )
+    if bold_answer_end:
+        letters = re.findall(r"[A-Z]", bold_answer_end.group(1))
+        seen = set()
+        labels_list = []
+        for letter in letters:
+            if letter not in seen:
+                seen.add(letter)
+                labels_list.append(letter)
+        return labels_list
+
+    # Second, try to find numbered list format with dash-prefixed answers
     # Pattern: optional numbering/bullets followed by question, then dash with letters
     # E.g., "1. **Question?**\n   - A, C" or "2. **Question**\n   - B"
     # Use findall to get all matches, then take the last one (most likely the actual question)
@@ -180,7 +289,22 @@ def extract_labels(answer: str) -> list[str]:
         r"^(?:Answer|answer|The answer is|the answer is):\s*", "", answer, flags=re.IGNORECASE
     )
 
-    # First, check for simple letter pattern at the start of the answer
+    # Check for bold markdown with comma-separated letters at the start: **A, C**, **A, B, C**, etc.
+    # This handles cases like "Answer: **A, C**" after the prefix has been stripped above.
+    bold_csv_match = re.search(r"^\s*\*\*\s*([A-Z](?:\s*,\s*[A-Z])+)\s*\*\*", answer)
+    if bold_csv_match:
+        labels_list = [letter.strip() for letter in bold_csv_match.group(1).split(",")]
+        return labels_list
+
+    # First, check for consecutive capital letters at the start (e.g., "ABCD", "AB\n...")
+    # This handles cases where multiple answers are given as a single string without separators
+    consecutive_match = re.search(r"^\s*([A-Z]{2,})(?:\n|\.|\s|$)", answer)
+    if consecutive_match:
+        # Extract each letter from the consecutive string
+        letters = list(consecutive_match.group(1))
+        return letters
+
+    # Second, check for simple letter pattern at the start of the answer
     # This pattern matches: "A", "A.", "B. No", etc. at the beginning
     # This should be checked before bold patterns to avoid matching section headers like "**Reasoning:**"
     start_letter_pattern = r"^\s*([A-Z])\.?"
@@ -204,7 +328,33 @@ def extract_labels(answer: str) -> list[str]:
                     labels_list.append(letter)
             return labels_list
 
-    # Second, try to find bold markdown labels: **A**, **B**, **(A)**, **A. 4.65**, etc.
+    # Second, try to find quoted format: "A", "C", etc.
+    # This handles cases like "\"A\", \"C\"" or "\"B\" and \"D\""
+    quote_matches = re.findall(r'["\']([A-Z])["\']', answer)
+    if quote_matches:
+        # Remove duplicates while preserving order
+        seen = set()
+        labels_list = []
+        for letter in quote_matches:
+            if letter not in seen:
+                seen.add(letter)
+                labels_list.append(letter)
+        return labels_list
+
+    # Third, try to find parentheses format: (A), (C), etc.
+    # This handles cases like "(A), (C)" or "(B) and (D)"
+    paren_matches = re.findall(r"\(\s*([A-Z])\s*\)", answer)
+    if paren_matches:
+        # Remove duplicates while preserving order
+        seen = set()
+        labels_list = []
+        for letter in paren_matches:
+            if letter not in seen:
+                seen.add(letter)
+                labels_list.append(letter)
+        return labels_list
+
+    # Fourth, try to find bold markdown labels: **A**, **B**, **(A)**, **A. 4.65**, etc.
     # Pattern handles optional parentheses and other characters between ** markers
     # Use negative lookahead (?![a-z]) to ensure we don't match section headers like **Explanation:**
     bold_matches = re.findall(r"\*\*\s*\(?\s*([A-Z])(?![a-z])[^*]*\*\*", answer)

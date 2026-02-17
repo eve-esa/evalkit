@@ -46,6 +46,7 @@ class TaskConfig:
     # Each judge dict can have: name, model, api_key, base_url, max_tokens, prompt
     batch_size: int = 1
     limit: int | None = None  # Limit number of samples to evaluate
+    seed: int | None = None  # Random seed for reproducibility
 
     def __post_init__(self):
         # If task_name is not provided, use name as task_name
@@ -197,6 +198,8 @@ def parse_task_config(task_data) -> TaskConfig:
             kwargs["judges"] = task_data["judges"]
         if "limit" in task_data:
             kwargs["limit"] = task_data["limit"]
+        if "seed" in task_data:
+            kwargs["seed"] = task_data["seed"]
 
         return TaskConfig(**kwargs)
     else:
@@ -523,6 +526,7 @@ def init_wandb_for_task(
                 "apply_chat_template": task.apply_chat_template,
                 "batch_size": task.batch_size,
                 "limit": task.limit,
+                "seed": task.seed,
             },
         }
 
@@ -786,16 +790,25 @@ def run_evaluation(
 
         # Run evaluation using simple_evaluate
         # Pass model type as string and let simple_evaluate handle model initialization
-        results = simple_evaluate(
-            model=task.model_type,
-            model_args=model_args,
-            tasks=[task.task_name],
-            num_fewshot=task.num_fewshot,
-            limit=task.limit if task.limit and task.limit > 0 else None,
-            log_samples=True,
-            apply_chat_template=task.apply_chat_template,
-            task_manager=task_manager,
-        )
+        eval_kwargs = {
+            "model": task.model_type,
+            "model_args": model_args,
+            "tasks": [task.task_name],
+            "num_fewshot": task.num_fewshot,
+            "limit": task.limit if task.limit and task.limit > 0 else None,
+            "log_samples": True,
+            "apply_chat_template": task.apply_chat_template,
+            "task_manager": task_manager,
+        }
+
+        # Add seed if provided (set all seed parameters for full reproducibility)
+        if task.seed is not None:
+            eval_kwargs["random_seed"] = task.seed  # (C)
+            eval_kwargs["numpy_random_seed"] = task.seed  # (C)
+            eval_kwargs["torch_random_seed"] = task.seed  # (C)
+            eval_kwargs["fewshot_random_seed"] = task.seed  # (C)
+
+        results = simple_evaluate(**eval_kwargs)
 
         if results is None:
             raise RuntimeError("simple_evaluate returned None")

@@ -168,7 +168,9 @@ def query_judge_structured(
 
             if is_pydantic_error and attempt < max_retries - 1:
                 next_temp = min(0.35 * (attempt + 1), 0.9)
-                print(f"Pydantic validation error for {judge_config['name']}: {str(e)[:150]}... - Retrying with temperature {next_temp:.2f}")
+                print(
+                    f"Pydantic validation error for {judge_config['name']}: {str(e)[:150]}... - Retrying with temperature {next_temp:.2f}"
+                )
                 time.sleep(2**attempt)  # Exponential backoff
             elif attempt < max_retries - 1:
                 error_msg = f"Error querying {judge_config['name']}: {e}"
@@ -354,7 +356,12 @@ def _sanitize_column_name(name: str) -> str:
     return name.lower().replace(" ", "_").replace(".", "").replace("-", "_").replace("/", "_")
 
 
-def results_to_dataframe(results: List[EvaluationResult], base_df, model_a_name: str = "model_a", model_b_name: str = "model_b"):
+def results_to_dataframe(
+    results: List[EvaluationResult],
+    base_df,
+    model_a_name: str = "model_a",
+    model_b_name: str = "model_b",
+):
     """
     Convert evaluation results to DataFrame format.
 

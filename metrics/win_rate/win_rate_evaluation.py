@@ -533,6 +533,11 @@ def log_to_wandb(
     # Log win rates
     if log_config.get("win_rates", True):
         for judge_name, stats in win_rates.items():
+            # Calculate alpaca_win_rate for this judge
+            judge_total = stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"]
+            alpaca_win_rate_a = (stats["model_a_wins"] + stats["ties"] * 0.5) / judge_total if judge_total > 0 else 0
+            alpaca_win_rate_b = (stats["model_b_wins"] + stats["ties"] * 0.5) / judge_total if judge_total > 0 else 0
+
             wandb.log(
                 {
                     f"win_rate/{judge_name}/{model_a_sanitized}": stats["model_a_win_rate"] / 100,
@@ -541,6 +546,8 @@ def log_to_wandb(
                     f"win_rate/{judge_name}/{model_a_sanitized}_wins": stats["model_a_wins"],
                     f"win_rate/{judge_name}/{model_b_sanitized}_wins": stats["model_b_wins"],
                     f"win_rate/{judge_name}/ties": stats["ties"],
+                    f"alpaca_win_rate/{judge_name}/{model_a_sanitized}": alpaca_win_rate_a,
+                    f"alpaca_win_rate/{judge_name}/{model_b_sanitized}": alpaca_win_rate_b,
                 }
             )
 
@@ -553,6 +560,22 @@ def log_to_wandb(
         # Calculate average win rates for wandb
         avg_model_a_win_rate = np.mean([stats["model_a_win_rate"] for stats in win_rates.values()])
         avg_model_b_win_rate = np.mean([stats["model_b_win_rate"] for stats in win_rates.values()])
+
+        # Calculate aggregate alpaca_win_rate
+        alpaca_win_rate_a = (total_model_a_wins + total_ties * 0.5) / total_evaluations if total_evaluations > 0 else 0
+        alpaca_win_rate_b = (total_model_b_wins + total_ties * 0.5) / total_evaluations if total_evaluations > 0 else 0
+
+        # Calculate average alpaca_win_rate across judges
+        avg_alpaca_win_rate_a = np.mean([
+            (stats["model_a_wins"] + stats["ties"] * 0.5) / (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"])
+            for stats in win_rates.values()
+            if (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"]) > 0
+        ])
+        avg_alpaca_win_rate_b = np.mean([
+            (stats["model_b_wins"] + stats["ties"] * 0.5) / (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"])
+            for stats in win_rates.values()
+            if (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"]) > 0
+        ])
 
         wandb.log(
             {
@@ -569,6 +592,11 @@ def log_to_wandb(
                 f"aggregate/avg_{model_b_sanitized}_win_rate": avg_model_b_win_rate / 100,
                 "aggregate/win_rate_difference": (avg_model_b_win_rate - avg_model_a_win_rate)
                 / 100,
+                f"aggregate/{model_a_sanitized}_alpaca_win_rate": alpaca_win_rate_a,
+                f"aggregate/{model_b_sanitized}_alpaca_win_rate": alpaca_win_rate_b,
+                f"aggregate/avg_{model_a_sanitized}_alpaca_win_rate": avg_alpaca_win_rate_a,
+                f"aggregate/avg_{model_b_sanitized}_alpaca_win_rate": avg_alpaca_win_rate_b,
+                "aggregate/alpaca_win_rate_difference": (avg_alpaca_win_rate_b - avg_alpaca_win_rate_a),
             }
         )
 
@@ -761,6 +789,18 @@ def create_metrics_table(
     overall_accuracy_a = np.mean([stats["model_a_accuracy"] for stats in accuracy_rates.values()])
     overall_accuracy_b = np.mean([stats["model_b_accuracy"] for stats in accuracy_rates.values()])
 
+    # Calculate average alpaca_win_rate across judges
+    avg_alpaca_win_rate_a = np.mean([
+        (stats["model_a_wins"] + stats["ties"] * 0.5) / (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"])
+        for stats in win_rates.values()
+        if (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"]) > 0
+    ])
+    avg_alpaca_win_rate_b = np.mean([
+        (stats["model_b_wins"] + stats["ties"] * 0.5) / (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"])
+        for stats in win_rates.values()
+        if (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"]) > 0
+    ])
+
     # Add metrics for model_b (the model being evaluated against model_a)
     metrics_rows.extend(
         [
@@ -820,6 +860,23 @@ def create_metrics_table(
                 "metric": "accuracy_difference_vs_opponent",
                 "value": (overall_accuracy_b - overall_accuracy_a) / 100,
             },
+            {
+                "model_name": model_b_name,
+                "task": task,
+                "subtask": subtask,
+                "opponent": opponent,
+                "metric": "alpaca_win_rate",
+                "value": (total_model_b_wins + total_ties * 0.5)
+                / (total_ties + total_model_a_wins + total_model_b_wins),
+            },
+            {
+                "model_name": model_b_name,
+                "task": task,
+                "subtask": subtask,
+                "opponent": opponent,
+                "metric": "avg_alpaca_win_rate",
+                "value": avg_alpaca_win_rate_b,
+            },
         ]
     )
 
@@ -835,6 +892,21 @@ def create_metrics_table(
                 "value": stats["model_b_win_rate"] / 100,
             }
         )
+
+        # Add per-judge alpaca_win_rate
+        judge_total = stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"]
+        if judge_total > 0:
+            alpaca_win_rate_judge = (stats["model_b_wins"] + stats["ties"] * 0.5) / judge_total
+            metrics_rows.append(
+                {
+                    "model_name": model_b_name,
+                    "task": task,
+                    "subtask": subtask,
+                    "opponent": opponent,
+                    "metric": f"alpaca_win_rate_judge_{judge_name}",
+                    "value": alpaca_win_rate_judge,
+                }
+            )
 
     for judge_name, stats in accuracy_rates.items():
         metrics_rows.append(
@@ -912,6 +984,11 @@ def print_results(
     print_and_log("=" * 80 + "\n")
 
     for judge_name, stats in win_rates.items():
+        # Calculate alpaca_win_rate for this judge
+        judge_total = stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"]
+        alpaca_win_rate_a = (stats["model_a_wins"] + stats["ties"] * 0.5) / judge_total if judge_total > 0 else 0
+        alpaca_win_rate_b = (stats["model_b_wins"] + stats["ties"] * 0.5) / judge_total if judge_total > 0 else 0
+
         print_and_log(f"Judge: {judge_name}")
         print_and_log(
             f"  {model_a_name} wins: {stats['model_a_wins']:4d} ({stats['model_a_win_rate']/100:.3f})"
@@ -920,6 +997,8 @@ def print_results(
             f"  {model_b_name} wins: {stats['model_b_wins']:4d} ({stats['model_b_win_rate']/100:.3f})"
         )
         print_and_log(f"  Ties:         {stats['ties']:4d} ({stats['tie_rate']/100:.3f})")
+        print_and_log(f"  {model_a_name} alpaca_win_rate: {alpaca_win_rate_a:.3f}")
+        print_and_log(f"  {model_b_name} alpaca_win_rate: {alpaca_win_rate_b:.3f}")
         print_and_log(f"  Errors:       {stats['errors']:4d}")
         print_and_log(f"  Total:        {stats['total']:4d}")
         print_and_log()
@@ -951,6 +1030,24 @@ def print_results(
     print_and_log(f"  {model_a_name}: {avg_model_a_win_rate/100:.3f}")
     print_and_log(f"  {model_b_name}: {avg_model_b_win_rate/100:.3f}")
     print_and_log(f"  Difference ({model_b_name} - {model_a_name}): {win_rate_difference:+.3f}")
+
+    # Calculate and print average alpaca_win_rate across judges
+    avg_alpaca_win_rate_a = np.mean([
+        (stats["model_a_wins"] + stats["ties"] * 0.5) / (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"])
+        for stats in win_rates.values()
+        if (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"]) > 0
+    ])
+    avg_alpaca_win_rate_b = np.mean([
+        (stats["model_b_wins"] + stats["ties"] * 0.5) / (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"])
+        for stats in win_rates.values()
+        if (stats["model_a_wins"] + stats["model_b_wins"] + stats["ties"]) > 0
+    ])
+    alpaca_win_rate_difference = avg_alpaca_win_rate_b - avg_alpaca_win_rate_a
+
+    print_and_log(f"\nAverage alpaca_win_rate across judges:")
+    print_and_log(f"  {model_a_name}: {avg_alpaca_win_rate_a:.3f}")
+    print_and_log(f"  {model_b_name}: {avg_alpaca_win_rate_b:.3f}")
+    print_and_log(f"  Difference ({model_b_name} - {model_a_name}): {alpaca_win_rate_difference:+.3f}")
 
     # Accuracy rates
     print_and_log("\n" + "=" * 80)
