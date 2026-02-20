@@ -3,7 +3,6 @@
 ./__pycache__/*
 ./evals_outputs/*/*
 .idea/*
-/notebooks/
 /wandb/*
 /lm_eval_out/*
 /distractors/*
