@@ -253,6 +253,179 @@ output_dir: test_outputs
 
 ---
 
+---
+
+## Example 7: Using Seed for Reproducibility
+
+Control randomness in evaluations by setting a seed value. This is especially useful for open-ended tasks with multiple judges where answer order randomization occurs:
+
+```yaml
+constants:
+  judge_api_key: ${JUDGE_API_KEY}
+  judge_base_url: https://openrouter.ai/api/v1/
+  concurrent_requests: 20
+
+  open_ended_judges:
+    - name: qwen3-235b
+      model: qwen/qwen3-235b-a22b-2507
+      api_key: ${JUDGE_API_KEY}
+      base_url: https://openrouter.ai/api/v1/
+      prompt_path: metrics/prompts/llm_judge_qa.yaml
+    - name: mistral-large
+      model: mistral-large-2512
+      api_key: ${MISTRAL_API_KEY}
+      base_url: https://api.mistral.ai/v1
+      prompt_path: metrics/prompts/llm_judge_qa.yaml
+
+  tasks:
+    # Same task with different seeds for variance analysis
+    - name: open_ended_0_shot_seed_1234
+      task_name: open_ended
+      model_type: local-chat-completions
+      num_fewshot: 0
+      max_tokens: 10000
+      judges: !ref open_ended_judges
+      batch_size: !ref concurrent_requests
+      seed: 1234  # Fixed seed for reproducibility
+
+    - name: open_ended_0_shot_seed_5678
+      task_name: open_ended
+      model_type: local-chat-completions
+      num_fewshot: 0
+      max_tokens: 10000
+      judges: !ref open_ended_judges
+      batch_size: !ref concurrent_requests
+      seed: 5678  # Different seed
+
+    # Other tasks with seeds
+    - name: mcqa_single_answer_0_shot_seed_1234
+      task_name: mcqa_single_answer
+      model_type: local-chat-completions
+      num_fewshot: 0
+      max_tokens: 15
+      seed: 1234
+
+wandb:
+  enabled: true
+  project: seed-reproducibility-test
+  entity: your-org
+
+models:
+  - name: your-model
+    base_url: http://localhost:8010/v1/
+    api_key: EMPTY
+    temperature: 0.0
+    num_concurrent: !ref concurrent_requests
+    tasks: !ref tasks
+    timeout: 180
+
+output_dir: evals_outputs
+```
+
+**Why use seeds?**
+- Reproduce exact same results across runs
+- Compare model performance with controlled randomness
+- Debug evaluation issues with consistent behavior
+- Analyze variance by running same task with different seeds
+
+---
+
+## Example 8: Using EVE API for RAG-Enhanced Evaluation
+
+Evaluate using the EVE API which provides RAG (Retrieval-Augmented Generation) enhanced responses with Earth Observation context:
+
+```yaml
+constants:
+  # EVE API credentials
+  eve_email: your-email@example.com
+  eve_password: your-eve-password
+  eve_base_url: http://0.0.0.0:8000/
+  eve_public_collections: ['qwen-512-filtered', 'Wikipedia EO', 'Wiley AI Gateway']
+  eve_k: 10  # Number of documents to retrieve
+  eve_threshold: 0.5  # Similarity threshold
+
+  concurrent_requests: 7
+
+  # Judge configuration for open-ended tasks
+  open_ended_judges:
+    - name: qwen3-235b
+      model: qwen/qwen3-235b-a22b-2507
+      api_key: ${OPENROUTER_API_KEY}
+      base_url: https://openrouter.ai/api/v1/
+      prompt_path: metrics/prompts/llm_judge_qa.yaml
+    - name: mistral-large
+      model: mistral-large-2512
+      api_key: ${MISTRAL_API_KEY}
+      base_url: https://api.mistral.ai/v1
+      prompt_path: metrics/prompts/llm_judge_qa.yaml
+
+  tasks:
+    - name: open_ended_0_shot
+      task_name: open_ended
+      num_fewshot: 0
+      max_tokens: 10000
+      judges: !ref open_ended_judges
+      model_type: eve-api  # Use EVE API model type
+
+    - name: mcqa_multiple_answer_0_shot
+      task_name: mcqa_multiple_answer
+      num_fewshot: 0
+      max_tokens: 10000
+      model_type: eve-api
+
+    - name: mcqa_single_answer_0_shot
+      task_name: mcqa_single_answer
+      model_type: eve-api
+      num_fewshot: 0
+      max_tokens: 1000
+
+    - name: hallucination_detection_0_shot
+      task_name: hallucination_detection
+      num_fewshot: 0
+      max_tokens: 10000
+      model_type: eve-api
+
+wandb:
+  enabled: true
+  project: eve-api-evaluation
+  entity: LLM4EO
+
+models:
+  - name: eve-api
+    # EVE API configuration
+    email: !ref eve_email
+    password: !ref eve_password
+    base_url: !ref eve_base_url
+    public_collections: !ref eve_public_collections
+    k: !ref eve_k
+    threshold: !ref eve_threshold
+
+    # General settings
+    temperature: 0.0
+    num_concurrent: !ref concurrent_requests
+    tasks: !ref tasks
+    timeout: 180
+
+output_dir: evals_outputs_eve_api
+```
+
+**EVE API Configuration Parameters:**
+- `email`: Email for EVE API authentication
+- `password`: Password for EVE API authentication
+- `base_url`: Base URL for the EVE API endpoint
+- `public_collections`: List of document collections to search for RAG
+- `k`: Number of documents to retrieve (default: 5)
+- `threshold`: Similarity threshold for document retrieval (default: 0.5)
+- `model_type: eve-api`: Must be specified in task configuration
+
+**Important Notes:**
+- The EVE API automatically retrieves relevant context for each query
+- Retrieved documents are used to enhance the model's responses
+- Especially useful for Earth Observation domain-specific questions
+- Requires a running EVE API server
+
+---
+
 ## Running Examples
 
 To run any of these examples:

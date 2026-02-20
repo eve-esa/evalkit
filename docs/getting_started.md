@@ -95,15 +95,56 @@ Each task can have the following parameters:
 ```yaml
 tasks:
   - name: task_name              # Required: Task identifier
+    task_name: base_task         # Optional: Base task name (for custom naming)
     num_fewshot: 0               # Number of few-shot examples (default: 0)
     max_tokens: 1000             # Maximum tokens for generation (default: 512)
     temperature: 0.0             # Sampling temperature (default: 0.0)
     limit: 100                   # Optional: Limit number of samples to evaluate
+    seed: 1234                   # Optional: Random seed for reproducibility
+    model_type: local-chat-completions  # Optional: Model type (local-chat-completions, eve-api)
     judge_api_key: api-key       # Required for single-judge LLM-as-judge tasks
     judge_base_url: base-url     # Required for single-judge LLM-as-judge tasks
     judge_name: model-name       # Required for single-judge LLM-as-judge tasks
     judges: []                   # Optional: List of multiple judges for multi-judge evaluation
 ```
+
+#### Random Seed for Reproducibility
+
+The `seed` parameter allows you to control randomness in evaluations for reproducible results:
+
+```yaml
+tasks:
+  - name: open_ended_0_shot_seed_1234
+    task_name: open_ended
+    num_fewshot: 0
+    max_tokens: 10000
+    seed: 1234  # Fixed seed ensures same results across runs
+```
+
+**Benefits of using seeds:**
+- Reproduce exact same results across multiple runs
+- Debug evaluation issues with consistent behavior
+- Compare model performance with controlled randomness
+- Run variance analysis by using multiple different seeds
+
+**Example: Running same task with different seeds**
+
+```yaml
+tasks:
+  - name: open_ended_seed_1234
+    task_name: open_ended
+    seed: 1234
+
+  - name: open_ended_seed_5678
+    task_name: open_ended
+    seed: 5678
+
+  - name: open_ended_seed_9012
+    task_name: open_ended
+    seed: 9012
+```
+
+This configuration runs the same task three times with different random seeds to analyze variance in results.
 
 #### Multi-Judge Evaluation
 
@@ -160,6 +201,67 @@ models:
     timeout: 180          # Request timeout in seconds (default: 300)
     tasks: !ref tasks     # Reference to tasks list
 ```
+
+#### EVE API Model Configuration
+
+The EVE API provides RAG-enhanced (Retrieval-Augmented Generation) responses with Earth Observation context. To use the EVE API:
+
+```yaml
+constants:
+  # EVE API credentials
+  eve_email: your-email@example.com
+  eve_password: your-password
+  eve_base_url: http://0.0.0.0:8000/
+  eve_public_collections: ['qwen-512-filtered', 'Wikipedia EO', 'Wiley AI Gateway']
+  eve_k: 10
+  eve_threshold: 0.5
+
+  tasks:
+    - name: open_ended_0_shot
+      task_name: open_ended
+      num_fewshot: 0
+      max_tokens: 10000
+      model_type: eve-api  # Specify eve-api model type
+
+models:
+  - name: eve-api
+    # EVE API configuration
+    email: !ref eve_email
+    password: !ref eve_password
+    base_url: !ref eve_base_url
+    public_collections: !ref eve_public_collections
+    k: !ref eve_k
+    threshold: !ref eve_threshold
+
+    # General settings
+    temperature: 0.0
+    num_concurrent: 7
+    tasks: !ref tasks
+    timeout: 180
+```
+
+**EVE API Parameters:**
+- `email`: Email for EVE API authentication
+- `password`: Password for EVE API authentication
+- `base_url`: Base URL for the EVE API endpoint
+- `public_collections`: List of document collections to search for RAG context
+- `k`: Number of documents to retrieve (default: 5)
+- `threshold`: Similarity threshold for document retrieval (default: 0.5)
+
+**Important Notes:**
+- Tasks using EVE API must specify `model_type: eve-api` in the task configuration
+- The EVE API automatically retrieves relevant context documents for each query
+- Retrieved documents are used to enhance the model's responses
+- Especially useful for Earth Observation domain-specific questions
+- Requires a running EVE API server at the specified `base_url`
+
+**Example Use Case:**
+
+The EVE API is particularly valuable for:
+- Evaluating models on Earth Observation tasks with factual grounding
+- Comparing RAG-enhanced responses vs. non-RAG responses
+- Testing model performance with domain-specific context retrieval
+- Hallucination detection where factual context is critical
 
 ### Weights & Biases (WandB) Logging
 
