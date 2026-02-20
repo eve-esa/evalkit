@@ -10,7 +10,7 @@ Follow the installation instructions in the [README](https://github.com/eve-esa/
 
 ```bash
 # Clone the repository
-git clone https://github.com/eve-esa/eve-evaluation.git
+git clone https://github.com/eve-esa/evalkit.git
 cd eve-evaluation
 
 # Install uv

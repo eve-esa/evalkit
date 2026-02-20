@@ -1,0 +1,83 @@
+# Win Rate Evaluation Configuration
+
+# Task type for metrics logging
+task: "open_ended"
+
+# Models to compare
+model_a:
+  - name: "mistralai/mistral-small-3.2-24b-instruct"
+    file: "generations/open_ended/scoring_mistral-small-3.2-24b-instruct_open_ended_0_shot.csv"
+  - name: "meta-llama/llama-4-scout"
+    file: "generations/open_ended/scoring_llama-4-scout_open_ended_0_shot.csv"
+  - name: "google/gemma-3-27b-it"
+    file: "generations/open_ended/scoring_gemma-3-27b-it_open_ended_0_shot.csv"
+  - name: "qwen/qwen3-30b-a3b-instruct-2507"
+    file: "generations/open_ended/scoring_qwen3-30b-a3b-instruct-2507_open_ended_0_shot.csv"
+
+model_b:
+  - name: "eve-api"
+    file: "generations/open_ended/scoring_eve-api_open_ended_0_shot.csv"
+  - name: "eve_v04"
+    file: "generations/open_ended/scoring_eve_v04_open_ended_0_shot.csv"
+  - name: "eve_v05"
+    file: "generations/open_ended/scoring_eve_v05_open_ended_0_shot.csv"
+
+# LLM Judges configuration
+judges:
+  - name: "mistral-large-2512"
+    model: "mistral-large-2512"
+    api_key: ""  # Use environment variable or set directly
+    base_url: "https://api.mistral.ai/v1"
+
+  - name: "gpt-4.1-mini"
+    model: "openai/gpt-4.1-mini"
+    api_key: ""  # Use environment variable or set directly
+    base_url: "https://openrouter.ai/api/v1/"
+
+  - name: "qwen3-235b-a22b-2507"
+    model: "qwen/qwen3-235b-a22b-2507"
+    api_key: ""  # Use environment variable or set directly
+    base_url: "https://openrouter.ai/api/v1/"
+
+  - name: "deepseek-v3.2"
+    model: "deepseek/deepseek-v3.2"
+    api_key: ""  # Use environment variable or set directly
+    base_url: "https://openrouter.ai/api/v1/"
+
+# Evaluation settings
+evaluation:
+  limit: null  # Set to a number to limit evaluation to N questions, or null for all
+  max_workers: 20  # Number of parallel threads
+  rate_limit_delay: 0.05  # Delay between API calls per thread (in seconds)
+  random_seed: 42  # Set to null for true randomness
+
+# Output settings
+output:
+  save_results: true
+  save_visualizations: true
+  output_dir: "win_rate_results"
+  results_filename: "results_{model_a}_vs_{model_b}.csv"
+  summary_filename: "summary_{model_a}_vs_{model_b}.csv"
+  visualization_filename: "comparison_{model_a}_vs_{model_b}.png"
+
+# Weights & Biases configuration
+wandb:
+  enabled: true
+  project: "eve-win-rate-evaluation"
+  entity: LLM4EO  # Set your wandb entity/username, or null to use default
+  run_name: "alpaca_{model_a}_vs_{model_b}_open_ended"  # Will be formatted with model names
+  tags:
+    - "win-rate"
+    - "llm-judge"
+  notes: "Win rate evaluation using multiple LLM judges"
+
+  # What to log to wandb
+  log:
+    win_rates: true
+    accuracy_rates: true
+    judge_agreement: true
+    position_bias: true
+    visualizations: true
+    raw_results: true  # Upload CSV files
+    sample_rationales: true  # Log sample judge rationales
+    sample_count: 5  # Number of sample rationales to log
