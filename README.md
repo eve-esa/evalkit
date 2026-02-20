@@ -4,7 +4,7 @@ This repository contains the evaluation tasks and metrics for evaluating models 
 
 Evalkit is built on top of the [EleutherAI Language Model Evaluation Harness](https://github.com/EleutherAI/lm-evaluation-harness), a unified framework for testing generative language models on a large number of different evaluation tasks.
 
-For more information refer to the complete guide of the project: [EVE Guide](eve-esa.github.io/eve-guide/).
+For more information refer to the complete guide of the project: [EVE Guide](https://eve-esa.github.io/eve-guide/).
 
 ## Earth Virtual Expert (EVE)
 
