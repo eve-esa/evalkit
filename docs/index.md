@@ -77,25 +77,3 @@ Evaluate models on specialized EO capabilities:
 
 If you use this evaluation framework in your research, please cite:
 
-```bibtex
-@misc{eve2025,
-  title={EVE: Earth Virtual Expert},
-  author={ESA},
-  year={2025},
-  publisher={HuggingFace},
-  url={https://huggingface.co/eve-esa/eve_v0.1}
-}
-```
-
-For the underlying evaluation harness:
-
-```bibtex
-@software{eval-harness,
-  author       = {Gao, Leo and others},
-  title        = {A framework for few-shot language model evaluation},
-  year         = 2021,
-  publisher    = {Zenodo},
-  doi          = {10.5281/zenodo.5371628},
-  url          = {https://doi.org/10.5281/zenodo.5371628}
-}
-```

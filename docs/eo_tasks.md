@@ -6,12 +6,11 @@ This page provides a comprehensive overview of all available Earth Observation (
 
 | Task Name | Type | Dataset | Size | Primary Metrics |
 |-----------|------|---------|------|-----------------|
-| [MCQA Multiple Answer](#mcqa-multiple-answer) | Multiple Choice | [eve-esa/eve-is-mcqa](https://huggingface.co/datasets/eve-esa/eve-is-mcqa) | 432  | IoU, Accuracy |
-| [MCQA Single Answer](#mcqa-single-answer) | Multiple Choice | [eve-esa/mcqa-single-answer](https://huggingface.co/datasets/eve-esa/mcqa-single-answer) | 1308 | Accuracy |
-| [Open Ended](#open-ended) | Generation | [eve-esa/open-ended](https://huggingface.co/datasets/eve-esa/open-ended) | 1304 | LLM as Judge |
-| [Open Ended with Context](#open-ended-with-context) | Generation | [eve-esa/open-ended-w-context](https://huggingface.co/datasets/eve-esa/open-ended-w-context) | 436  | LLM Judge |
-| [Refusal](#refusal) | Generation | [eve-esa/refusal](https://huggingface.co/datasets/eve-esa/refusal) | 946  | LLM Judge |
-| [Hallucination Detection](#hallucination-detection) | Classification | [eve-esa/hallucination-detection](https://huggingface.co/datasets/eve-esa/hallucination-detection) | 2996 | Accuracy, Precision, Recall, F1 |
+| [MCQA Multiple Answer](#mcqa-multiple-answer) | Multiple Choice | [eve-esa/eve-is-mcqa](https://huggingface.co/datasets/eve-esa/eve-is-mcqa) | 431  | IoU, Accuracy |
+| [MCQA Single Answer](#mcqa-single-answer) | Multiple Choice | [eve-esa/mcqa-single-answer](https://huggingface.co/datasets/eve-esa/mcqa-single-answer) | 1261 | Accuracy |
+| [Open Ended](#open-ended) | Generation | [eve-esa/open-ended](https://huggingface.co/datasets/eve-esa/open-ended) | 1257 | LLM as Judge, Win Rate |
+| [Open Ended with Context](#open-ended-with-context) | Generation | [eve-esa/open-ended-w-context](https://huggingface.co/datasets/eve-esa/open-ended-w-context) | 418  | LLM Judge, Win Rate |
+| [Hallucination Detection](#hallucination-detection) | Classification | [eve-esa/hallucination-detection](https://huggingface.co/datasets/eve-esa/hallucination-detection) | 2326 | Accuracy, Precision, Recall, F1 |
 
 ---
 
@@ -141,6 +140,7 @@ tasks:
 
 - **LLM as Judge**: A judge model evaluates the quality, accuracy, and completeness of generated answers using strict fact-checking rules (0 = FAIL, 1 = PASS)
 - **Multi-Judge Support**: Use multiple judges for more robust evaluation (see Multi-Judge Evaluation section below)
+- **Win Rate**: Compare two models head-to-head using multiple LLM judges (see Win Rate Evaluation section below)
 - Alternative metrics: BLEU, ROUGE, Cosine Similarity, BERTScore
 
 **LLM Judge Evaluation Rules:**
@@ -186,6 +186,7 @@ tasks:
 
 - **LLM Judge**: Evaluates whether answers are grounded in the provided context and correctly answer the question (higher is better)
 - **Multi-Judge Support**: Use multiple judges for more robust evaluation (see Multi-Judge Evaluation section below)
+- **Win Rate**: Compare two models head-to-head using multiple LLM judges (see Win Rate Evaluation section below)
 - Uses the same strict fact-checking evaluation rules as open-ended tasks
 
 **Why It's Useful:**
@@ -430,6 +431,307 @@ In this example:
 - Overall average is 77.7%
 - Judges fully agreed on 65% of samples
 - **Majority vote gave 80% (recommended metric to report)**
+
+---
+
+## Win Rate Evaluation
+
+For open-ended tasks (`open_ended`, `open_ended_w_context`), you can perform **win rate evaluation** to compare two models head-to-head using multiple LLM judges. This separate evaluation script provides comparative analysis between model outputs, complementing the standard LLM-as-judge metrics.
+
+### What is Win Rate?
+
+Win rate evaluation compares the outputs of two models (Model A vs Model B) on the same questions and determines which model provides better answers according to independent LLM judges. This approach is particularly useful for:
+
+- **Model Selection**: Directly compare two models to identify which performs better
+- **Model Improvement**: Assess whether a new model version improves over a baseline
+- **Ablation Studies**: Evaluate the impact of specific model changes or training approaches
+- **Benchmark Comparison**: Compare your model against established baselines or competitors
+
+### Key Differences from Standard Evaluation
+
+The win rate evaluation is a **separate script** with its own configuration format and workflow:
+
+| Aspect | Standard Evaluation | Win Rate Evaluation |
+|--------|---------------------|---------------------|
+| **Purpose** | Evaluate single model quality | Compare two models head-to-head |
+| **Script** | `scripts/evaluate.py` | `metrics/win_rate/win_rate_evaluation.py` |
+| **Configuration** | `evals.yaml` | Separate YAML config (e.g., `win_rate_config.yaml`) |
+| **Input** | Live model API | Pre-generated CSV files from standard evaluation |
+| **Output Format** | Standard metrics (accuracy, F1) | Win rates, alpaca win rates, judge agreement |
+| **Judges** | Single or multi-judge per eval | Multiple judges comparing two outputs |
+| **WandB Logging** | Evaluation results | Win rate metrics, visualizations, judge rationales |
+
+### Metrics Explained
+
+#### 1. Win Rate
+
+Percentage of questions where each model won according to each judge.
+
+**Formula:**
+```
+Win Rate = (Number of Wins / Total Evaluations) × 100%
+```
+
+**Calculation Process:**
+- For each question, each judge compares Model A vs Model B outputs
+- Judge decides: Model A wins, Model B wins, or Tie
+- Win rate = (wins / total evaluations) × 100%
+- Aggregate win rate = average win rate across all judges
+
+**Interpreting Win Rate Values:**
+- **0.50 (50%)**: Models perform equally well (perfect tie across all questions)
+- **> 0.50**: Model is better than its competitor
+  - 0.55-0.60: Slight advantage
+  - 0.60-0.70: Clear advantage
+  - 0.70+: Strong advantage
+- **< 0.50**: Model is worse than its competitor
+- **Win Rate Difference**: The gap between Model A and Model B
+  - Difference < 0.05: Negligible difference
+  - Difference 0.05-0.10: Noticeable difference
+  - Difference > 0.10: Significant performance gap
+
+**Logged Metrics:**
+- `win_rate/{judge_name}/{model_name}`: Win rate for each model per judge (0.0 to 1.0)
+- `aggregate/{model_name}_win_rate`: Aggregate win rate across all judges
+- `aggregate/avg_{model_name}_win_rate`: Average win rate across judges
+- `aggregate/win_rate_difference`: Difference between Model A and Model B win rates
+
+**Example:**
+```
+Model A wins: 72 questions
+Model B wins: 25 questions
+Ties: 3 questions
+Total: 100 questions
+
+Model A Win Rate = 72/100 = 0.72 (72%)
+Model B Win Rate = 25/100 = 0.25 (25%)
+Win Rate Difference = 0.72 - 0.25 = 0.47 (47% gap - significant advantage for Model A)
+```
+
+#### 2. Alpaca Win Rate
+
+A more nuanced metric that counts ties as half a win for each model, based on the [AlpacaEval](https://github.com/tatsu-lab/alpaca_eval) framework.
+
+**Formula:**
+```
+Alpaca Win Rate = (Number of Wins + 0.5 × Number of Ties) / Total Evaluations
+```
+
+**Why Use Alpaca Win Rate?**
+- Treats ties as split decisions, giving partial credit to both models
+- More granular than standard win rate when there are many ties
+- Better reflects cases where models perform similarly on some questions
+- Recommended by AlpacaEval for instruction-following model comparisons
+
+**Interpreting Alpaca Win Rate Values:**
+- **0.50 (50%)**: Models perform equally well
+- **> 0.50**: Model is better (same interpretation as standard win rate)
+- Alpaca win rate is always ≥ standard win rate (due to partial credit for ties)
+- Use alpaca win rate when you have many ties and want more nuanced comparison
+
+**Logged Metrics:**
+- `alpaca_win_rate/{judge_name}/{model_name}`: Alpaca win rate per judge
+- `aggregate/{model_name}_alpaca_win_rate`: Aggregate alpaca win rate
+- `aggregate/avg_{model_name}_alpaca_win_rate`: Average alpaca win rate across judges
+- `aggregate/alpaca_win_rate_difference`: Difference between Model A and Model B alpaca win rates
+
+**Example:**
+```
+Model A wins: 72 questions
+Model B wins: 25 questions
+Ties: 3 questions
+Total: 100 questions
+
+Model A Alpaca Win Rate = (72 + 0.5×3)/100 = 73.5/100 = 0.735 (73.5%)
+Model B Alpaca Win Rate = (25 + 0.5×3)/100 = 26.5/100 = 0.265 (26.5%)
+
+Note: Both models get partial credit for the 3 ties
+```
+
+**Reference:** [AlpacaEval - Automatic Evaluator for Instruction-following LLMs](https://github.com/tatsu-lab/alpaca_eval)
+
+#### 3. Judge Agreement
+
+Measures how consistently judges agree on which model is better:
+
+- **Unanimous (1.0)**: All judges made the same decision
+- **Majority (0.5-0.99)**: Most judges agreed on winner
+- **Split (< 0.5)**: Judges were evenly divided
+
+**Interpreting Agreement:**
+- **> 0.80**: High agreement - clear quality difference or consistent evaluation
+- **0.50-0.80**: Moderate agreement - some subjective variation among judges
+- **< 0.50**: Low agreement - questions may be ambiguous or judges have different criteria
+
+#### 4. Position Bias
+
+Analysis of whether judges are biased toward answers shown in position A vs B. The evaluation randomizes answer positions to mitigate this bias.
+
+**What to Look For:**
+- Position bias close to 0.50 (50%) indicates no position bias
+- Significant deviation from 0.50 suggests judges prefer one position
+- Randomization helps ensure fair comparison despite any position bias
+
+### How to Run Win Rate Evaluation
+
+#### Step 1: Generate Model Outputs
+
+First, run standard evaluation to generate CSV files with model outputs:
+
+```bash
+python scripts/evaluate.py evals.yaml
+```
+
+This creates CSV files in your output directory (e.g., `evals_outputs/{model_name}/samples_open_ended.csv`) with columns:
+- `doc\.Question`: The question text
+- `target`: The reference/ground truth answer
+- `filtered_resps`: The model's response
+
+#### Step 2: Create Win Rate Configuration
+
+Create a YAML configuration file (e.g., `win_rate_config.yaml`):
+
+```yaml
+# Task type for metrics logging
+task: "open_ended"  # or "open_ended_w_context"
+
+# Models to compare
+model_a:
+  - name: "model-a-name"
+    file: "path/to/model_a_output.csv"
+
+model_b:
+  - name: "model-b-name"
+    file: "path/to/model_b_output.csv"
+
+# LLM Judges configuration
+judges:
+  - name: "mistral-large"
+    model: "mistral-large-2512"
+    api_key: "${MISTRAL_API_KEY}"
+    base_url: "https://api.mistral.ai/v1"
+
+  - name: "gpt-4-mini"
+    model: "openai/gpt-4.1-mini"
+    api_key: "${OPENROUTER_API_KEY}"
+    base_url: "https://openrouter.ai/api/v1/"
+
+  - name: "qwen3-235b"
+    model: "qwen/qwen3-235b-a22b-2507"
+    api_key: "${OPENROUTER_API_KEY}"
+    base_url: "https://openrouter.ai/api/v1/"
+
+# Evaluation settings
+evaluation:
+  limit: null  # Set to N to limit to first N questions, or null for all
+  max_workers: 20  # Number of parallel threads
+  rate_limit_delay: 0.05  # Delay between API calls (seconds)
+  random_seed: 42  # For reproducibility (null = random)
+
+# Output settings
+output:
+  save_results: true
+  save_visualizations: true
+  output_dir: "win_rate_results"
+  results_filename: "results_{model_a}_vs_{model_b}.csv"
+  summary_filename: "summary_{model_a}_vs_{model_b}.csv"
+  visualization_filename: "comparison_{model_a}_vs_{model_b}.png"
+
+# Weights & Biases configuration
+wandb:
+  enabled: true
+  project: "eve-win-rate-evaluation"
+  entity: your-wandb-username  # or null for default
+  run_name: "{model_a}_vs_{model_b}"
+  tags:
+    - "win-rate"
+    - "llm-judge"
+
+  # What to log
+  log:
+    win_rates: true
+    accuracy_rates: true
+    judge_agreement: true
+    position_bias: true
+    visualizations: true
+    raw_results: true
+    sample_rationales: true
+    sample_count: 5
+```
+
+#### Step 3: Run Win Rate Evaluation
+
+```bash
+python metrics/win_rate/win_rate_evaluation.py --config win_rate_config.yaml
+```
+
+#### Step 4: View Results
+
+The script generates:
+
+1. **CSV Results** (`win_rate_results/results_*.csv`): Complete evaluation data with all judge decisions
+2. **Summary CSV** (`win_rate_results/summary_*.csv`): Win rate statistics per judge
+3. **Visualizations** (`win_rate_results/comparison_*.png`): Charts showing win rates
+4. **WandB Dashboard**: Interactive results with metrics, visualizations, and sample rationales
+
+### Comparing Multiple Models
+
+You can compare multiple models pairwise by configuring lists for `model_a` and `model_b`:
+
+```yaml
+model_a:
+  - name: "eve_v04"
+    file: "generations/open_ended/scoring_eve_v04_open_ended_0_shot.csv"
+  - name: "eve_v05"
+    file: "generations/open_ended/scoring_eve_v05_open_ended_0_shot.csv"
+
+model_b:
+  - name: "mistral-small"
+    file: "generations/open_ended/scoring_mistral-small_open_ended_0_shot.csv"
+  - name: "llama-4-scout"
+    file: "generations/open_ended/scoring_llama-4-scout_open_ended_0_shot.csv"
+```
+
+This will run all pairwise comparisons: eve_v04 vs mistral-small, eve_v04 vs llama-4-scout, eve_v05 vs mistral-small, eve_v05 vs llama-4-scout.
+
+### Best Practices
+
+1. **Number of Judges**: Use 3-5 judges for robust evaluation
+2. **Judge Diversity**: Select judges from different model families (e.g., GPT, Claude, Mistral, Qwen)
+3. **Rate Limiting**: Adjust `rate_limit_delay` if hitting API rate limits
+4. **Reproducibility**: Set `random_seed` to a fixed value for reproducible position randomization
+5. **Testing**: Start with `limit: 10` to test configuration before running full evaluation
+6. **WandB Tracking**: Enable wandb logging to track experiments and compare runs
+
+### Example Output
+
+After running win rate evaluation, you'll see output like:
+
+```
+Model A: eve_v05
+Model B: mistral-small-3.2-24b
+
+=== Aggregate Results ===
+eve_v05:
+  Win Rate: 0.72 (72%)
+  Alpaca Win Rate: 0.75 (75%)
+
+mistral-small-3.2-24b:
+  Win Rate: 0.28 (28%)
+  Alpaca Win Rate: 0.25 (25%)
+
+Judge Agreement: 0.68 (68% unanimous decisions)
+
+WandB Run: https://wandb.ai/your-entity/eve-win-rate-evaluation/runs/...
+```
+
+**Interpretation**: eve_v05 clearly outperforms mistral-small-3.2-24b with a 44% win rate gap (0.72 - 0.28), indicating strong superiority across the evaluated questions.
+
+### References
+
+- **AlpacaEval Framework**: [https://github.com/tatsu-lab/alpaca_eval](https://github.com/tatsu-lab/alpaca_eval)
+- **Full Documentation**: See `WIN_RATE_EVALUATION_README.md` in the repository root
+- **Example Configurations**: See `metrics/win_rate/win_rate_open_ended_example.yaml`
 
 ---
 
