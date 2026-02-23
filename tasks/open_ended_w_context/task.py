@@ -82,15 +82,15 @@ class OpenEndedWContextTask(ConfigurableTask):
 
     def test_docs(self):
         """Filter test documents to exclude those with empty Question or Answer."""
-        return filter(self._is_valid_doc, super().test_docs())
+        return list(filter(self._is_valid_doc, super().test_docs()))
 
     def training_docs(self):
         """Filter training documents to exclude those with empty Question or Answer."""
-        return filter(self._is_valid_doc, super().training_docs())
+        return list(filter(self._is_valid_doc, super().training_docs()))
 
     def validation_docs(self):
         """Filter validation documents to exclude those with empty Question or Answer."""
-        return filter(self._is_valid_doc, super().validation_docs())
+        return list(filter(self._is_valid_doc, super().validation_docs()))
 
     def doc_to_text(self, doc: dict) -> str:
         """Converts a document dictionary to a text representation with context."""
