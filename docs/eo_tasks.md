@@ -1,6 +1,6 @@
 # Earth Observation Evaluation Tasks
 
-This page provides a comprehensive overview of all available Earth Observation (EO) evaluation tasks in eve-evalkit. Each task is designed to assess different capabilities of language models in the Earth Observation domain.
+This page provides a comprehensive overview of all available Earth Observation (EO) evaluation tasks in Eve-evalkit. Each task is designed to assess different capabilities of language models in the Earth Observation domain.
 
 ## Quick Reference
 
