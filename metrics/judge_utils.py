@@ -403,10 +403,34 @@ def process_qa_results(
         If single judge:
             {"llm_as_judge": LoggableFuture}
     """
+    question = doc.get(question_key)
+    output = results[0] if results else ""
+    reference = doc.get(answer_key)
+
+    # Skip samples with None question or reference -- exclude from scoring
+    if question is None or reference is None:
+        missing_fields = []
+        if question is None:
+            missing_fields.append("question")
+        if reference is None:
+            missing_fields.append("reference")
+
+        print(f"[WARNING] Skipping sample with None {'/'.join(missing_fields)}")
+
+        skip_result = {"score": None, "raw_output": "skipped: None question or reference"}
+        if judges and len(judges) > 0:
+            result_dict = {"llm_as_judge_avg": skip_result}
+            for jc in judges:
+                jname = jc.get("name", jc.get("model", "unknown"))
+                result_dict[f"llm_as_judge_{jname}"] = skip_result
+            return result_dict
+        else:
+            return {"llm_as_judge": skip_result}
+
     sample = {
-        "question": doc[question_key],
-        "output": results[0],
-        "reference": doc[answer_key],
+        "question": question,
+        "output": output,
+        "reference": reference,
     }
 
     if judges and len(judges) > 0:
@@ -469,11 +493,15 @@ def aggregate_llm_judge(
 
         # Handle both dict format (new) and int format (backward compatibility)
         if isinstance(result, dict):
+            # Skip samples that were excluded (None question/reference)
+            if "score" in result and result["score"] is None:
+                continue
             # Check if this is multi-judge result
             if all(isinstance(v, dict) and "score" in v for v in result.values()):
                 # Multi-judge: average across all judges for this sample
-                judge_scores = [v["score"] for v in result.values()]
-                scores.append(mean(judge_scores))
+                judge_scores = [v["score"] for v in result.values() if v["score"] is not None]
+                if judge_scores:
+                    scores.append(mean(judge_scores))
             elif "score" in result:
                 # Single judge dict format
                 scores.append(result["score"])
