@@ -1,6 +1,6 @@
 # Eve-evalkit
 
-Welcome to the Wve-evalkit documentation. This framework provides comprehensive tools for evaluating language models on Earth Observation (EO) specific tasks and benchmarks.
+Welcome to the Eve-evalkit documentation. This framework provides comprehensive tools for evaluating language models on Earth Observation (EO) specific tasks and benchmarks.
 
 ## What is Eve-evalkit?
 
