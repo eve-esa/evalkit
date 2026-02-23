@@ -48,49 +48,6 @@ class OpenEndedTask(ConfigurableTask):
         if judges:
             self._config.judges = judges
 
-    def _is_valid_doc(self, doc):
-        """
-        Check if a document is valid (has non-empty Question and Answer).
-
-        Args:
-            doc: The document to validate
-
-        Returns:
-            bool: True if document is valid, False otherwise
-        """
-        # Auto-detect field names (same logic as in process_results)
-        if "Question" in doc:
-            question_key = "Question"
-            answer_key = "Answer"
-        elif "question" in doc:
-            question_key = "question"
-            answer_key = "answer"
-        else:
-            # Fallback: try to find any key containing 'question'
-            question_keys = [k for k in doc.keys() if "question" in k.lower()]
-            answer_keys = [k for k in doc.keys() if "answer" in k.lower()]
-            question_key = question_keys[0] if question_keys else "question"
-            answer_key = answer_keys[0] if answer_keys else "answer"
-
-        # Check if both question and answer exist and are non-empty
-        question = doc.get(question_key, "")
-        answer = doc.get(answer_key, "")
-
-        # Consider empty, None, or whitespace-only strings as invalid
-        return bool(question and str(question).strip() and answer and str(answer).strip())
-
-    def test_docs(self):
-        """Filter test documents to exclude those with empty Question or Answer."""
-        return list(filter(self._is_valid_doc, super().test_docs()))
-
-    def training_docs(self):
-        """Filter training documents to exclude those with empty Question or Answer."""
-        return list(filter(self._is_valid_doc, super().training_docs()))
-
-    def validation_docs(self):
-        """Filter validation documents to exclude those with empty Question or Answer."""
-        return list(filter(self._is_valid_doc, super().validation_docs()))
-
     def process_results(self, doc, results):
         """
         Process results with access to task configuration including judges.
