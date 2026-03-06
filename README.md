@@ -19,8 +19,8 @@ For more information refer to the complete guide of the project: [EVE Guide](htt
 ### 1. Clone the repository
 
 ```bash
-git clone -b dev https://github.com/eve-esa/eve-evaluation.git
-cd eve-evaluation
+git clone -b dev https://github.com/eve-esa/evalkit.git
+cd evalkit
 ```
 
 ### 2. Set up Python environment

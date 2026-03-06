@@ -6,12 +6,12 @@ Eve-evalkit is built on top of the [EleutherAI Language Model Evaluation Harness
 
 ### 1. Installation
 
-Follow the installation instructions in the [README](https://github.com/eve-esa/eve-evaluation):
+Follow the installation instructions in the [README](https://github.com/eve-esa/evalkit):
 
 ```bash
 # Clone the repository
 git clone https://github.com/eve-esa/evalkit.git
-cd eve-evaluation
+cd evalkit
 
 # Install uv
 curl -LsSf https://astral.sh/uv/install.sh | sh
@@ -565,6 +565,6 @@ wandb login your-api-key
 ## Support
 
 For issues or questions:
-- GitHub Issues: [eve-esa/eve-evaluation](https://github.com/eve-esa/eve-evaluation/issues)
+- GitHub Issues: [eve-esa/evalkit](https://github.com/eve-esa/evalkit/issues)
 - Documentation: [https://docs.eve-evaluation.org](https://docs.eve-evaluation.org)
 - LM-Eval-Harness: [EleutherAI Documentation](https://github.com/EleutherAI/lm-evaluation-harness)

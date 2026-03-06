@@ -831,7 +831,7 @@ Choose tasks based on your evaluation goals:
 ## Additional Resources
 
 - **Dataset Repository:** [https://huggingface.co/eve-esa](https://huggingface.co/eve-esa)
-- **GitHub Repository:** [https://github.com/eve-esa/eve-evaluation](https://github.com/eve-esa/eve-evaluation)
+- **GitHub Repository:** [https://github.com/eve-esa/evalkit](https://github.com/eve-esa/evalkit)
 - **LM Evaluation Harness:** [https://github.com/EleutherAI/lm-evaluation-harness](https://github.com/EleutherAI/lm-evaluation-harness)
 
 ---
