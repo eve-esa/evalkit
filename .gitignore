@@ -19,3 +19,4 @@ eve-evaluation/*
 /tasks/wiley_mcqa/
 /evals.yaml
 /metrics/win_rate/generations/
+__pycache__/*
