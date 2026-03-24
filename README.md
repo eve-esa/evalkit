@@ -19,7 +19,7 @@ For more information refer to the complete guide of the project: [EVE Guide](htt
 ### 1. Clone the repository
 
 ```bash
-git clone -b dev https://github.com/eve-esa/evalkit.git
+git clone  https://github.com/eve-esa/evalkit.git
 cd evalkit
 ```
 
