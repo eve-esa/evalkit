@@ -19,4 +19,38 @@ eve-evaluation/*
 /tasks/wiley_mcqa/
 /evals.yaml
 /metrics/win_rate/generations/
-__pycache__/*
+**/__pycache__/*
+evals_configs/*
+notebooks/create_eval_table/tables/*
+notebooks/**/*.json
+notebooks/**/*.jsonl
+notebooks/**/*.csv
+metrics/**/*.yaml
+metrics/**/*.png
+metrics/**/*.csv
+notebooks/**
+.DS_Store
+tasks/open_ended_w_context_full/*
+evals_config/*
+
+# wandb artifacts
+**/wandb/
+
+# Debug notebooks
+notebooks/system_gen_debug/
+
+# Local docs/notes not for repo
+MULTI_JUDGE_SETUP.md
+WIN_RATE_EVALUATION_README.md
+metrics/win_rate/BUGFIX_COLUMN_NAMES.md
+metrics/win_rate/CHANGES.md
+metrics/win_rate/MULTIPLE_MODELS_README.md
+docs/remove_from_git_history.md
+
+# Local scripts/configs
+check_vllm_template.py
+gd_evals.yaml
+requirements_win_rate.txt
+
+# External tools
+lm-evaluation-harness/

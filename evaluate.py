@@ -64,6 +64,7 @@ class ModelConfig:
     num_concurrent: int = 3  # Number of concurrent API requests
     timeout: int = 300  # Timeout in seconds (default: 300s / 5 minutes)
     tokenizer: str | None = None  # HuggingFace tokenizer name for chat template (optional)
+    extra_model_args: dict | None = None  # Additional model-specific API parameters (e.g. reasoning_effort)
     # Eve API specific parameters
     email: str | None = None
     password: str | None = None
@@ -515,6 +516,7 @@ def init_wandb_for_task(
                 "num_concurrent": model.num_concurrent,
                 "timeout": model.timeout,
                 "tokenizer": model.tokenizer,
+                "extra_model_args": model.extra_model_args,
             },
             "task": {
                 "name": task.name,  # User-defined task configuration name
@@ -723,6 +725,8 @@ def run_evaluation(
     print(f"  Task Config: {task.name}")
     if task.name != task.task_name:
         print(f"  LM-Eval Task: {task.task_name}")
+    if model.extra_model_args:
+        print(f"  Extra Model Args: {model.extra_model_args}")
     print(f"  Output: {task_output_dir}")
     print("-" * 80)
 
@@ -783,6 +787,11 @@ def run_evaluation(
             # Add tokenizer if provided
             if model.tokenizer:
                 model_args += f",tokenizer={model.tokenizer}"
+
+        # Append any extra model-specific parameters (e.g. reasoning_effort)
+        if model.extra_model_args:
+            for key, value in model.extra_model_args.items():
+                model_args += f",{key}={value}"
 
         # Create TaskManager to include custom tasks directory
         # This is equivalent to the CLI's --include tasks option
@@ -959,6 +968,7 @@ def main(config_file: str):
                 num_concurrent=model.get("num_concurrent", 3),
                 timeout=model.get("timeout", 300),
                 tokenizer=model.get("tokenizer"),
+                extra_model_args=model.get("extra_model_args"),
                 email=model.get("email"),
                 password=model.get("password"),
                 public_collections=model.get("public_collections"),
