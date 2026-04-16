@@ -437,16 +437,20 @@ def create_visualizations(
 
 
 def get_sample_rationales(
-    df: pd.DataFrame, judges: List[Dict], model_a_name: str, model_b_name: str, n_samples: int = 5
+    df: pd.DataFrame, judges: List[Dict], model_a_name: str, model_b_name: str, n_samples: Optional[int] = None
 ) -> List[Dict]:
-    """Get sample rationales from judges for logging."""
+    """Get sample rationales from judges for logging.
+    
+    If n_samples is None, all rows in the dataframe are returned.
+    """
     samples = []
 
     # Sanitize model names for column lookups
     model_a_col = sanitize_name(model_a_name)
     model_b_col = sanitize_name(model_b_name)
 
-    for idx in df.head(n_samples).index:
+    sample_df = df.head(n_samples) if n_samples is not None else df
+    for idx in sample_df.index:
         row = df.loc[idx]
         position_col = f"{model_a_col}_position"
         answer_a_col = f"answer_{model_a_col}"
@@ -676,7 +680,7 @@ def log_to_wandb(
             config["judges"],
             model_a_name,
             model_b_name,
-            log_config.get("sample_count", 5),
+            log_config.get("sample_count", None),
         )
         # Create a wandb Table
         columns = [
